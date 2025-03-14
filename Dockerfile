@@ -14,10 +14,14 @@ COPY backend/setup-*.sql ./
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+# Railway will provide the PORT environment variable
 
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the backend
-CMD ["npm", "start"]
+# Create a simple healthcheck script
+RUN echo '#!/bin/sh\nwget -q -O- http://localhost:$PORT/health || exit 1' > /healthcheck.sh && \
+    chmod +x /healthcheck.sh
+
+# Start the backend with a simple command to echo logs
+CMD ["sh", "-c", "npm start"]

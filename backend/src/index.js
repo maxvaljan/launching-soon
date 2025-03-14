@@ -38,6 +38,7 @@ app.use(express.json({ limit: '1mb' })); // JSON parsing with size limit
 
 // Health check
 app.get('/health', (req, res) => {
+  console.log('Health check endpoint called');
   res.status(200).json({ 
     status: 'ok', 
     environment: config.environment,
@@ -72,11 +73,20 @@ app.use('/api/api-keys', configRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const PORT = config.port || 3000;
+const PORT = process.env.PORT || config.port || 3000;
 
-app.listen(PORT, () => {
+// Log all environment variables to help debug (excluding secrets)
+console.log('Environment variables:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+console.log('Configured port:', PORT);
+console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
+console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`MaxMove API running on port ${PORT} in ${config.environment} mode`);
-  console.log(`Using Supabase project: ${config.supabase.url}`);
+  console.log(`Server listening on 0.0.0.0:${PORT}`);
+  console.log(`Using Supabase project: ${config.supabase.url || 'Not configured'}`);
 });
 
 module.exports = app; // For testing
