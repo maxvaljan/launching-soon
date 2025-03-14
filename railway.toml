@@ -1,12 +1,8 @@
 [build]
-builder = "nixpacks"
-buildCommand = "yarn install && yarn build:backend"
+builder = "DOCKERFILE"
+watchPatterns = ["backend/**", "shared/**", "package.json", "yarn.lock", "Dockerfile"]
 
 [deploy]
-startCommand = "yarn start"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
-
-[phases.setup]
-nixPkgs = ["nodejs_20", "yarn-1_x", "openssl"]
