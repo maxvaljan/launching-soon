@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+buildCommand = "yarn install && yarn build:backend"
+
+[deploy]
+startCommand = "yarn start"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+
+[phases.setup]
+nixPkgs = ["nodejs_18", "yarn-1_x", "openssl"]

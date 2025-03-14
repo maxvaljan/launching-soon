@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.js",
     "lint": "eslint .",
     "test": "jest",
-    "build": "npm install"
+    "build": "echo 'Backend build complete'"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.41",

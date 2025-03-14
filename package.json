@@ -8,6 +8,7 @@
     "shared"
   ],
   "scripts": {
+    "start": "cd backend && npm start",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:web\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:web": "cd frontend/web-ui && npm run dev",
