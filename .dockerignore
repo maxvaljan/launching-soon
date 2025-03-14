@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# Allow only specific files/directories
+!backend/package.json
+!backend/src/**
+!backend/setup-*.js
+!backend/setup-*.sql
