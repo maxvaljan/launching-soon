@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    /* MaxMove branding colors */
+    --maxmove-50: 214 100% 98%;
+    --maxmove-100: 214 100% 96%;
+    --maxmove-200: 214 100% 90%;
+    --maxmove-300: 214 100% 82%;
+    --maxmove-400: 214 100% 70%;
+    --maxmove-500: 214 100% 60%;
+    --maxmove-600: 214 100% 50%;
+    --maxmove-700: 214 100% 45%;
+    --maxmove-800: 214 100% 35%;
+    --maxmove-900: 214 100% 25%;
+    --maxmove-950: 214 100% 15%;
+    
+    /* UI Colors */
+    --background: 0 0% 100%;
+    --foreground: 214 60% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 214 60% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 60% 15%;
+    --primary: 214 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 20% 96%;
+    --secondary-foreground: 214 60% 15%;
+    --muted: 214 20% 96%;
+    --muted-foreground: 214 30% 46%;
+    --accent: 214 100% 96%;
+    --accent-foreground: 214 60% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 214 100% 50%;
+    --radius: 0.6rem;
+  }
+ 
+  .dark {
+    --background: 214 50% 10%;
+    --foreground: 0 0% 98%;
+    --card: 214 50% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 214 50% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 214 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 30% 17%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 214 30% 17%;
+    --muted-foreground: 214 15% 65%;
+    --accent: 214 30% 17%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 60% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 30% 17%;
+    --input: 214 30% 17%;
+    --ring: 214 100% 50%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-[hsl(var(--border))];
+  }
+  
+  html, body {
+    @apply antialiased scroll-smooth;
+  }
+  
+  body {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] min-h-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-[hsl(var(--foreground))];
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.875rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  a {
+    @apply text-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))];
+  }
+}
+
+@layer utilities {
+  .maxmove-gradient {
+    @apply bg-gradient-to-r from-[hsl(var(--maxmove-600))] to-[hsl(var(--maxmove-800))];
+  }
+  
+  .shadow-blue {
+    box-shadow: 0 4px 14px rgba(0, 60, 200, 0.15);
+  }
+
+  .section-padding {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* Investment page animations */
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Custom scrollbar styling */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+    border: transparent;
+  }
+}
+
+/* Custom component styling */
+.toast-success {
+  background-color: rgba(240, 253, 244, 1);
+  border-color: rgba(34, 197, 94, 1);
+  color: rgba(21, 128, 61, 1);
+}
+
+.toast-error {
+  background-color: rgba(254, 242, 242, 1);
+  border-color: rgba(239, 68, 68, 1);
+  color: rgba(185, 28, 28, 1);
+}
+
+.toast-warning {
+  background-color: rgba(255, 251, 235, 1);
+  border-color: rgba(245, 158, 11, 1);
+  color: rgba(180, 83, 9, 1);
+}
+
+.toast-info {
+  background-color: rgba(239, 246, 255, 1);
+  border-color: rgba(59, 130, 246, 1);
+  color: rgba(29, 78, 216, 1);
+}
+
+.toast-loading {
+  background-color: rgba(249, 250, 251, 1);
+  border-color: rgba(107, 114, 128, 1);
+  color: rgba(55, 65, 81, 1);
+}

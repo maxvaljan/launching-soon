@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "MaxMove Driver",
+    "slug": "maxmove-driver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "maxmoveapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
+    },
+    "install": {
+      "exclude": ["react-native-webview", "@stripe/stripe-react-native"]
+    },
+    "packagerOpts": {
+      "config": "metro.config.js"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      },
+      "overrideReactNativeVersion": "0.78.0",
+      "overrideReactVersion": "19.0.0"
+    }
+  }
+}
