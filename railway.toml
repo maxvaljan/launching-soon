@@ -1,8 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-watchPatterns = ["backend/**", "shared/**", "package.json", "yarn.lock", "Dockerfile"]
-
-[deploy]
-healthcheckPath = "/health"
-healthcheckTimeout = 100
-restartPolicyType = "on_failure"
