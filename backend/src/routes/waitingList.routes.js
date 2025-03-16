@@ -46,4 +46,16 @@ router.get(
   waitingListController.getReferrals
 );
 
+/**
+ * @route GET /api/waiting-list/admin
+ * @description Get all waiting list entries (admin only)
+ * @access Private/Admin
+ */
+router.get(
+  '/admin',
+  // In production, add middleware to verify admin access
+  // adminMiddleware,
+  waitingListController.getWaitingList
+);
+
 module.exports = router;

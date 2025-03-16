@@ -127,7 +127,7 @@ exports.checkEmail = async (req, res) => {
   try {
     const { data, error } = await supabaseService.supabase
       .from('waiting_list_emails')
-      .select('id, email')
+      .select('id, email, referral_code')
       .eq('email', email)
       .single();
 
@@ -138,7 +138,11 @@ exports.checkEmail = async (req, res) => {
 
     return res.status(200).json({ 
       exists: !!data,
-      data: data ? { id: data.id, email: data.email } : null
+      data: data ? { 
+        id: data.id, 
+        email: data.email,
+        referral_code: data.referral_code
+      } : null
     });
   } catch (error) {
     console.error('Error in waiting list controller:', error);
@@ -186,6 +190,33 @@ exports.getReferrals = async (req, res) => {
       },
       referrals: referrals
     });
+  } catch (error) {
+    console.error('Error in waiting list controller:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+/**
+ * Get all waiting list entries (admin only)
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
+exports.getWaitingList = async (req, res) => {
+  try {
+    // In a production app, verify admin access here
+    
+    // Get all waiting list entries
+    const { data, error } = await supabaseService.supabase
+      .from('waiting_list_emails')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching waiting list:', error);
+      return res.status(500).json({ message: 'Failed to fetch waiting list', error: error.message });
+    }
+
+    return res.status(200).json(data);
   } catch (error) {
     console.error('Error in waiting list controller:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });

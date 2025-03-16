@@ -14,11 +14,41 @@ const EmailCollectionPopup = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Force the popup to be visible for testing
-    setTimeout(() => {
-      setIsVisible(true);
-      setIsLoading(false);
-    }, 3000); // Show popup after 3 seconds
+    const initializePopup = async () => {
+      // Check if popup was recently closed (same session)
+      const wasClosed = localStorage.getItem('popupClosed');
+      
+      if (wasClosed) {
+        setIsLoading(false);
+        return;
+      }
+      
+      // Check if email exists in localStorage (legacy support)
+      const storedEmail = localStorage.getItem('waitingListEmail');
+      
+      if (storedEmail) {
+        try {
+          // Verify email exists in database
+          const response = await checkEmailExists(storedEmail);
+          
+          if (response.exists) {
+            // Email is already in the database, don't show popup
+            setIsLoading(false);
+            return;
+          }
+        } catch (err) {
+          console.error('Error checking email:', err);
+        }
+      }
+      
+      // Show popup if not closed and email not registered
+      setTimeout(() => {
+        setIsVisible(true);
+        setIsLoading(false);
+      }, 3000); // Show popup after 3 seconds
+    };
+    
+    initializePopup();
   }, []);
 
   const closePopup = () => {

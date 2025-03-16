@@ -12,34 +12,54 @@ const WaitingList = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [userReferralCode, setUserReferralCode] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if there's a stored email in localStorage for compatibility
-    const storedEmail = localStorage.getItem('waitingListEmail');
-    if (storedEmail) {
-      // Verify if this email exists in our database
-      const verifyEmail = async () => {
+    const checkWaitingListStatus = async () => {
+      // Check if there's a stored email in localStorage for compatibility
+      const storedEmail = localStorage.getItem('waitingListEmail');
+      if (storedEmail) {
+        // Verify if this email exists in our database
         try {
           const response = await checkEmailExists(storedEmail);
-          if (response.exists) {
+          if (response.exists && response.data) {
             setIsSubmitted(true);
+            setSubmittedEmail(storedEmail);
+            // Store the user's own referral code for display
+            if (response.data.referral_code) {
+              setUserReferralCode(response.data.referral_code);
+            }
           }
         } catch (err) {
           console.error('Error checking email in waiting list:', err);
         }
-      };
-      
-      verifyEmail();
-    }
+      }
+    };
     
     // Check for referral code in URL
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const ref = urlParams.get('ref');
-      if (ref) {
-        setReferralCode(ref);
+    const checkReferralCode = () => {
+      if (typeof window !== 'undefined') {
+        // First check URL path for /referral/[code]
+        const pathname = window.location.pathname;
+        const referralMatch = pathname.match(/\/referral\/([a-f0-9-]+)/i);
+        
+        if (referralMatch && referralMatch[1]) {
+          setReferralCode(referralMatch[1]);
+          return;
+        }
+        
+        // Then check query params for ?ref=code
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref');
+        if (ref) {
+          setReferralCode(ref);
+        }
       }
-    }
+    };
+    
+    checkWaitingListStatus();
+    checkReferralCode();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,10 +95,18 @@ const WaitingList = () => {
         return;
       }
       
-      // Also store in localStorage for compatibility
+      // Store in localStorage for compatibility
       localStorage.setItem('waitingListEmail', email);
       
+      // Update state with user's data
       setIsSubmitted(true);
+      setSubmittedEmail(email);
+      
+      // If response includes referral code, store it
+      if (response.data?.referral_code) {
+        setUserReferralCode(response.data.referral_code);
+      }
+      
       setEmail('');
     } catch (err) {
       console.error('Error submitting to waiting list:', err);
@@ -102,7 +130,34 @@ const WaitingList = () => {
         {isSubmitted ? (
           <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
             <h3 className="text-xl font-semibold mb-2 text-theme-blue">Thank you for joining our waiting list!</h3>
-            <p className="text-gray-600">We'll notify you as soon as we launch. Keep an eye on your inbox!</p>
+            <p className="text-gray-600 mb-4">We'll notify you as soon as we launch. Keep an eye on your inbox!</p>
+            
+            {userReferralCode && (
+              <div className="mt-4 border-t pt-4">
+                <h4 className="font-semibold text-theme-dark mb-2">Share with friends & get 10% off</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  Share your referral link with friends. When they sign up, you'll both get 10% off your first order!
+                </p>
+                
+                <div className="bg-gray-100 p-3 rounded text-sm break-all mb-3">
+                  {`${typeof window !== 'undefined' ? window.location.origin : ''}/referral/${userReferralCode}`}
+                </div>
+                
+                <button
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      navigator.clipboard.writeText(
+                        `${window.location.origin}/referral/${userReferralCode}`
+                      );
+                      alert('Referral link copied to clipboard!');
+                    }
+                  }}
+                  className="w-full bg-theme-blue hover:bg-theme-dark text-white py-2 rounded text-sm"
+                >
+                  Copy Referral Link
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">

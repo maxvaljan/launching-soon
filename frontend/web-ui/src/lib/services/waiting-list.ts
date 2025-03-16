@@ -17,6 +17,7 @@ interface CheckEmailResponse {
   data: {
     id: string;
     email: string;
+    referral_code?: string;
   } | null;
 }
 
