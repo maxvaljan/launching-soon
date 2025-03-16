@@ -36,33 +36,72 @@ export async function addToWaitingList(
   referralCode?: string
 ): Promise<WaitingListResponse> {
   try {
-    const response = await fetch('/api/waiting-list', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        source,
-        utm_source: utmSource,
-        referral_code: referralCode,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
+    // Basic email validation before sending request
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return {
         message: 'Failed to add email',
-        error: errorData.message || 'An error occurred',
+        error: 'Please provide a valid email address',
       };
     }
 
-    return await response.json();
-  } catch (error) {
+    // Add timeout for the request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    
+    try {
+      const response = await fetch('/api/waiting-list', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source,
+          utm_source: utmSource,
+          referral_code: referralCode,
+        }),
+        signal: controller.signal,
+      });
+      
+      // Clear the timeout since the request completed
+      clearTimeout(timeoutId);
+  
+      if (!response.ok) {
+        // Try to parse error response
+        let errorMessage = 'An error occurred';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || 'Failed to add email';
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+        }
+  
+        return {
+          message: 'Failed to add email',
+          error: errorMessage,
+        };
+      }
+  
+      return await response.json();
+    } catch (fetchError: any) {
+      // Clear the timeout
+      clearTimeout(timeoutId);
+      
+      // Check if the error is due to abort/timeout
+      if (fetchError.name === 'AbortError') {
+        return {
+          message: 'Failed to add email',
+          error: 'Request timed out. Please try again.',
+        };
+      }
+      
+      throw fetchError; // Re-throw to be caught by outer try/catch
+    }
+  } catch (error: any) {
     console.error('Error adding to waiting list:', error);
     return {
       message: 'Failed to add email',
-      error: 'Network error',
+      error: error.message || 'Network error. Please check your connection and try again.',
     };
   }
 }

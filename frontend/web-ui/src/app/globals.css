@@ -4,18 +4,12 @@
  
 @layer base {
   :root {
-    /* MaxMove branding colors */
-    --maxmove-50: 214 100% 98%;
-    --maxmove-100: 214 100% 96%;
-    --maxmove-200: 214 100% 90%;
-    --maxmove-300: 214 100% 82%;
-    --maxmove-400: 214 100% 70%;
-    --maxmove-500: 214 100% 60%;
-    --maxmove-600: 214 100% 50%;
-    --maxmove-700: 214 100% 45%;
-    --maxmove-800: 214 100% 35%;
-    --maxmove-900: 214 100% 25%;
-    --maxmove-950: 214 100% 15%;
+    /* MAXMOVE Standard Colors */
+    --maxmove-navy: #192338;
+    --maxmove-dark-blue: #1c2d4f;
+    --maxmove-light-blue: #294374;
+    --maxmove-grey: #798390;
+    --maxmove-creme: #eeeeee;
     
     /* UI Colors */
     --background: 0 0% 100%;
@@ -101,7 +95,7 @@
 
 @layer utilities {
   .maxmove-gradient {
-    @apply bg-gradient-to-r from-[hsl(var(--maxmove-600))] to-[hsl(var(--maxmove-800))];
+    @apply bg-gradient-to-r from-[var(--maxmove-dark-blue)] to-[var(--maxmove-navy)];
   }
   
   .shadow-blue {

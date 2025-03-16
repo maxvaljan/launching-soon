@@ -86,21 +86,13 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // MaxMove custom colors
+        // MAXMOVE Standard Colors
         maxmove: {
-          50: "#f5f7fa",
-          100: "#ebeef3",
-          200: "#d8dfe8",
-          300: "#b9c5d4",
-          400: "#94a6bc",
-          500: "#7689a7",
-          600: "#617190",
-          700: "#4f5b76",
-          800: "#434d63",
-          900: "#3b4354",
-          950: "#272b36",
-          primary: "#0e1424",
-          secondary: "#f1ebdb",
+          navy: "#192338",
+          "dark-blue": "#1c2d4f",
+          "light-blue": "#294374",
+          grey: "#798390",
+          creme: "#eeeeee",
         },
       },
       borderColor: {

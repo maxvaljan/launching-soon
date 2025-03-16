@@ -82,20 +82,58 @@ const WaitingList = () => {
         utmSource = urlParams.get('utm_source');
       }
       
-      // Send email to waiting list API
+      // Send email to waiting list API with improved error handling
       console.log('Submitting email to waiting list:', email);
-      const response = await addToWaitingList(
-        email, 
-        'waiting_list_section', 
-        utmSource || undefined,
-        referralCode || undefined
-      );
+      
+      // Add retry logic for reliability
+      let retries = 2;
+      let response;
+      
+      while (retries >= 0) {
+        response = await addToWaitingList(
+          email, 
+          'waiting_list_section', 
+          utmSource || undefined,
+          referralCode || undefined
+        );
+        
+        // If successful or has a specific error (not a network error), don't retry
+        if (!response.error || (response.error && !response.error.includes('Network error'))) {
+          break;
+        }
+        
+        // Only log retries
+        if (retries > 0) {
+          console.log(`Retrying waiting list submission... (${retries} attempts left)`);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+        }
+        
+        retries--;
+      }
       
       console.log('Waiting list API response:', response);
       
-      if (response.error) {
+      if (response?.error) {
         console.error('Error from waiting list API:', response.error);
-        setError(response.error);
+        // Provide a more user-friendly error message based on the error
+        if (response.error.includes('Connection error') || response.error.includes('Network error')) {
+          setError('Unable to connect to our service. Please check your internet connection and try again.');
+        } else if (response.error.includes('already registered') || response.error.includes('already exists')) {
+          // If email already exists, treat as success
+          localStorage.setItem('waitingListEmail', email);
+          setIsSubmitted(true);
+          setSubmittedEmail(email);
+          
+          // If response includes referral code, store it
+          if (response.data?.referral_code) {
+            setUserReferralCode(response.data.referral_code);
+          }
+          
+          setEmail('');
+          return;
+        } else {
+          setError(response.error);
+        }
         return;
       }
       
@@ -107,7 +145,7 @@ const WaitingList = () => {
       setSubmittedEmail(email);
       
       // If response includes referral code, store it
-      if (response.data?.referral_code) {
+      if (response?.data?.referral_code) {
         setUserReferralCode(response.data.referral_code);
       }
       
