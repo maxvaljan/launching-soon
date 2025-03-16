@@ -1,56 +1,21 @@
-# Claude's To-Do List (Next Steps) - Updated
+# CLAUDE TODO.md
 
-## **1. Store Emails from waiting list in a Live Database (Supabase)** ✅
-### **Tasks:**
-- ✅ Replace localStorage email storage with Supabase database.
-- ✅ Create a `waiting_list_emails` table in Supabase:
-  - ✅ `id` (UUID, primary key)
-  - ✅ `email` (unique, indexed)
-  - ✅ `created_at` (timestamp, default `now()`)
-  - ✅ `source` (e.g., `'popup'`, `'waiting_list_section' referral`)
-- ✅ Update the EmailCollectionPopup & WaitingList components to send email data to Supabase.
+Task: Integrate Waitlist Signup into Web UI Frontend
 
-## **2. Send an Instant Confirmation Email (Resend API)** ✅
-### **Tasks:**
-- ✅ Integrate instant confirmation for waiting list sign up
-- ✅ Email should:
-  - ✅ Thank the user for signing up.
-  - ✅ Provide a **referral link** (custom URL with referral tracking).
-  - ✅ Offer a **10% discount on first Maxmove order** if they invite friend who signs up on waiting list
+Description:
 
-## **3. Implement Referral System** ✅
-### **Tasks:**
-- ✅ Generate unique referral codes 
-- ✅ Store referral codes in Supabase linked to each user.
-- ✅ Track referrals and offer a **discount when a referred friend signs up**.
-- ✅ Create a **page for referrals**
+A simple waitlist signup Next.js project has been added to the monorepo directory. This needs to be fully integrated into our main web UI frontend.
 
-## **4. Automated Launch Announcement Emails** ✅
-### **Tasks:**
-- ✅ Set up **Resend** to send automated launch emails.
-- ✅ Create an email sequence:
-  - ✅ **Day 1**: "Thanks for signing up! Invite friends for 10% off."
-  - ✅ **Launch Day**: "We're live! Claim your discount now."
-- 🔄 Automate email sending using Supabase Functions or a CRON job (implementation pending schedule setup).
+Requirements:
 
-## **5. Optimize Popup & UI Behavior** ✅
-### **Tasks:**
-- ✅ Improve popup logic:
-  - ✅ Ensure **email is stored in Supabase, not localStorage**.
-  - ✅ Prevent showing the popup if email exists in Supabase.
-  - ✅ Check Supabase before displaying popups (debounce API calls to avoid spam requests).
-- ✅ Make the signup flow smoother
+Implement the waitlist signup section as a second section on the web UI frontend.
 
-## **6. Admin Dashboard to Track Signups & Referrals** ✅
-### **Tasks:**
-- ✅ Implement Admin Panel for:
-  - ✅ View waiting list signups.
-  - ✅ Track referral statistics.
-  - ✅ Export email data.
-- ✅ Use **Next.js Admin UI** with Supabase data
+Position it below the hero section and above the 'Your 24/7 delivery partner' section.
 
-### **Future Enhancements:**
-- Add authentication to admin dashboard
-- Implement CRON job for launch announcements
-- Add custom email templates for different campaigns
-- Add dashboard analytics for conversion tracking
+Maintain a design and styling close to the original.
+
+Ensure full ** logic and functionality is implemented but duplicated unnescessary files and packages we already have in our repo or css and styling doesnt need to be copied
+
+use maxmoves standard colors 
+
+integrate it seamless in our monorepo structure, that after implementing we can delete the unnecessary files which we dont need from   waitlist signup

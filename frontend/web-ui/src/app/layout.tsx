@@ -4,7 +4,8 @@ import { Inter, Poppins } from 'next/font/google';
 import { Providers } from './providers';
 import NavWrapper from '@/components/layouts/NavWrapper';
 import Footer from '@/components/Footer';
-import { Toaster } from 'sonner';
+import { Toaster as SonnerToaster } from 'sonner';
+import { Toaster } from '@/components/ui/toaster';
 import { ResponsiveCheck } from '@/components/ui/responsive-check';
 import dynamic from 'next/dynamic';
 
@@ -108,7 +109,7 @@ export default function RootLayout({
             </div>
           </NavWrapper>
           <EmailCollectionPopup />
-          <Toaster 
+          <SonnerToaster 
             position="top-right" 
             closeButton
             richColors
@@ -120,6 +121,7 @@ export default function RootLayout({
               }
             }}
           />
+          <Toaster />
         </Providers>
       </body>
     </html>

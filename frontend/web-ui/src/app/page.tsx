@@ -6,7 +6,11 @@ import { Loading } from '@/components/ui/loading';
 
 // Static import for critical above-the-fold content
 import ServiceBanners from "@/components/ServiceBanners";
-import WaitingList from "@/components/WaitingList";
+
+// Dynamic import for waitlist component
+const WaitlistSignup = dynamic(() => import('@/components/waitlist/waitlist-signup'), {
+  loading: () => <div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>
+});
 
 const DeliveryFeatures = dynamic(() => import('@/components/DeliveryFeatures'), {
   loading: () => <div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>
@@ -26,9 +30,9 @@ export default function Home() {
       {/* Critical path rendered immediately */}
       <ServiceBanners />
       
-      {/* Waiting List Section - added below hero section */}
-      <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loading variant="spinner" /></div>}>
-        <WaitingList />
+      {/* Waitlist section - integrated below the hero section */}
+      <Suspense fallback={<div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>}>
+        <WaitlistSignup />
       </Suspense>
       
       {/* Non-critical components lazy loaded */}
