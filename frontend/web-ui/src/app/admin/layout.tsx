@@ -109,10 +109,6 @@ export default function AdminLayout({
                   <ListChecks className="mr-2 h-4 w-4" />
                   Orders
                 </Link>
-                <Link href="/admin/waiting-list" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Waiting List
-                </Link>
                 <Link href="/admin/analytics" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
                   <BarChart className="mr-2 h-4 w-4" />
                   Analytics

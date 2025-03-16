@@ -13,7 +13,6 @@ const vehicleRoutes = require('./routes/vehicle.routes');
 const userRoutes = require('./routes/user.routes');
 const driverRoutes = require('./routes/driver.routes');
 const configRoutes = require('./routes/config.routes');
-const waitingListRoutes = require('./routes/waitingList.routes');
 // Temporarily comment out payment routes to fix startup error
 // const paymentRoutes = require('./routes/payment.routes');
 
@@ -67,7 +66,6 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/drivers', driverRoutes);
 app.use('/api/api-keys', configRoutes);
-app.use('/api/waiting-list', waitingListRoutes);
 // Temporarily comment out payment routes to fix startup error
 // app.use('/api/payment', paymentRoutes);
 
