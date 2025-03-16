@@ -50,11 +50,28 @@ exports.addToWaitingList = async (req, res) => {
       if (referrer) {
         referrerId = referrer.id;
         
-        // Increment referral count for referrer
-        await supabaseService.supabase
-          .from('waiting_list_emails')
-          .update({ referral_count: supabaseService.supabase.rpc('increment_counter', { row_id: referrer.id }) })
-          .eq('id', referrer.id);
+        try {
+          // Increment referral count for referrer
+          await supabaseService.supabase
+            .from('waiting_list_emails')
+            .update({ referral_count: supabaseService.supabase.rpc('increment_counter', { row_id: referrer.id }) })
+            .eq('id', referrer.id);
+        } catch (rpcError) {
+          console.warn('increment_counter RPC failed, falling back to direct update', rpcError);
+          // Fallback: Get current count and increment
+          const { data: currentUser } = await supabaseService.supabase
+            .from('waiting_list_emails')
+            .select('referral_count')
+            .eq('id', referrer.id)
+            .single();
+          
+          const currentCount = currentUser?.referral_count || 0;
+          
+          await supabaseService.supabase
+            .from('waiting_list_emails')
+            .update({ referral_count: currentCount + 1 })
+            .eq('id', referrer.id);
+        }
       }
     }
 

@@ -27,3 +27,22 @@ BEGIN
   CREATE INDEX IF NOT EXISTS idx_waiting_list_emails_referral_code ON waiting_list_emails(referral_code);
 END;
 $$;
+
+-- Create the increment_counter RPC function
+CREATE OR REPLACE FUNCTION increment_counter(row_id UUID)
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  current_count INTEGER;
+BEGIN
+  -- Get the current count
+  SELECT referral_count INTO current_count
+  FROM waiting_list_emails
+  WHERE id = row_id;
+  
+  -- Return incremented count
+  RETURN COALESCE(current_count, 0) + 1;
+END;
+$$;
