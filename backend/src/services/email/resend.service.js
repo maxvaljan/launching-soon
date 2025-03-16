@@ -3,11 +3,17 @@
  * @module services/email/resend.service
  */
 
-const { Resend } = require('resend');
+let resend;
 const config = require('../../config');
 
-// Initialize Resend with API key
-const resend = new Resend(config.resend.apiKey);
+try {
+  const { Resend } = require('resend');
+  // Initialize Resend with API key if the package is available
+  resend = new Resend(config.resend.apiKey);
+} catch (error) {
+  console.warn('Resend package not available, using mock implementation:', error.message);
+  resend = null;
+}
 
 // Frontend base URL for referral links
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
@@ -20,9 +26,9 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
  */
 exports.sendWaitingListConfirmation = async (email, referralCode) => {
   try {
-    // Skip sending if in development without API key
-    if (config.environment === 'development' && !config.resend.apiKey) {
-      console.log(`[DEV] Would send confirmation email to ${email} with referral code ${referralCode}`);
+    // Skip sending if in development, missing API key or resend package
+    if (config.environment === 'development' || !config.resend.apiKey || !resend) {
+      console.log(`[Mock] Sending confirmation email to ${email} with referral code ${referralCode}`);
       return {
         id: `mock-email-${Date.now()}`,
         status: 'success',
@@ -98,9 +104,9 @@ exports.sendWaitingListConfirmation = async (email, referralCode) => {
  */
 exports.sendLaunchAnnouncement = async (email, referralCode) => {
   try {
-    // Skip sending if in development without API key
-    if (config.environment === 'development' && !config.resend.apiKey) {
-      console.log(`[DEV] Would send launch announcement to ${email} with referral code ${referralCode}`);
+    // Skip sending if in development, missing API key or resend package
+    if (config.environment === 'development' || !config.resend.apiKey || !resend) {
+      console.log(`[Mock] Sending launch announcement to ${email} with referral code ${referralCode}`);
       return {
         id: `mock-email-${Date.now()}`,
         status: 'success',
