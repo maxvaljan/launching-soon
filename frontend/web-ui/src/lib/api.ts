@@ -1,8 +1,23 @@
 // For Next.js we should use relative URLs in the browser since API routes are served from the same domain
 // The environment variable will be used for server-side API calls to the backend if needed
+
+// Helper function to ensure URL has protocol
+const ensureUrlHasProtocol = (url: string): string => {
+  if (!url) return '';
+  
+  // If URL already has protocol, return as is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Add https:// protocol by default
+  return `https://${url}`;
+};
+
+// For client-side requests, we use relative URLs, for server-side we ensure the URL has a protocol
 const API_URL = typeof window !== 'undefined' 
   ? (process.env.NEXT_PUBLIC_API_URL || '') 
-  : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000');
+  : ensureUrlHasProtocol(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000');
 
 // Types
 export interface ApiResponse<T> {

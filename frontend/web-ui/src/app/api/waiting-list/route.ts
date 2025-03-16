@@ -3,7 +3,22 @@ import { NextRequest, NextResponse } from 'next/server';
 // Get API URL from environment variable, default to localhost
 // IMPORTANT: Make sure NEXT_PUBLIC_API_URL is set in your production environment
 // For local development, we'll default to localhost:3001 which is the default backend port
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+// Helper function to ensure URL has protocol
+const ensureUrlHasProtocol = (url: string): string => {
+  if (!url) return 'http://localhost:3001';
+  
+  // If URL already has protocol, return as is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Add https:// protocol by default
+  return `https://${url}`;
+};
+
+// Get the base URL from environment and ensure it has a protocol
+const API_BASE_URL = ensureUrlHasProtocol(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
 
 export async function POST(request: NextRequest) {
   try {
