@@ -18,15 +18,27 @@ exports.addToWaitingList = async (req, res) => {
   const { email, source, utm_source, referral_code } = req.body;
 
   try {
+    console.log(`[Backend] Processing waiting list request for email: ${email}`);
+    
     // Check if email already exists to prevent duplicates
-    const { data: existingEmail } = await supabaseService.supabase
+    const { data: existingEmail, error: searchError } = await supabaseService.supabase
       .from('waiting_list_emails')
       .select('id, email, referral_code')
       .eq('email', email)
       .single();
+      
+    // Handle potential error in the search query
+    if (searchError && searchError.code !== 'PGRST116') {
+      console.error('[Backend] Error checking for existing email:', searchError);
+      return res.status(500).json({ 
+        message: 'Database error while checking email', 
+        error: searchError.message 
+      });
+    }
 
     // If email already exists, return existing details
     if (existingEmail) {
+      console.log(`[Backend] Email already registered: ${email}`);
       return res.status(200).json({ 
         message: 'Email already registered', 
         data: {
@@ -50,56 +62,65 @@ exports.addToWaitingList = async (req, res) => {
       if (referrer) {
         referrerId = referrer.id;
         
-        try {
-          // Increment referral count for referrer
-          await supabaseService.supabase
-            .from('waiting_list_emails')
-            .update({ referral_count: supabaseService.supabase.rpc('increment_counter', { row_id: referrer.id }) })
-            .eq('id', referrer.id);
-        } catch (rpcError) {
-          console.warn('increment_counter RPC failed, falling back to direct update', rpcError);
-          // Fallback: Get current count and increment
-          const { data: currentUser } = await supabaseService.supabase
-            .from('waiting_list_emails')
-            .select('referral_count')
-            .eq('id', referrer.id)
-            .single();
-          
-          const currentCount = currentUser?.referral_count || 0;
-          
-          await supabaseService.supabase
-            .from('waiting_list_emails')
-            .update({ referral_count: currentCount + 1 })
-            .eq('id', referrer.id);
-        }
+        // Skip the RPC method and directly use the more reliable direct update approach
+        // Fetch current count
+        const { data: currentUser } = await supabaseService.supabase
+          .from('waiting_list_emails')
+          .select('referral_count')
+          .eq('id', referrer.id)
+          .single();
+        
+        const currentCount = currentUser?.referral_count || 0;
+        
+        // Update the count
+        await supabaseService.supabase
+          .from('waiting_list_emails')
+          .update({ referral_count: currentCount + 1 })
+          .eq('id', referrer.id);
       }
     }
 
     // Add new email to waiting list
+    console.log(`[Backend] Adding new email to waiting list: ${email}`);
+    
+    const insertData = { 
+      email, 
+      source: source || 'api', 
+      utm_source: utm_source || null,
+      referrer_id: referrerId
+    };
+    
+    console.log('[Backend] Insert data:', JSON.stringify(insertData));
+    
     const { data, error } = await supabaseService.supabase
       .from('waiting_list_emails')
-      .insert([
-        { 
-          email, 
-          source: source || 'api', 
-          utm_source: utm_source || null,
-          referrer_id: referrerId
-        }
-      ])
+      .insert([insertData])
       .select()
       .single();
 
     if (error) {
-      console.error('Error adding email to waiting list:', error);
-      return res.status(500).json({ message: 'Failed to add email to waiting list', error: error.message });
+      console.error('[Backend] Error adding email to waiting list:', error);
+      return res.status(500).json({ 
+        message: 'Failed to add email to waiting list', 
+        error: error.message,
+        details: error.details || 'No additional details'
+      });
     }
+    
+    console.log(`[Backend] Successfully added email to waiting list: ${email}`);
 
     // Send confirmation email
     try {
-      await resendService.sendWaitingListConfirmation(email, data.referral_code);
+      console.log(`[Backend] Sending confirmation email to: ${email}`);
+      const emailResult = await resendService.sendWaitingListConfirmation(email, data.referral_code);
+      console.log(`[Backend] Email sending result:`, JSON.stringify(emailResult));
+      
+      if (emailResult.status === 'error') {
+        console.warn(`[Backend] Non-critical email sending failure: ${emailResult.message}`);
+      }
     } catch (emailError) {
-      console.error('Error sending confirmation email:', emailError);
-      // Don't fail the request if email sending fails
+      console.error('[Backend] Error sending confirmation email:', emailError);
+      // Don't fail the request if email sending fails, but log it properly
     }
 
     return res.status(201).json({ 

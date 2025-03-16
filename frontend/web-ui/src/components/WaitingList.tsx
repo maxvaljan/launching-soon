@@ -83,6 +83,7 @@ const WaitingList = () => {
       }
       
       // Send email to waiting list API
+      console.log('Submitting email to waiting list:', email);
       const response = await addToWaitingList(
         email, 
         'waiting_list_section', 
@@ -90,7 +91,10 @@ const WaitingList = () => {
         referralCode || undefined
       );
       
+      console.log('Waiting list API response:', response);
+      
       if (response.error) {
+        console.error('Error from waiting list API:', response.error);
         setError(response.error);
         return;
       }
