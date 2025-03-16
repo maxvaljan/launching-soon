@@ -6,8 +6,8 @@ import { Loading } from '@/components/ui/loading';
 
 // Static import for critical above-the-fold content
 import ServiceBanners from "@/components/ServiceBanners";
+import WaitingList from "@/components/WaitingList";
 
-// Lazy load non-critical components
 const DeliveryFeatures = dynamic(() => import('@/components/DeliveryFeatures'), {
   loading: () => <div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>
 });
@@ -25,6 +25,11 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* Critical path rendered immediately */}
       <ServiceBanners />
+      
+      {/* Waiting List Section - added below hero section */}
+      <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loading variant="spinner" /></div>}>
+        <WaitingList />
+      </Suspense>
       
       {/* Non-critical components lazy loaded */}
       <Suspense fallback={<div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>}>

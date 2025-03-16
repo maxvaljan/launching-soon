@@ -6,6 +6,7 @@ import NavWrapper from '@/components/layouts/NavWrapper';
 import Footer from '@/components/Footer';
 import { Toaster } from 'sonner';
 import { ResponsiveCheck } from '@/components/ui/responsive-check';
+import dynamic from 'next/dynamic';
 
 // Load fonts
 const inter = Inter({ 
@@ -85,6 +86,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://maxmove.com'),
 };
 
+// Import the popup component directly
+import EmailCollectionPopup from '@/components/EmailCollectionPopup';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -103,6 +107,7 @@ export default function RootLayout({
               <Footer />
             </div>
           </NavWrapper>
+          <EmailCollectionPopup />
           <Toaster 
             position="top-right" 
             closeButton

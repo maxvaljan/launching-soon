@@ -14,95 +14,11 @@ const EmailCollectionPopup = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // First check localStorage for temporary compatibility
-    const hasSignedUp = localStorage.getItem('waitingListEmail');
-    const hasClosedPopup = localStorage.getItem('popupClosed');
-    
-    if (hasSignedUp || hasClosedPopup) {
+    // Force the popup to be visible for testing
+    setTimeout(() => {
+      setIsVisible(true);
       setIsLoading(false);
-      return; // Don't show popup if user already interacted with it
-    }
-
-    // Set up scroll event listener for engagement-based trigger
-    let scrollTriggered = false;
-    let inactivityTimer: NodeJS.Timeout;
-    let emailChecked = false;
-
-    // Function to check if the user's email cookie exists in the database
-    const checkEmailInWaitingList = async () => {
-      // Get email from localStorage (temporary)
-      const storedEmail = localStorage.getItem('waitingListEmail');
-
-      if (storedEmail && !emailChecked) {
-        emailChecked = true;
-        try {
-          const response = await checkEmailExists(storedEmail);
-          if (response.exists) {
-            setIsLoading(false);
-            return true;
-          }
-        } catch (err) {
-          console.error('Error checking email in waiting list:', err);
-        }
-      }
-      setIsLoading(false);
-      return false;
-    };
-
-    // Check email in waiting list first
-    checkEmailInWaitingList().then((exists) => {
-      if (exists) {
-        return; // Email exists, don't show popup
-      }
-
-      const handleScroll = () => {
-        if (scrollTriggered) return;
-        
-        // Calculate how far down the user has scrolled (50% of page height)
-        const scrollPosition = window.scrollY;
-        const pageHeight = document.body.scrollHeight;
-        const viewportHeight = window.innerHeight;
-        const scrollPercentage = (scrollPosition / (pageHeight - viewportHeight)) * 100;
-        
-        if (scrollPercentage > 30) { // Trigger when scrolled past 30% of page
-          scrollTriggered = true;
-          setIsVisible(true);
-          window.removeEventListener('scroll', handleScroll);
-          clearTimeout(inactivityTimer);
-        }
-      };
-      
-      // Handle inactivity detection
-      const resetInactivityTimer = () => {
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(() => {
-          if (!scrollTriggered) {
-            setIsVisible(true);
-            window.removeEventListener('scroll', handleScroll);
-          }
-        }, 10000); // 10 seconds of inactivity
-      };
-
-      // Set up event listeners
-      window.addEventListener('scroll', handleScroll);
-      
-      // Track user activity
-      ['mousemove', 'keydown', 'touchstart', 'click'].forEach(eventType => {
-        window.addEventListener(eventType, resetInactivityTimer);
-      });
-      
-      // Initial setup of the inactivity timer
-      resetInactivityTimer();
-    });
-    
-    // Cleanup function
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      ['mousemove', 'keydown', 'touchstart', 'click'].forEach(eventType => {
-        window.removeEventListener(eventType, resetInactivityTimer);
-      });
-      clearTimeout(inactivityTimer);
-    };
+    }, 3000); // Show popup after 3 seconds
   }, []);
 
   const closePopup = () => {
