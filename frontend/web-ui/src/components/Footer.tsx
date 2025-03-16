@@ -5,13 +5,13 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-maxmove-primary text-maxmove-secondary">
+    <footer className="bg-theme-dark text-theme-creme">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-maxmove-secondary">Maxmove</h3>
-            <p className="text-maxmove-secondary opacity-90">
+            <h3 className="text-2xl font-bold text-theme-creme">Maxmove</h3>
+            <p className="text-theme-creme opacity-90">
               Move anything, anytime, anywhere
             </p>
             <div className="flex space-x-4">
@@ -19,7 +19,7 @@ const Footer = () => {
                 href="https://www.linkedin.com/company/maxmove" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity"
+                className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity"
               >
                 <Linkedin className="h-8 w-8" />
               </a>
@@ -28,35 +28,35 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-lg mb-4 text-maxmove-secondary">Quick Links</h4>
+            <h4 className="font-semibold text-lg mb-4 text-theme-creme">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/personal-delivery" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/personal-delivery" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Personal Delivery
                 </Link>
               </li>
               <li>
-                <Link href="/business" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/business" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Business Solutions
                 </Link>
               </li>
               <li>
-                <Link href="/drivers" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/drivers" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Become a Driver
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/about" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/career" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/career" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Careers
                 </Link>
               </li>
@@ -65,20 +65,20 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold text-lg mb-4 text-maxmove-secondary">Legal</h4>
+            <h4 className="font-semibold text-lg mb-4 text-theme-creme">Legal</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/terms" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/cookie-policy" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/cookie-policy" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Cookie Policy
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="text-maxmove-secondary opacity-80 hover:opacity-100 transition-opacity">
+                <Link href="/privacy-policy" className="text-theme-creme opacity-80 hover:opacity-100 transition-opacity">
                   Privacy Policy
                 </Link>
               </li>
@@ -87,13 +87,13 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold text-lg mb-4 text-maxmove-secondary">Contact</h4>
+            <h4 className="font-semibold text-lg mb-4 text-theme-creme">Contact</h4>
             <ul className="space-y-2">
-              <li className="text-maxmove-secondary opacity-90">
+              <li className="text-theme-creme opacity-90">
                 contact@maxmove.com
               </li>
-              <li className="text-maxmove-secondary opacity-90">+49 173 4224371</li>
-              <li className="text-maxmove-secondary opacity-90">
+              <li className="text-theme-creme opacity-90">+49 173 4224371</li>
+              <li className="text-theme-creme opacity-90">
                 Eulenbergstr.37
                 <br />
                 51065 Köln, Deutschland
@@ -102,8 +102,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-opacity-20 border-maxmove-secondary">
-          <p className="text-center text-maxmove-secondary opacity-80">
+        <div className="mt-12 pt-8 border-t border-opacity-20 border-theme-creme">
+          <p className="text-center text-theme-creme opacity-80">
             © {new Date().getFullYear()} Maxmove. All rights reserved.
           </p>
         </div>
