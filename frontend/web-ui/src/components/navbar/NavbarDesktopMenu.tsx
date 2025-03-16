@@ -22,19 +22,19 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         >
           How it Works <ChevronDown className="ml-1 h-4 w-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-white">
           <DropdownMenuItem>
-            <Link href="/personal-delivery" className="w-full">
+            <Link href="/personal-delivery" className="w-full text-[#192338]">
               Personal Delivery
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/business" className="w-full">
+            <Link href="/business" className="w-full text-[#192338]">
               Business Solutions
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/drivers" className="w-full">
+            <Link href="/drivers" className="w-full text-[#192338]">
               Drivers
             </Link>
           </DropdownMenuItem>
@@ -47,24 +47,24 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         >
           Company <ChevronDown className="ml-1 h-4 w-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-white">
           <DropdownMenuItem>
-            <Link href="/about" className="w-full">
+            <Link href="/about" className="w-full text-[#192338]">
               About Us
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/career" className="w-full">
+            <Link href="/career" className="w-full text-[#192338]">
               Careers
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/investment" className="w-full">
+            <Link href="/investment" className="w-full text-[#192338]">
               Investment
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/roadmap" className="w-full">
+            <Link href="/roadmap" className="w-full text-[#192338]">
               Roadmap
             </Link>
           </DropdownMenuItem>
