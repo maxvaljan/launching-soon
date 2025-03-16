@@ -75,6 +75,7 @@ app.use('/api/waiting-list', waitingListRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+// Use the PORT env variable directly - Railway will provide the correct port
 const PORT = process.env.PORT || config.port || 3000;
 
 // Log all environment variables to help debug (excluding secrets)
@@ -85,9 +86,10 @@ console.log('Configured port:', PORT);
 console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
 console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
 
-app.listen(PORT, '0.0.0.0', () => {
+// Listen without binding to specific IP - let Railway handle the binding
+app.listen(PORT, () => {
   console.log(`MaxMove API running on port ${PORT} in ${config.environment} mode`);
-  console.log(`Server listening on 0.0.0.0:${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
   console.log(`Using Supabase project: ${config.supabase.url || 'Not configured'}`);
 });
 

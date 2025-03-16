@@ -13,7 +13,12 @@ const ensureUrlHasProtocol = (url: string): string => {
     return url;
   }
   
-  // Add https:// protocol by default
+  // Railway requires HTTP protocol for internal service URLs
+  if (url.includes('.railway.app')) {
+    return `http://${url}`;
+  }
+  
+  // Add https:// protocol by default for other domains
   return `https://${url}`;
 };
 
