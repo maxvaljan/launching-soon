@@ -31,7 +31,7 @@ export default function Home() {
       <ServiceBanners />
       
       {/* Waitlist section - integrated below the hero section */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>}>
+      <Suspense fallback={<div className="flex items-center justify-center"><Loading variant="spinner" /></div>}>
         <WaitlistSignup />
       </Suspense>
       

@@ -25,7 +25,7 @@ export default function WaitlistSignup() {
   }
 
   return (
-    <section className="bg-gradient-to-br from-maxmove-navy to-maxmove-dark-blue py-16 md:py-24">
+    <section className="bg-gradient-to-br from-maxmove-navy to-maxmove-dark-blue py-0 mt-0">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl mx-auto p-8 flex flex-col justify-between">
           <div className="flex-1 flex flex-col justify-center items-center text-center">
