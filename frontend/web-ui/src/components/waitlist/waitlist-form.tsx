@@ -44,7 +44,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
   return (
     <form action={handleSubmit} className="w-full space-y-4 mb-8">
-      <div className="flex overflow-hidden rounded-xl bg-white/5 p-1 ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-maxmove-light-blue">
+      <div className="flex overflow-hidden rounded-xl bg-white/5 p-1 ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-blue-500">
         <Input
           id="email"
           name="email"
@@ -59,7 +59,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         <Button 
           type="submit" 
           disabled={isPending} 
-          className="bg-maxmove-navy hover:bg-maxmove-light-blue text-white font-semibold px-4 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
+          className="bg-black hover:bg-gray-800 text-white font-semibold px-4 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
         >
           {isPending ? (
             <Loader2 className="h-5 w-5 animate-spin" />

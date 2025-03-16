@@ -1,25 +1,21 @@
-"use client"
+import type React from "react"
 
-import { cn } from "@/lib/utils"
-import React from "react"
-
-interface SocialIconProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface SocialIconProps {
+  href: string
+  "aria-label": string
   icon: React.ReactNode
+  target?: string
+  rel?: string
 }
 
-export function SocialIcon({
-  icon,
-  className,
-  ...props
-}: SocialIconProps) {
+export function SocialIcon({ href, "aria-label": ariaLabel, icon, target, rel }: SocialIconProps) {
   return (
     <a
-      className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-full bg-maxmove-navy text-white transition-colors hover:bg-maxmove-light-blue",
-        className
-      )}
-      {...props}
+      href={href}
+      aria-label={ariaLabel}
+      target={target}
+      rel={rel}
+      className="text-gray-400 hover:text-white transition-all duration-300 ease-in-out transform hover:scale-110"
     >
       {icon}
     </a>

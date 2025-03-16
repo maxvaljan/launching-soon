@@ -1,26 +1,17 @@
-"use client"
-
-import { cn } from "@/lib/utils"
-
 interface AvatarProps {
-  initials: string
-  index: number
+  initials: string;
+  index: number;
 }
 
-const avatarColors = [
-  "bg-maxmove-navy",
-  "bg-maxmove-dark-blue",
-  "bg-maxmove-light-blue",
-]
-
 export function Avatar({ initials, index }: AvatarProps) {
+  const colors = [
+    'bg-purple-600', // First avatar
+    'bg-blue-600',   // Second avatar
+    'bg-blue-700',   // Third avatar
+  ];
+
   return (
-    <div
-      className={cn(
-        "flex items-center justify-center rounded-full h-8 w-8 text-white text-xs font-semibold border-2 border-white",
-        avatarColors[index % avatarColors.length]
-      )}
-    >
+    <div className={`w-10 h-10 rounded-full border border-white/20 ${colors[index]} flex items-center justify-center text-white font-semibold text-sm`}>
       {initials}
     </div>
   )

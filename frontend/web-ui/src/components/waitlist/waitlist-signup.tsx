@@ -13,6 +13,27 @@ import { Avatar } from "./avatar"
 import { SocialIcon } from "./social-icon"
 import { WaitlistForm } from "./waitlist-form"
 
+const backgroundStyle = `
+  .bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+  }
+`
+
 export default function WaitlistSignup() {
   const [waitlistCount, setWaitlistCount] = useState(0)
 
@@ -25,19 +46,23 @@ export default function WaitlistSignup() {
   }
 
   return (
-    <section className="bg-gradient-to-br from-maxmove-navy to-maxmove-dark-blue py-0 mt-0">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl mx-auto p-8 flex flex-col justify-between">
+    <section className="w-full py-0 mt-0" style={{
+      background: "radial-gradient(circle at center, #1E40AF, #000000)"
+    }}>
+      <style jsx>{backgroundStyle}</style>
+      <div className="bg-pattern"></div>
+      <div className="content w-full">
+        <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between min-h-screen">
           <div className="flex-1 flex flex-col justify-center items-center text-center">
             <div>
-              <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-br from-gray-200 to-gray-400">
-                Join Our Delivery Service Waitlist
+              <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-br from-gray-200 to-gray-600">
+                Join Our Product Launch Waitlist
               </h2>
             </div>
             <div>
               <p className="text-lg sm:text-xl mb-8 text-gray-300">
-                Be part of something innovative. Join thousands of others already gaining early access to our
-                revolutionary delivery service for the German market.
+                Be part of something truly extraordinary. Join thousands of others already gaining early access to our
+                revolutionary new product.
               </p>
             </div>
             <div className="w-full">
