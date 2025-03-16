@@ -55,8 +55,8 @@ export default function AboutPage() {
             </div>
             <div className="relative h-80 sm:h-96 lg:h-[500px] rounded-lg overflow-hidden shadow-xl">
               <Image 
-                src="/images/delivery-van.jpg" 
-                alt="MaxMove delivery van"
+                src="/images/MAXMOVE-9.png" 
+                alt="MaxMove delivery"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 style={{ objectFit: "cover" }}
@@ -74,7 +74,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1 relative h-80 sm:h-96 rounded-lg overflow-hidden shadow-xl">
               <Image 
-                src="/images/team-photo.jpg" 
+                src="/images/team-photo-new.jpg" 
                 alt="MaxMove team"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
