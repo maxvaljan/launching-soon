@@ -121,14 +121,6 @@ export const SignInForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem className="grid gap-2">
-              <div className="flex justify-end">
-                <a 
-                  href="/reset-password" 
-                  className="text-sm text-maxmove-creme hover:text-white underline-offset-2 hover:underline"
-                >
-                  Forgot your password?
-                </a>
-              </div>
               <FormControl>
                 <Input
                   id="password"
@@ -138,6 +130,14 @@ export const SignInForm = () => {
                   className="bg-maxmove-creme border-0"
                 />
               </FormControl>
+              <div className="flex justify-end">
+                <a 
+                  href="/reset-password" 
+                  className="text-sm text-maxmove-creme hover:text-white underline-offset-2 hover:underline"
+                >
+                  Forgot your password?
+                </a>
+              </div>
               <FormMessage className="text-red-300" />
             </FormItem>
           )}
