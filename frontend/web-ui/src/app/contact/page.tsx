@@ -47,8 +47,18 @@ function ContactPageContent() {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call with timeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Send form data to the API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
       
       console.log("Form submitted:", data);
       
