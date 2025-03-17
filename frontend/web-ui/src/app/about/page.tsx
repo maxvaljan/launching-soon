@@ -129,19 +129,19 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-maxmove-800 text-white">
+      <section className="py-16 bg-maxmove-navy text-maxmove-creme">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Experience MaxMove?</h2>
-          <p className="max-w-2xl mx-auto mb-8 text-maxmove-100">
+          <p className="max-w-2xl mx-auto mb-8">
             Join thousands of satisfied customers who trust MaxMove for their delivery needs. 
             Whether you need to send a package, become a driver, or set up business deliveries, 
             we're here to help.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild className="bg-white text-maxmove-800 hover:bg-maxmove-100">
+            <Button asChild className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90">
               <Link href="/book">Book Now</Link>
             </Button>
-            <Button asChild variant="outline" className="border-white text-white hover:bg-maxmove-700">
+            <Button asChild className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90">
               <Link href="/contact">Contact Us</Link>
             </Button>
           </div>
