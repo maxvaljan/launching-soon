@@ -24,17 +24,17 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-white">
           <DropdownMenuItem>
-            <Link href="/personal-delivery" className="w-full text-[#192338]">
+            <Link href="/personal-delivery" className="w-full text-maxmove-navy">
               Personal Delivery
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/business" className="w-full text-[#192338]">
+            <Link href="/business" className="w-full text-maxmove-navy">
               Business Solutions
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/drivers" className="w-full text-[#192338]">
+            <Link href="/drivers" className="w-full text-maxmove-navy">
               Drivers
             </Link>
           </DropdownMenuItem>
@@ -49,22 +49,22 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-white">
           <DropdownMenuItem>
-            <Link href="/about" className="w-full text-[#192338]">
+            <Link href="/about" className="w-full text-maxmove-navy">
               About Us
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/career" className="w-full text-[#192338]">
+            <Link href="/career" className="w-full text-maxmove-navy">
               Careers
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/investment" className="w-full text-[#192338]">
+            <Link href="/investment" className="w-full text-maxmove-navy">
               Investment
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/roadmap" className="w-full text-[#192338]">
+            <Link href="/roadmap" className="w-full text-maxmove-navy">
               Roadmap
             </Link>
           </DropdownMenuItem>

@@ -111,9 +111,9 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
           className={`transition-all duration-300 font-medium px-6 py-2 rounded-full ${
             isHomePage 
               ? isScrolled 
-                ? "bg-maxmove-800 hover:bg-maxmove-900 text-white shadow-md" 
-                : "bg-white/90 backdrop-blur-sm hover:bg-white text-maxmove-900 shadow-lg"
-              : "bg-maxmove-800 hover:bg-maxmove-900 text-white shadow-md"
+                ? "bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md" 
+                : "bg-white/90 backdrop-blur-sm hover:bg-white text-maxmove-navy shadow-lg"
+              : "bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md"
           }`}
           onClick={() => window.location.href = "/signin"}
         >

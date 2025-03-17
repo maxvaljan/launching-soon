@@ -147,9 +147,9 @@ const Navbar = () => {
 
   const getTextColor = () => {
     if (isDarkBackground) {
-      return isScrolled ? "text-maxmove-700 hover:text-maxmove-900" : "text-maxmove-secondary hover:text-maxmove-secondary/80";
+      return isScrolled ? "text-maxmove-navy hover:text-maxmove-dark-blue" : "text-maxmove-creme hover:text-white";
     }
-    return "text-maxmove-700 hover:text-maxmove-900";
+    return "text-maxmove-navy hover:text-maxmove-dark-blue";
   };
 
   return (
@@ -167,8 +167,8 @@ const Navbar = () => {
               href="/" 
               className={`text-2xl font-bold transition-colors ${
                 isDarkBackground 
-                  ? isScrolled ? "text-maxmove-900" : "text-maxmove-secondary"
-                  : "text-maxmove-900"
+                  ? isScrolled ? "text-maxmove-navy" : "text-maxmove-creme"
+                  : "text-maxmove-navy"
               }`}
             >
               Maxmove
@@ -190,7 +190,7 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={isDarkBackground ? (isScrolled ? "text-maxmove-900" : "text-maxmove-secondary") : "text-maxmove-900"}
+              className={isDarkBackground ? (isScrolled ? "text-maxmove-navy" : "text-maxmove-creme") : "text-maxmove-navy"}
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
