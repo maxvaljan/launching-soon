@@ -29,7 +29,7 @@ export function EmailTemplate({ email }: EmailTemplateProps) {
           <Container className="mx-auto my-[40px] bg-white p-[20px] rounded-lg shadow-sm max-w-[600px]">
             <Section className="pt-[16px]">
               <Img
-                src="https://whadz2ols6ge6eli.public.blob.vercel-storage.com/MAXMOVE-9.png"
+                src="https://whadz2ols6ge6eli.public.blob.vercel-storage.com/Riviera_Maxmove-OYpQhy9uHTcLbmTBLGh8D7e3j8V5MU.png"
                 alt="Maxmove Delivery Service"
                 width="600"
                 height="200"
