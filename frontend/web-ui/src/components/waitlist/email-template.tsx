@@ -30,7 +30,18 @@ export function EmailTemplate({ email }: EmailTemplateProps) {
           <Container className="mx-auto my-[40px] bg-white p-[20px] rounded-lg shadow-sm max-w-[600px]">
             <Section className="pt-[16px]">
               <div 
-                className="email-banner"
+                style={{
+                  width: '600px',
+                  height: '200px',
+                  margin: '0 auto',
+                  borderRadius: '0.5rem',
+                  overflow: 'hidden',
+                  backgroundImage: 'url(https://whadz2ols6ge6eli.public.blob.vercel-storage.com/Riviera_Maxmove-OYpQhy9uHTcLbmTBLGh8D7e3j8V5MU.png)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  display: 'block',
+                }}
                 role="img" 
                 aria-label="Maxmove Delivery Service">
                 &nbsp;
