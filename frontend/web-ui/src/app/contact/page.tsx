@@ -1,85 +1,41 @@
 'use client';
 
-import { useState, Suspense } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "sonner";
 import { Building, Mail, PhoneCall, Clock, MapPin } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-
-// Define the form schema with zod
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  subject: z.string().min(2, "Subject must be at least 2 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
-  department: z.string().min(1, "Please select a department"),
-});
+import { useSearchParams } from "next/navigation";
 
 function ContactPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialSubject = searchParams.get('subject') || '';
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Initialize the form with react-hook-form and zod validation
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: initialSubject,
-      message: "",
-      department: "",
-    },
-  });
+  // State for form values
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState(initialSubject);
+  const [department, setDepartment] = useState('');
+  const [message, setMessage] = useState('');
+  
+  // Create mailto URL with form data
+  const getMailtoUrl = () => {
+    return `mailto:max@maxmove.com?subject=${encodeURIComponent(`Contact Form: ${subject}`)}&body=${encodeURIComponent(
+      `Name: ${name}\n` +
+      `Email: ${email}\n` +
+      `Department: ${department}\n\n` +
+      `Message:\n${message}`
+    )}`;
+  };
   
   // Handle form submission
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setIsSubmitting(true);
-    
-    try {
-      // Send form data to the API endpoint
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-      
-      console.log("Form submitted:", data);
-      
-      // Show success message
-      toast.success("Your message has been sent successfully. We'll get back to you soon!");
-      
-      // Reset form
-      form.reset();
-      
-      // Redirect to homepage after a short delay
-      setTimeout(() => {
-        router.push('/');
-      }, 2000);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("There was an error sending your message. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    window.location.href = getMailtoUrl();
   };
-
+  
   return (
     <div className="min-h-screen pt-32 pb-16">
       <div className="container mx-auto px-4">
@@ -205,113 +161,83 @@ function ContactPageContent() {
                   Send Us a Message
                 </h2>
                 
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Full Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Your name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div>
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input 
+                          id="name" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Your name" 
+                          required 
+                        />
+                      </div>
                       
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <Input type="email" placeholder="your.email@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div>
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input 
+                          id="email" 
+                          type="email" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="your.email@example.com" 
+                          required 
+                        />
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="department"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Department</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select department" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="customer-support">Customer Support</SelectItem>
-                                <SelectItem value="business">Business Inquiries</SelectItem>
-                                <SelectItem value="driver">Driver Relations</SelectItem>
-                                <SelectItem value="technical">Technical Support</SelectItem>
-                                <SelectItem value="media">Press & Media</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div>
+                        <Label htmlFor="department">Department</Label>
+                        <select 
+                          id="department" 
+                          value={department}
+                          onChange={(e) => setDepartment(e.target.value)}
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          required
+                          aria-label="Department"
+                        >
+                          <option value="" disabled>Select department</option>
+                          <option value="Customer Support">Customer Support</option>
+                          <option value="Business Inquiries">Business Inquiries</option>
+                          <option value="Driver Relations">Driver Relations</option>
+                          <option value="Technical Support">Technical Support</option>
+                          <option value="Press & Media">Press & Media</option>
+                        </select>
+                      </div>
                       
-                      <FormField
-                        control={form.control}
-                        name="subject"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Subject</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Message subject" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div>
+                        <Label htmlFor="subject">Subject</Label>
+                        <Input 
+                          id="subject" 
+                          value={subject}
+                          onChange={(e) => setSubject(e.target.value)}
+                          placeholder="Message subject" 
+                          required 
+                        />
+                      </div>
                     </div>
                     
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Message</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="How can we help you?" 
-                              className="min-h-[150px]" 
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div>
+                      <Label htmlFor="message">Message</Label>
+                      <Textarea 
+                        id="message" 
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="How can we help you?" 
+                        className="min-h-[150px]" 
+                        required
+                      />
+                    </div>
                     
                     <Button 
                       type="submit" 
                       className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
-                      disabled={isSubmitting}
                     >
-                      {isSubmitting ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Sending Message...</span>
-                        </div>
-                      ) : (
-                        "Send Message"
-                      )}
+                      Send Message
                     </Button>
                   </form>
-                </Form>
               </Card>
             </div>
           </div>
