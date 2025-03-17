@@ -54,13 +54,13 @@ export default function PersonalDelivery() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all"
+                className="bg-[#294374] p-6 rounded-xl shadow-sm hover:shadow-md transition-all"
               >
-                <feature.icon className="h-10 w-10 text-maxmove-700 mb-4" />
-                <h3 className="text-xl font-semibold text-maxmove-900 mb-2">
+                <feature.icon className="h-10 w-10 text-maxmove-creme mb-4" />
+                <h3 className="text-xl font-semibold text-maxmove-creme mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-maxmove-600">{feature.description}</p>
+                <p className="text-maxmove-creme">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -121,7 +121,7 @@ export default function PersonalDelivery() {
             <Button
               size="lg"
               variant="secondary"
-              className="bg-white text-maxmove-800 hover:bg-maxmove-50"
+              className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-dark-blue"
               asChild
             >
               <Link href="/book">
