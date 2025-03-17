@@ -23,7 +23,7 @@ export default function SignIn() {
         <SignInCard />
       </div>
       
-      <div className="absolute bottom-4 w-full text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary z-10">
+      <div className="absolute bottom-4 right-4 md:right-8 max-w-md text-balance text-center text-xs text-maxmove-grey [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-white z-10">
         By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy-policy">Privacy Policy</a>.
       </div>
     </div>

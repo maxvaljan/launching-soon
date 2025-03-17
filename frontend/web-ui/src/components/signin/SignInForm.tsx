@@ -97,7 +97,7 @@ export const SignInForm = () => {
           name="identifier"
           render={({ field }) => (
             <FormItem className="grid gap-2">
-              <Label htmlFor="identifier">Email or Phone</Label>
+
               <FormControl>
                 <div className="flex gap-2">
                   <CountryCodeSelect
@@ -108,11 +108,11 @@ export const SignInForm = () => {
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1"
+                    className="flex-1 bg-maxmove-creme border-0"
                   />
                 </div>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-300" />
             </FormItem>
           )}
         />
@@ -121,11 +121,10 @@ export const SignInForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+              <div className="flex justify-end">
                 <a 
                   href="/reset-password" 
-                  className="ml-auto text-sm text-maxmove-800 hover:text-maxmove-900 underline-offset-2 hover:underline"
+                  className="text-sm text-maxmove-creme hover:text-white underline-offset-2 hover:underline"
                 >
                   Forgot your password?
                 </a>
@@ -136,15 +135,16 @@ export const SignInForm = () => {
                   placeholder="Password"
                   type="password"
                   {...field}
+                  className="bg-maxmove-creme border-0"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-300" />
             </FormItem>
           )}
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white mt-2 py-6 font-semibold"
+          className="w-full bg-maxmove-creme hover:bg-white text-maxmove-navy mt-2 py-6 font-semibold"
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}
