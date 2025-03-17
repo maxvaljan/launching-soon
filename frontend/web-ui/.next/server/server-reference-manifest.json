@@ -1,0 +1,28 @@
+{
+  "node": {
+    "008ccff37fc1d1b934db919e1a4ee5f05ffcd35831": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(action-browser)/../../node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmaxvaljan%2Fmaxmove-monorepo-main%2Ffrontend%2Fweb-ui%2Fsrc%2Fapp%2Factions%2Fwaitlist.ts%22%2C%5B%7B%22id%22%3A%22008ccff37fc1d1b934db919e1a4ee5f05ffcd35831%22%2C%22exportedName%22%3A%22getWaitlistCount%22%7D%2C%7B%22id%22%3A%22602899cc7d5dc9abac344e94d8f31e8d1fd6d52e9a%22%2C%22exportedName%22%3A%22joinWaitlist%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": true
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    },
+    "602899cc7d5dc9abac344e94d8f31e8d1fd6d52e9a": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(action-browser)/../../node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fmaxvaljan%2Fmaxmove-monorepo-main%2Ffrontend%2Fweb-ui%2Fsrc%2Fapp%2Factions%2Fwaitlist.ts%22%2C%5B%7B%22id%22%3A%22008ccff37fc1d1b934db919e1a4ee5f05ffcd35831%22%2C%22exportedName%22%3A%22getWaitlistCount%22%7D%2C%7B%22id%22%3A%22602899cc7d5dc9abac344e94d8f31e8d1fd6d52e9a%22%2C%22exportedName%22%3A%22joinWaitlist%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": true
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "fQ2WCIXRIPE4/m0iDc7NIwRCjMNLD16zVFlUjrKRoMU="
+}
