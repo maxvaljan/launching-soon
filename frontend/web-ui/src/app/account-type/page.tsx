@@ -20,7 +20,7 @@ export default function AccountTypeSelectionPage() {
         className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
-        Back to Home
+        Back
       </Button>
       
       <div className="w-full max-w-4xl space-y-8">
@@ -141,10 +141,10 @@ export default function AccountTypeSelectionPage() {
             Already have an account?
           </p>
           <Button
-            className="bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 px-8 font-semibold"
+            className="bg-maxmove-navy hover:bg-maxmove-navy text-maxmove-creme py-6 px-8 font-semibold"
             onClick={() => window.location.href = "/signin"}
           >
-            Sign in
+            Login
           </Button>
         </div>
       </div>

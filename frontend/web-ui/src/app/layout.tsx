@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import { Providers } from './providers';
 import NavWrapper from '@/components/layouts/NavWrapper';
-import Footer from '@/components/Footer';
+import FooterWrapper from '@/components/layouts/FooterWrapper';
 import { Toaster as SonnerToaster } from 'sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { ResponsiveCheck } from '@/components/ui/responsive-check';
@@ -99,12 +99,13 @@ export default function RootLayout({
         <Providers>
           {process.env.NODE_ENV === 'development' && <ResponsiveCheck />}
           <NavWrapper>
-            <div className="flex flex-col min-h-screen">
-              <div className="flex-grow">
-                {children}
+            <FooterWrapper>
+              <div className="flex flex-col min-h-screen">
+                <div className="flex-grow">
+                  {children}
+                </div>
               </div>
-              <Footer />
-            </div>
+            </FooterWrapper>
           </NavWrapper>
           <SonnerToaster 
             position="top-right" 
