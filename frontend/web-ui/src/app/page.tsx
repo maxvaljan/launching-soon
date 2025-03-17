@@ -52,9 +52,11 @@ export default function Home() {
         </Suspense>
       </div>
       
-      <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loading variant="spinner" /></div>}>
-        <FAQ />
-      </Suspense>
+      <div className="w-full bg-maxmove-creme">
+        <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loading variant="spinner" /></div>}>
+          <FAQ />
+        </Suspense>
+      </div>
     </div>
   );
 }

@@ -89,6 +89,11 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg mb-4 text-[#eeeeee]">Contact</h4>
             <ul className="space-y-2">
+              <li>
+                <Link href="/contact" className="text-[#eeeeee] opacity-80 hover:opacity-100 transition-opacity">
+                  Contact Us
+                </Link>
+              </li>
               <li className="text-[#eeeeee] opacity-90">
                 contact@maxmove.com
               </li>

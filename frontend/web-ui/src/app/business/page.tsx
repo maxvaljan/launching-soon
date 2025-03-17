@@ -377,7 +377,7 @@ const delivery = await maxmove.createDelivery({
       {/* CTA Section */}
       <section className="py-20 bg-maxmove-primary text-maxmove-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6 text-maxmove-creme">Ready to Transform Your Delivery Operations?</h2>
+          <h2 className="text-3xl font-bold mb-6 text-maxmove-navy">Ready to Transform Your Delivery Operations?</h2>
           <Button 
             size="lg" 
             className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90" 
