@@ -14,6 +14,7 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
+import './email-styles.css';
 
 export interface EmailTemplateProps {
   email: string;
@@ -29,18 +30,7 @@ export function EmailTemplate({ email }: EmailTemplateProps) {
           <Container className="mx-auto my-[40px] bg-white p-[20px] rounded-lg shadow-sm max-w-[600px]">
             <Section className="pt-[16px]">
               <div 
-                style={{
-                  width: '600px',
-                  height: '200px',
-                  margin: '0 auto',
-                  borderRadius: '0.5rem',
-                  overflow: 'hidden',
-                  backgroundImage: 'url(https://whadz2ols6ge6eli.public.blob.vercel-storage.com/Riviera_Maxmove-OYpQhy9uHTcLbmTBLGh8D7e3j8V5MU.png)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  display: 'block',
-                }}
+                className="email-banner"
                 role="img" 
                 aria-label="Maxmove Delivery Service">
                 &nbsp;
@@ -72,7 +62,7 @@ export function EmailTemplate({ email }: EmailTemplateProps) {
               
               <Button
                 className="bg-[#1c2d4f] text-white font-bold py-[12px] px-[20px] rounded-md no-underline text-center box-border"
-                href="https://maxmove.de"
+                href="https://maxmove.com"
               >
                 Learn More About Maxmove
               </Button>

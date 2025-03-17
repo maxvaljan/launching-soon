@@ -18,6 +18,9 @@ interface Suggestion {
   center: [number, number];
 }
 
+// Import React explicitly
+import React from 'react';
+
 export default function BookPage() {
   const [stops, setStops] = useState<Stop[]>([
     { address: '', type: 'pickup' },
@@ -119,7 +122,7 @@ export default function BookPage() {
               setStops={setStops}
               suggestions={suggestions}
               activeInput={activeInput}
-              suggestionsRef={suggestionsRef}
+              suggestionsRef={suggestionsRef as React.RefObject<HTMLDivElement>}
               onAddressChange={handleAddressChange}
               onSuggestionSelect={handleSuggestionSelect}
               onAddStop={addStop}
@@ -127,8 +130,8 @@ export default function BookPage() {
             />
             
             <div className="mt-6">
-              <Button className="w-full" onClick={handleSubmit}>
-                Continue to Vehicle Selection
+              <Button className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-dark-blue" onClick={handleSubmit}>
+                Book your delivery
               </Button>
             </div>
           </div>

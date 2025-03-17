@@ -1,0 +1,19 @@
+.email-preview-container {
+  max-width: 600px;
+  margin: 0 auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.email-banner {
+  width: 600px;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-image: url('https://whadz2ols6ge6eli.public.blob.vercel-storage.com/Riviera_Maxmove-OYpQhy9uHTcLbmTBLGh8D7e3j8V5MU.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

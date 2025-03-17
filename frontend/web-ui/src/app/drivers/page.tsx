@@ -59,7 +59,7 @@ export default function Drivers() {
               <h1 className="text-2xl font-bold mb-2">
                 Drive With Maxmove
               </h1>
-              <p className="text-base mb-2 text-gray-200">
+              <p className="text-base mb-2 text-maxmove-navy">
                 Be your own boss, set your own schedule, and earn great money
               </p>
             </div>
@@ -84,8 +84,12 @@ export default function Drivers() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select your city" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-[#294374]">
+                      <SelectItem value="berlin">Berlin, Germany</SelectItem>
                       <SelectItem value="cologne">Cologne, Germany</SelectItem>
+                      <SelectItem value="munich">Munich, Germany</SelectItem>
+                      <SelectItem value="hamburg">Hamburg, Germany</SelectItem>
+                      <SelectItem value="frankfurt">Frankfurt, Germany</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
