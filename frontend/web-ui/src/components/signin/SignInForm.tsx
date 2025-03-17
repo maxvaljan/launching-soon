@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { CountryCodeSelect } from "@/components/CountryCodeSelect";
 import { apiClient } from "@/lib/api";
@@ -90,12 +91,13 @@ export const SignInForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSignIn)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSignIn)} className="grid gap-4">
         <FormField
           control={form.control}
           name="identifier"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="grid gap-2">
+              <Label htmlFor="identifier">Email or Phone</Label>
               <FormControl>
                 <div className="flex gap-2">
                   <CountryCodeSelect
@@ -103,9 +105,10 @@ export const SignInForm = () => {
                     onChange={setCountryCode}
                   />
                   <Input
+                    id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 bg-white/80 border-0"
+                    className="flex-1"
                   />
                 </div>
               </FormControl>
@@ -117,13 +120,22 @@ export const SignInForm = () => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <a 
+                  href="/reset-password" 
+                  className="ml-auto text-sm text-maxmove-800 hover:text-maxmove-900 underline-offset-2 hover:underline"
+                >
+                  Forgot your password?
+                </a>
+              </div>
               <FormControl>
                 <Input
+                  id="password"
                   placeholder="Password"
                   type="password"
                   {...field}
-                  className="bg-white/80 border-0"
                 />
               </FormControl>
               <FormMessage />
@@ -132,7 +144,7 @@ export const SignInForm = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white"
+          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white mt-2"
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}

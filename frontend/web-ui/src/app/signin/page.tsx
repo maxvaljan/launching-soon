@@ -10,7 +10,7 @@ export default function SignIn() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-maxmove-100 to-maxmove-200 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative bg-muted">
       <Button
         variant="ghost"
         onClick={() => window.location.href = "/"}
@@ -19,18 +19,11 @@ export default function SignIn() {
         <ArrowLeft className="h-5 w-5 mr-2" />
         Back
       </Button>
-      <div className="w-full max-w-md space-y-8">
-        <SignUpHeader />
+      <div className="w-full max-w-sm md:max-w-3xl">
         <SignInCard />
         
-        <div className="mt-6 text-center">
-          <p className="mb-4 text-maxmove-700 font-medium">New to Maxmove?</p>
-          <Button
-            onClick={() => window.location.href = "/account-type"}
-            className="w-full py-6 bg-maxmove-primary text-maxmove-secondary hover:bg-maxmove-primary/90 font-semibold text-lg"
-          >
-            Create an Account
-          </Button>
+        <div className="text-balance text-center text-xs text-muted-foreground mt-6 [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+          By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy-policy">Privacy Policy</a>.
         </div>
       </div>
     </div>
