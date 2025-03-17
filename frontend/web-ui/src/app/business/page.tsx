@@ -162,13 +162,13 @@ export default function Business() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#0a101c,#1c2434)]"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-maxmove-secondary">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-maxmove-creme">
               Maxmove for Business
             </h1>
-            <p className="text-xl md:text-2xl text-maxmove-secondary opacity-80 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-maxmove-creme mb-8 max-w-3xl mx-auto">
               Streamline your logistics operations with our enterprise-grade delivery solutions
             </p>
-            <Button size="lg" onClick={handleContactSales} className="bg-maxmove-secondary text-maxmove-primary hover:bg-opacity-90">
+            <Button size="lg" onClick={handleContactSales} className="bg-maxmove-creme text-maxmove-navy hover:bg-maxmove-creme/90">
               Contact Sales <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
