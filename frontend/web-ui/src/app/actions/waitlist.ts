@@ -29,7 +29,7 @@ export async function joinWaitlist(prevState: any, formData: FormData) {
 
     // Send welcome email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'MAXMOVE <onboarding@resend.dev>',
+      from: 'MAXMOVE <max@maxmove.com>',
       to: email.toString(),
       subject: 'Welcome to the MAXMOVE Waitlist!',
       html: EmailTemplate({ email: email.toString() }),
