@@ -144,7 +144,7 @@ export const SignInForm = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white mt-2"
+          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white mt-2 py-6 font-semibold"
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}

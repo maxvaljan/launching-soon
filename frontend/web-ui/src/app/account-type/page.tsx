@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Building2, Car } from "lucide-react";
+import { User, Building2, Car, ArrowLeft } from "lucide-react";
 
 export default function AccountTypeSelectionPage() {
   const router = useRouter();
@@ -13,7 +13,16 @@ export default function AccountTypeSelectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-maxmove-100 to-maxmove-200 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
+      <Button
+        variant="ghost"
+        onClick={() => window.location.href = "/"}
+        className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
+      >
+        <ArrowLeft className="h-5 w-5 mr-2" />
+        Back to Home
+      </Button>
+      
       <div className="w-full max-w-4xl space-y-8">
         <div className="text-center">
           <h2 className="text-4xl font-bold tracking-tight text-maxmove-900">
@@ -128,16 +137,15 @@ export default function AccountTypeSelectionPage() {
         </div>
 
         <div className="text-center mt-8">
-          <p className="text-maxmove-600">
-            Already have an account?{" "}
-            <Button
-              variant="link"
-              className="text-maxmove-800 hover:text-maxmove-900"
-              onClick={() => window.location.href = "/signin"}
-            >
-              Sign in
-            </Button>
+          <p className="text-maxmove-600 mb-3">
+            Already have an account?
           </p>
+          <Button
+            className="bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 px-8 font-semibold"
+            onClick={() => window.location.href = "/signin"}
+          >
+            Sign in
+          </Button>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -50,62 +50,70 @@ export default function ResetPasswordConfirm() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative bg-muted">
-      <div className="w-full max-w-md">
-        <Card className="backdrop-blur-sm bg-white/70 border border-maxmove-200">
-          <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-center text-maxmove-900">
+    <div className="relative w-full h-screen flex flex-col overflow-hidden bg-white">
+      <Button
+        variant="ghost"
+        onClick={() => window.location.href = "/signin"}
+        className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
+      >
+        <ArrowLeft className="h-5 w-5 mr-2" />
+        Back to Login
+      </Button>
+      
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-md px-6">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-maxmove-900">
               {isComplete ? "Password Reset Complete" : "Create New Password"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {!isComplete ? (
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="password">New Password</Label>
-                  <Input 
-                    id="password"
-                    type="password"
-                    placeholder="Enter your new password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input 
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Updating..." : "Reset Password"}
-                </Button>
-              </form>
-            ) : (
-              <div className="text-center space-y-4">
-                <p className="text-maxmove-700">
-                  Your password has been reset successfully.
-                </p>
-                <Button
-                  onClick={() => window.location.href = "/signin"}
-                  className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white"
-                >
-                  Sign In
-                </Button>
+            </h1>
+          </div>
+          
+          {!isComplete ? (
+            <form onSubmit={handleResetPassword} className="space-y-6">
+              <div className="grid gap-2">
+                <Label htmlFor="password">New Password</Label>
+                <Input 
+                  id="password"
+                  type="password"
+                  placeholder="Enter your new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input 
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 font-semibold"
+                disabled={isLoading}
+              >
+                {isLoading ? "Updating..." : "Reset Password"}
+              </Button>
+            </form>
+          ) : (
+            <div className="text-center space-y-6">
+              <p className="text-maxmove-700">
+                Your password has been reset successfully.
+              </p>
+              <Button
+                onClick={() => window.location.href = "/signin"}
+                className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 font-semibold"
+              >
+                Sign In
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

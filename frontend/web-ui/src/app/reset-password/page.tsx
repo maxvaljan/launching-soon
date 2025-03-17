@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -46,64 +45,60 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative bg-muted">
+    <div className="relative w-full h-screen flex flex-col overflow-hidden bg-white">
       <Button
         variant="ghost"
         onClick={() => window.location.href = "/signin"}
-        className="absolute top-4 left-4 text-maxmove-800 hover:text-maxmove-900 hover:bg-white/20"
+        className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
         Back to Login
       </Button>
       
-      <div className="w-full max-w-md">
-        <Card className="backdrop-blur-sm bg-white/70 border border-maxmove-200">
-          <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-center text-maxmove-900">
-              Reset Your Password
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {!isSubmitted ? (
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Sending..." : "Send Reset Instructions"}
-                </Button>
-              </form>
-            ) : (
-              <div className="text-center space-y-4">
-                <p className="text-maxmove-700">
-                  We've sent password reset instructions to your email.
-                </p>
-                <p className="text-maxmove-600 text-sm">
-                  Please check your inbox and follow the instructions to reset your password.
-                </p>
-                <Button
-                  onClick={() => window.location.href = "/signin"}
-                  className="mt-4"
-                  variant="outline"
-                >
-                  Return to Login
-                </Button>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-md px-6">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-maxmove-900">Reset Your Password</h1>
+          </div>
+          
+          {!isSubmitted ? (
+            <form onSubmit={handleResetPassword} className="space-y-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input 
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <Button
+                type="submit"
+                className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 font-semibold"
+                disabled={isLoading}
+              >
+                {isLoading ? "Sending..." : "Send Reset Instructions"}
+              </Button>
+            </form>
+          ) : (
+            <div className="text-center space-y-6">
+              <p className="text-maxmove-700">
+                We've sent password reset instructions to your email.
+              </p>
+              <p className="text-maxmove-600">
+                Please check your inbox and follow the instructions to reset your password.
+              </p>
+              <Button
+                onClick={() => window.location.href = "/signin"}
+                className="bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 font-semibold"
+              >
+                Return to Login
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
