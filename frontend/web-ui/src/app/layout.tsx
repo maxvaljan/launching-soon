@@ -87,8 +87,6 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://maxmove.com'),
 };
 
-// Import the popup component directly
-import EmailCollectionPopup from '@/components/EmailCollectionPopup';
 
 export default function RootLayout({
   children,
@@ -108,7 +106,6 @@ export default function RootLayout({
               <Footer />
             </div>
           </NavWrapper>
-          <EmailCollectionPopup />
           <SonnerToaster 
             position="top-right" 
             closeButton
