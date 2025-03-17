@@ -36,9 +36,13 @@ export default function Home() {
       </Suspense>
       
       {/* Non-critical components lazy loaded */}
-      <Suspense fallback={<div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>}>
-        <DeliveryFeatures />
-      </Suspense>
+      <div className="w-full bg-maxmove-navy">
+        <Suspense fallback={<div className="h-96 flex items-center justify-center"><Loading variant="spinner" /></div>}>
+          <div className="max-w-6xl mx-auto">
+            <DeliveryFeatures />
+          </div>
+        </Suspense>
+      </div>
       
       <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loading variant="spinner" /></div>}>
         <AppDownload />

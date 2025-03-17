@@ -46,7 +46,7 @@ const DeliveryFeatures = () => {
   }, [currentSlide, images.length]);
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto bg-maxmove-navy rounded-lg">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 mx-auto bg-maxmove-navy">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="flex flex-col items-start relative">
           <Carousel 
