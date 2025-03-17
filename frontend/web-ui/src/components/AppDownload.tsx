@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const AppDownload = () => {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-50">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 mx-auto bg-maxmove-creme">
       <div className="text-center mb-8">
         <h2 className="text-4xl font-bold text-maxmove-900">Our Apps</h2>
         <p className="mt-2 text-maxmove-600">Coming Soon</p>
