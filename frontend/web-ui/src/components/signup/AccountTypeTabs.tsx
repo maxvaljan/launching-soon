@@ -10,13 +10,14 @@ interface AccountTypeTabsProps {
 export const AccountTypeTabs = ({ accountType, onAccountTypeChange }: AccountTypeTabsProps) => {
   return (
     <div className="mb-8">
-
-      <TabsList className="flex w-full rounded-xl overflow-hidden border-0 p-1 bg-[#192338]">
+      <TabsList className="flex w-full rounded-xl overflow-hidden border-0 p-1 bg-maxmove-navy">
         <TabsTrigger 
           value="personal"
           className="flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-200
-                    data-[state=active]:bg-[#1c2d4f] data-[state=active]:text-[#eeeeee] data-[state=active]:shadow-sm
-                    data-[state=inactive]:text-[#798390] data-[state=inactive]:hover:text-[#eeeeee]"
+                    bg-maxmove-navy text-maxmove-creme
+                    hover:text-white focus:text-white
+                    data-[state=active]:bg-maxmove-navy data-[state=active]:text-maxmove-creme
+                    data-[state=active]:hover:text-white data-[state=active]:focus:text-white"
           onClick={() => onAccountTypeChange("personal")}
         >
           Personal
@@ -24,8 +25,10 @@ export const AccountTypeTabs = ({ accountType, onAccountTypeChange }: AccountTyp
         <TabsTrigger 
           value="business"
           className="flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-200
-                    data-[state=active]:bg-[#1c2d4f] data-[state=active]:text-[#eeeeee] data-[state=active]:shadow-sm
-                    data-[state=inactive]:text-[#798390] data-[state=inactive]:hover:text-[#eeeeee]"
+                    bg-maxmove-navy text-maxmove-creme
+                    hover:text-white focus:text-white
+                    data-[state=active]:bg-maxmove-navy data-[state=active]:text-maxmove-creme
+                    data-[state=active]:hover:text-white data-[state=active]:focus:text-white"
           onClick={() => onAccountTypeChange("business")}
         >
           Business
@@ -33,8 +36,10 @@ export const AccountTypeTabs = ({ accountType, onAccountTypeChange }: AccountTyp
         <TabsTrigger 
           value="driver"
           className="flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-200
-                    data-[state=active]:bg-[#1c2d4f] data-[state=active]:text-[#eeeeee] data-[state=active]:shadow-sm
-                    data-[state=inactive]:text-[#798390] data-[state=inactive]:hover:text-[#eeeeee]"
+                    bg-maxmove-navy text-maxmove-creme
+                    hover:text-white focus:text-white
+                    data-[state=active]:bg-maxmove-navy data-[state=active]:text-maxmove-creme
+                    data-[state=active]:hover:text-white data-[state=active]:focus:text-white"
           onClick={() => onAccountTypeChange("driver")}
         >
           Driver
