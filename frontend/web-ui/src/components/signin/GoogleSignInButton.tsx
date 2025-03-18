@@ -44,8 +44,8 @@ export const GoogleSignInButton = () => {
 
   return (
     <Button 
-      variant="outline" 
-      className="w-full bg-white hover:bg-gray-50 flex items-center justify-center" 
+      variant="ghost" 
+      className="w-full bg-transparent hover:bg-transparent border-0 shadow-none flex items-center justify-center" 
       onClick={handleGoogleSignIn}
       disabled={isLoading}
     >

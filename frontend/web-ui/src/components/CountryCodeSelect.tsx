@@ -60,7 +60,7 @@ export const CountryCodeSelect = ({ value, onChange }: CountryCodeSelectProps) =
         setSearchValue(value);
       }}
     >
-      <SelectTrigger className="w-[100px] bg-maxmove-creme border-0">
+      <SelectTrigger className="w-[100px] bg-maxmove-navy border border-maxmove-grey text-maxmove-grey focus:bg-maxmove-creme focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme">
         <SelectValue placeholder="Select code">
           {countryCodes.find(code => code.value === value)?.label || value}
         </SelectValue>
@@ -71,7 +71,7 @@ export const CountryCodeSelect = ({ value, onChange }: CountryCodeSelectProps) =
             placeholder="Search country code..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="mb-2"
+            className="mb-2 bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-creme focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
           />
         </div>
         {filteredCountryCodes.map((code) => (
