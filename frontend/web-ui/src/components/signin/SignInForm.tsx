@@ -108,7 +108,7 @@ export const SignInForm = () => {
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-creme focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
+                    className="flex-1 bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-navy focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
                   />
                 </div>
               </FormControl>
@@ -127,7 +127,7 @@ export const SignInForm = () => {
                   placeholder="Password"
                   type="password"
                   {...field}
-                  className="bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-creme focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
+                  className="bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-navy focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
                 />
               </FormControl>
 
