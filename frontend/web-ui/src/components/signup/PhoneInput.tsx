@@ -25,7 +25,7 @@ export const PhoneInput = ({ form, countryCode, setCountryCode }: PhoneInputProp
                 onChange={setCountryCode}
               />
               <Input 
-                className="flex-1 bg-white/80 border-0" 
+                className="flex-1 bg-white/80" 
                 placeholder="Phone number" 
                 {...field} 
               />

@@ -59,7 +59,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="First name" {...field} className="bg-white/80 border-0" />
+                  <Input placeholder="First name" {...field} className="bg-white/80" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +71,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Last name" {...field} className="bg-white/80 border-0" />
+                  <Input placeholder="Last name" {...field} className="bg-white/80" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +84,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Email" {...field} className="bg-white/80 border-0" />
+                <Input type="email" placeholder="Email" {...field} className="bg-white/80" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +97,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="bg-white/80 border-0" />
+                <Input type="password" placeholder="Password" {...field} className="bg-white/80" />
               </FormControl>
               <FormMessage />
             </FormItem>

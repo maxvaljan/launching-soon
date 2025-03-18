@@ -63,7 +63,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Company name" {...field} className="bg-white/80 border-0" />
+                <Input placeholder="Company name" {...field} className="bg-white/80" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,7 +76,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             <FormItem>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="h-11 bg-white/80 border-0">
+                  <SelectTrigger className="h-11 bg-white/80">
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
                 </FormControl>
@@ -98,7 +98,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="First name" {...field} className="bg-white/80 border-0" />
+                  <Input placeholder="First name" {...field} className="bg-white/80" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,7 +110,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Last name" {...field} className="bg-white/80 border-0" />
+                  <Input placeholder="Last name" {...field} className="bg-white/80" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,7 +123,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Work email" {...field} className="bg-white/80 border-0" />
+                <Input type="email" placeholder="Work email" {...field} className="bg-white/80" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -136,7 +136,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="bg-white/80 border-0" />
+                <Input type="password" placeholder="Password" {...field} className="bg-white/80" />
               </FormControl>
               <FormMessage />
             </FormItem>
