@@ -10,8 +10,8 @@ interface AccountTypeTabsProps {
 export const AccountTypeTabs = ({ accountType, onAccountTypeChange }: AccountTypeTabsProps) => {
   return (
     <div className="mb-8">
-      <h2 className="text-center text-xl font-medium mb-6 text-[#eeeeee]">Choose account type</h2>
-      <TabsList className="flex w-full rounded-xl overflow-hidden border border-[#294374] p-1 bg-[#192338]">
+
+      <TabsList className="flex w-full rounded-xl overflow-hidden border-0 p-1 bg-[#192338]">
         <TabsTrigger 
           value="personal"
           className="flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-200

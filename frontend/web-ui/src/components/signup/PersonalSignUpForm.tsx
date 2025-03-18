@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { PhoneInput } from "./PhoneInput";
-import { MarketingConsent } from "./MarketingConsent";
+
 import { useState } from "react";
 
 const personalFormSchema = z.object({
@@ -16,7 +16,7 @@ const personalFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   phoneNumber: z.string().min(8, "Invalid phone number"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  marketing: z.boolean().default(false),
+
 });
 
 interface PersonalSignUpFormProps {
@@ -35,7 +35,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
       email: "",
       phoneNumber: "",
       password: "",
-      marketing: false,
+
     },
   });
 
@@ -103,7 +103,7 @@ export const PersonalSignUpForm = ({ onSubmit, isLoading }: PersonalSignUpFormPr
             </FormItem>
           )}
         />
-        <MarketingConsent form={form} />
+
         <Button 
           type="submit" 
           className="w-full bg-[#eeeeee] hover:bg-[#eeeeee]/90 text-[#192338] font-medium border-0" 

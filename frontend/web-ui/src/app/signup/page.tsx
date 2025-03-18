@@ -91,11 +91,11 @@ function SignUpContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#192338] to-[#1c2d4f] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#eeeeee] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <SignUpHeader />
         
-        <Card className="backdrop-blur-sm bg-[#192338]/90 border-0">
+        <Card className="bg-white border-0 shadow-sm">
           <CardHeader />
           <CardContent className="-mt-4">
             <Tabs value={accountType} className="w-full">
@@ -122,11 +122,17 @@ function SignUpContent() {
                 Already have an account?{" "}
                 <Button
                   variant="link"
-                  className="text-[#eeeeee] hover:text-[#eeeeee]/80"
+                  className="text-[#192338] hover:text-[#192338]/80"
                   onClick={() => router.push("/signin")}
                 >
                   Login
                 </Button>
+              </p>
+              <p className="text-xs text-[#798390] text-center px-2 mt-6">
+                By signing up, you agree to our {" "}
+                <a href="/terms" className="text-[#192338] hover:underline">Terms of Service</a>{" "}
+                and{" "}
+                <a href="/privacy-policy" className="text-[#192338] hover:underline">Privacy Policy</a>.
               </p>
             </div>
           </CardContent>
@@ -139,9 +145,9 @@ function SignUpContent() {
 export default function SignUp() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-[#192338] to-[#1c2d4f] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#eeeeee] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8 flex justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#eeeeee]"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#192338]"></div>
         </div>
       </div>
     }>

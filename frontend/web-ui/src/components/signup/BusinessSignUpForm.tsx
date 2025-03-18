@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { PhoneInput } from "./PhoneInput";
-import { MarketingConsent } from "./MarketingConsent";
+
 import { useState } from "react";
 
 const businessFormSchema = z.object({
@@ -19,7 +19,7 @@ const businessFormSchema = z.object({
   workEmail: z.string().email("Invalid email address"),
   phoneNumber: z.string().min(8, "Invalid phone number"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  marketing: z.boolean().default(false),
+
 });
 
 interface BusinessSignUpFormProps {
@@ -40,7 +40,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
       workEmail: "",
       phoneNumber: "",
       password: "",
-      marketing: false,
+
     },
   });
   
@@ -142,7 +142,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             </FormItem>
           )}
         />
-        <MarketingConsent form={form} />
+
         <Button 
           type="submit" 
           className="w-full bg-[#eeeeee] hover:bg-[#eeeeee]/90 text-[#192338] font-medium border-0" 
