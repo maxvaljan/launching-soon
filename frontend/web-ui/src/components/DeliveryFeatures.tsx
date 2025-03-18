@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const DeliveryFeatures = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -70,55 +71,125 @@ const DeliveryFeatures = () => {
         </div>
         
         <div className="space-y-8">
-          <div className="space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-bold text-maxmove-creme">
+          <motion.div 
+            className="space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <motion.h2 
+              className="text-3xl sm:text-4xl font-bold text-maxmove-creme"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               Your 24/7 delivery partner
-            </h2>
-            <p className="text-2xl sm:text-3xl text-maxmove-creme font-semibold">
+            </motion.h2>
+            <motion.p 
+              className="text-2xl sm:text-3xl text-maxmove-creme font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               Fast. Simple. Affordable.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           <div className="space-y-6">
-            <div className="flex gap-4">
-              <DollarSign className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+            <motion.div 
+              className="flex gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.3, type: "spring" }}
+              >
+                <DollarSign className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold text-maxmove-creme">Affordable</h3>
                 <p className="text-maxmove-creme">Transparent pricing with no hidden costs.</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <Clock className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+            <motion.div 
+              className="flex gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.5, type: "spring" }}
+              >
+                <Clock className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold text-maxmove-creme">Speedy order matching</h3>
                 <p className="text-maxmove-creme">Match orders and deliver your goods immediately.</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <Truck className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+            <motion.div 
+              className="flex gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.7, type: "spring" }}
+              >
+                <Truck className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold text-maxmove-creme">Reliable driver network</h3>
                 <p className="text-maxmove-creme">Different vehicle types and courier services for all kinds of delivery needs.</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <Shield className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+            <motion.div 
+              className="flex gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.9 }}
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.9, type: "spring" }}
+              >
+                <Shield className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold text-maxmove-creme">Safe delivery</h3>
                 <p className="text-maxmove-creme">Professional and trained drivers ensure all your goods safely reach their destination.</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <MapPin className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+            <motion.div 
+              className="flex gap-4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+            >
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.4, delay: 1.1, type: "spring" }}
+              >
+                <MapPin className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold text-maxmove-creme">Real-time tracking</h3>
                 <p className="text-maxmove-creme">In-app tracking allows you and the receiver to track your order in real time during the delivery.</p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -112,7 +112,8 @@ export default function BookPage() {
   return (
     <main className="flex min-h-screen flex-col items-center pt-24 p-6">
       <div className="max-w-5xl w-full mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">Book a Delivery</h1>
+        <h1 className="text-3xl font-bold mb-2 text-center">Book a Delivery</h1>
+        <p className="text-xl text-center text-maxmove-navy/80 mb-8">Coming soon</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">

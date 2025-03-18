@@ -35,7 +35,7 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      router.push("/signin");
+      router.push("/#waitlist");
       return;
     }
     
