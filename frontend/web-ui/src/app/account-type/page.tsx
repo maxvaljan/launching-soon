@@ -32,31 +32,31 @@ export default function AccountTypeSelectionPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Individual Account */}
-          <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer" 
+          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer" 
                 onClick={() => handleSelection("personal")}>
             <CardHeader className="text-center">
-              <User className="w-12 h-12 mx-auto text-maxmove-800 mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-900">Individual</CardTitle>
+              <User className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
+              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Individual</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-600 text-center">
+              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
                 For personal use and small businesses
               </p>
-              <ul className="space-y-2 text-sm text-maxmove-700">
+              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Fast and simple sign up
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Track deliveries in real-time
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Save favorite locations
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Wide range of vehicles
                 </li>
               </ul>
@@ -64,35 +64,35 @@ export default function AccountTypeSelectionPage() {
           </Card>
 
           {/* Business Account */}
-          <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer"
                 onClick={() => handleSelection("business")}>
             <CardHeader className="text-center">
-              <Building2 className="w-12 h-12 mx-auto text-maxmove-800 mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-900">Business</CardTitle>
+              <Building2 className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
+              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Business</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-600 text-center">
+              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
                 For companies and enterprises
               </p>
-              <ul className="space-y-2 text-sm text-maxmove-700">
+              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Bulk delivery management
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Business analytics dashboard
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Priority support
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Centralized business wallet for multiple users
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Monthly corporate statements
                 </li>
               </ul>
@@ -100,31 +100,31 @@ export default function AccountTypeSelectionPage() {
           </Card>
 
           {/* Driver Account */}
-          <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer"
                 onClick={() => handleSelection("driver")}>
             <CardHeader className="text-center">
-              <Car className="w-12 h-12 mx-auto text-maxmove-800 mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-900">Driver</CardTitle>
+              <Car className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
+              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Driver</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-600 text-center">
+              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
                 Join our delivery fleet
               </p>
-              <ul className="space-y-2 text-sm text-maxmove-700">
+              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Great Earnings
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Be your own boss
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Flexible working hours
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2">•</span>
+                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
                   Choose your vehicle type
                 </li>
               </ul>
