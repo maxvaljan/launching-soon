@@ -95,7 +95,7 @@ function SignUpContent() {
       <div className="w-full max-w-md space-y-8">
         <SignUpHeader />
         
-        <Card className="backdrop-blur-sm bg-[#192338]/90 border border-[#294374]">
+        <Card className="backdrop-blur-sm bg-[#192338]/90 border-0">
           <CardHeader />
           <CardContent className="-mt-4">
             <Tabs value={accountType} className="w-full">

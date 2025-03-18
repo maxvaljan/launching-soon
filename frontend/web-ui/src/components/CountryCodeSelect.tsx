@@ -49,18 +49,18 @@ export const CountryCodeSelect = ({ value, onChange, className }: CountryCodeSel
         setSearchValue("");
       }}
     >
-      <SelectTrigger className={`w-[100px] bg-[#192338] border border-[#294374] text-[#798390] focus:border-[#eeeeee] ${className || ''}`}>
+      <SelectTrigger className={`w-[100px] bg-[#192338] border border-[#798390] text-[#798390] focus:border-[#eeeeee] ${className || ''}`}>
         <SelectValue placeholder="Select code">
           {countryCodes.find(code => code.value === value)?.label || value}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="max-h-[300px] overflow-y-auto">
+      <SelectContent className="max-h-[300px] overflow-y-auto bg-[#192338] border border-[#798390]">
         <div className="px-3 py-2">
           <Input
             placeholder="Search country code or name..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="mb-2 bg-[#192338] border border-[#294374] text-[#eeeeee] placeholder:text-[#798390] focus:border-[#eeeeee]"
+            className="mb-2 bg-[#192338] border border-[#798390] text-[#eeeeee] placeholder:text-[#798390] focus:border-[#eeeeee]"
           />
         </div>
         {filteredCountryCodes.map((code) => (
