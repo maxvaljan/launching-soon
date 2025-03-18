@@ -45,11 +45,11 @@ export const GoogleSignInButton = () => {
   return (
     <Button 
       variant="outline" 
-      className="w-full bg-white hover:bg-gray-50" 
+      className="w-full bg-white hover:bg-gray-50 flex items-center justify-center" 
       onClick={handleGoogleSignIn}
       disabled={isLoading}
     >
-      <div className="relative h-5 w-5 mr-2">
+      <div className="relative h-6 w-6">
         <Image 
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
           alt="Google" 
@@ -57,7 +57,7 @@ export const GoogleSignInButton = () => {
           className="object-contain"
         />
       </div>
-      {isLoading ? "Connecting..." : "Sign in with Google"}
+      {isLoading && <span className="ml-2">Connecting...</span>}
     </Button>
   );
 };

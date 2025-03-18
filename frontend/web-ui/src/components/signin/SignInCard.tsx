@@ -29,7 +29,7 @@ export const SignInCard = () => {
             <SignInForm />
 
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-maxmove-creme/30">
-              <span className="relative z-10 bg-maxmove-navy px-2 text-maxmove-creme">Or continue with</span>
+              <span className="relative z-10 bg-maxmove-navy px-2 text-maxmove-creme">Or</span>
             </div>
 
             <GoogleSignInButton />
@@ -42,8 +42,15 @@ export const SignInCard = () => {
               >
                 Create an Account
               </Button>
+
             </div>
           </div>
+          <p className="text-xs text-maxmove-creme/60 text-center px-2 mt-16 mb-2">
+            By clicking continue, you agree to our {" "}
+            <a href="/terms" className="text-maxmove-creme/80 hover:text-white">Terms of Service</a>{" "}
+            and{" "}
+            <a href="/privacy-policy" className="text-maxmove-creme/80 hover:text-white">Privacy Policy</a>.
+          </p>
         </div>
       </div>
     </div>

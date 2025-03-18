@@ -23,12 +23,7 @@ export default function SignIn() {
         <SignInCard />
       </div>
       
-      <div className="absolute bottom-4 right-0 left-0 mx-auto text-center text-xs text-maxmove-creme z-10">
-        By clicking continue, you agree to our {" "}
-        <a href="/terms" className="text-maxmove-creme hover:text-white">Terms of Service</a>{" "}
-        and{" "}
-        <a href="/privacy-policy" className="text-maxmove-creme hover:text-white">Privacy Policy</a>.
-      </div>
+
     </div>
   );
 }

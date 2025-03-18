@@ -108,7 +108,7 @@ export const SignInForm = () => {
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 bg-maxmove-creme border-0"
+                    className="flex-1 bg-maxmove-creme border-0 placeholder:text-maxmove-creme/50"
                   />
                 </div>
               </FormControl>
@@ -127,17 +127,10 @@ export const SignInForm = () => {
                   placeholder="Password"
                   type="password"
                   {...field}
-                  className="bg-maxmove-creme border-0"
+                  className="bg-maxmove-creme border-0 placeholder:text-maxmove-creme/50"
                 />
               </FormControl>
-              <div className="flex justify-end">
-                <a 
-                  href="/reset-password" 
-                  className="text-sm text-maxmove-creme hover:text-white underline-offset-2 hover:underline"
-                >
-                  Forgot your password?
-                </a>
-              </div>
+
               <FormMessage className="text-red-300" />
             </FormItem>
           )}
@@ -149,6 +142,14 @@ export const SignInForm = () => {
         >
           {isLoading ? "Signing in..." : "Sign in"}
         </Button>
+        <div className="flex justify-center mt-4">
+          <a 
+            href="/reset-password" 
+            className="text-sm text-maxmove-creme/70 hover:text-white underline-offset-2 hover:underline transition-colors"
+          >
+            Forgot your password?
+          </a>
+        </div>
       </form>
     </Form>
   );
