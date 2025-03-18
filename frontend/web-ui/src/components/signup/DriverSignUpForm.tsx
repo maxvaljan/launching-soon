@@ -59,7 +59,7 @@ export const DriverSignUpForm = ({ onSubmit, isLoading }: DriverSignUpFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="First name" {...field} className="bg-white/80" />
+                  <Input placeholder="First name" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +71,7 @@ export const DriverSignUpForm = ({ onSubmit, isLoading }: DriverSignUpFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Last name" {...field} className="bg-white/80" />
+                  <Input placeholder="Last name" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,7 +84,7 @@ export const DriverSignUpForm = ({ onSubmit, isLoading }: DriverSignUpFormProps)
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Email" {...field} className="bg-white/80" />
+                <Input type="email" placeholder="Email" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +97,7 @@ export const DriverSignUpForm = ({ onSubmit, isLoading }: DriverSignUpFormProps)
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="bg-white/80" />
+                <Input type="password" placeholder="Password" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,12 +106,12 @@ export const DriverSignUpForm = ({ onSubmit, isLoading }: DriverSignUpFormProps)
         <MarketingConsent form={form} />
         <Button 
           type="submit" 
-          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white" 
+          className="w-full bg-[#1c2d4f] hover:bg-[#294374] text-[#eeeeee]" 
           disabled={isLoading}
         >
           {isLoading ? (
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#eeeeee] border-t-transparent rounded-full animate-spin" />
               <span>Creating account...</span>
             </div>
           ) : (

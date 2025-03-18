@@ -19,19 +19,20 @@ export const PhoneInput = ({ form, countryCode, setCountryCode }: PhoneInputProp
       render={({ field }) => (
         <FormItem>
           <FormControl>
-            <div className="flex gap-2">
+            <div className="flex gap-2 relative">
               <CountryCodeSelect
                 value={countryCode}
                 onChange={setCountryCode}
+                className="w-24 rounded-lg transition-all duration-200"
               />
               <Input 
-                className="flex-1 bg-white/80" 
+                className="flex-1 h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee] transition-all duration-200 pl-3" 
                 placeholder="Phone number" 
                 {...field} 
               />
             </div>
           </FormControl>
-          <FormMessage />
+          <FormMessage className="text-xs mt-1 text-red-400" />
         </FormItem>
       )}
     />

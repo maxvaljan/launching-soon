@@ -63,7 +63,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Company name" {...field} className="bg-white/80" />
+                <Input placeholder="Company name" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,15 +76,15 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             <FormItem>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="h-11 bg-white/80">
+                  <SelectTrigger className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] focus-visible:border-[#eeeeee]">
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="technology">Technology</SelectItem>
-                  <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                  <SelectItem value="services">Services</SelectItem>
+                <SelectContent className="bg-[#192338] text-[#eeeeee] border border-[#294374]">
+                  <SelectItem className="hover:bg-[#1c2d4f] focus:bg-[#1c2d4f]" value="retail">Retail</SelectItem>
+                  <SelectItem className="hover:bg-[#1c2d4f] focus:bg-[#1c2d4f]" value="technology">Technology</SelectItem>
+                  <SelectItem className="hover:bg-[#1c2d4f] focus:bg-[#1c2d4f]" value="manufacturing">Manufacturing</SelectItem>
+                  <SelectItem className="hover:bg-[#1c2d4f] focus:bg-[#1c2d4f]" value="services">Services</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -98,7 +98,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="First name" {...field} className="bg-white/80" />
+                  <Input placeholder="First name" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,7 +110,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Last name" {...field} className="bg-white/80" />
+                  <Input placeholder="Last name" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,7 +123,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Work email" {...field} className="bg-white/80" />
+                <Input type="email" placeholder="Work email" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -136,7 +136,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="bg-white/80" />
+                <Input type="password" placeholder="Password" {...field} className="h-11 rounded-lg border border-[#294374] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,12 +145,12 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
         <MarketingConsent form={form} />
         <Button 
           type="submit" 
-          className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white" 
+          className="w-full bg-[#1c2d4f] hover:bg-[#294374] text-[#eeeeee]" 
           disabled={isLoading}
         >
           {isLoading ? (
             <div className="flex items-center justify-center space-x-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#eeeeee] border-t-transparent rounded-full animate-spin" />
               <span>Creating account...</span>
             </div>
           ) : (

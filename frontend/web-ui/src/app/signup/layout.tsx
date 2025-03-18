@@ -13,8 +13,8 @@ export default function SignupLayout({
     <div className="relative">
       <div className="absolute top-4 left-4 z-10">
         <Link href="/">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-white/80 hover:bg-white/90 shadow-sm">
-            <ChevronLeft className="h-5 w-5 text-[var(--maxmove-navy)]" />
+          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-[#294374] hover:bg-[#1c2d4f] shadow-sm border border-[#eeeeee]/20">
+            <ChevronLeft className="h-5 w-5 text-[#eeeeee]" />
             <span className="sr-only">Back to home</span>
           </Button>
         </Link>

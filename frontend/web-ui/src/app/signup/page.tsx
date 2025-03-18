@@ -91,11 +91,11 @@ function SignUpContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-maxmove-100 to-maxmove-200 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#192338] to-[#1c2d4f] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <SignUpHeader />
         
-        <Card className="backdrop-blur-sm bg-white/50 border border-maxmove-200">
+        <Card className="backdrop-blur-sm bg-[#192338]/90 border border-[#294374]">
           <CardHeader />
           <CardContent className="-mt-4">
             <Tabs value={accountType} className="w-full">
@@ -118,11 +118,11 @@ function SignUpContent() {
             </Tabs>
 
             <div className="text-center mt-6">
-              <p className="text-maxmove-600">
+              <p className="text-[#798390]">
                 Already have an account?{" "}
                 <Button
                   variant="link"
-                  className="text-maxmove-800 hover:text-maxmove-900"
+                  className="text-[#eeeeee] hover:text-[#eeeeee]/80"
                   onClick={() => router.push("/signin")}
                 >
                   Login
@@ -139,9 +139,9 @@ function SignUpContent() {
 export default function SignUp() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-maxmove-100 to-maxmove-200 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#192338] to-[#1c2d4f] flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8 flex justify-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-maxmove-800"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#eeeeee]"></div>
         </div>
       </div>
     }>

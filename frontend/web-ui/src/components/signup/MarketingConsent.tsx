@@ -14,16 +14,16 @@ export const MarketingConsent = ({ form }: MarketingConsentProps) => {
       control={form.control}
       name="marketing"
       render={({ field }) => (
-        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+        <FormItem className="flex flex-row items-center space-x-3 space-y-0 py-2">
           <FormControl>
             <Checkbox
               checked={field.value}
               onCheckedChange={field.onChange}
-              className="border-maxmove-300 data-[state=checked]:bg-maxmove-600 data-[state=checked]:border-maxmove-600"
+              className="h-5 w-5 rounded-md border-[#294374] bg-[#192338] data-[state=checked]:bg-[#294374] data-[state=checked]:text-[#eeeeee]"
             />
           </FormControl>
-          <div className="space-y-1 leading-none">
-            <div className="text-sm text-maxmove-600">
+          <div className="leading-none">
+            <div className="text-sm text-[#eeeeee]">
               Keep me updated with offers and news from Maxmove
             </div>
           </div>

@@ -24,9 +24,10 @@ const formatCountryCodes = () => {
 interface CountryCodeSelectProps {
   value: string;
   onChange: (value: string) => void;
+  className?: string;
 }
 
-export const CountryCodeSelect = ({ value, onChange }: CountryCodeSelectProps) => {
+export const CountryCodeSelect = ({ value, onChange, className }: CountryCodeSelectProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [countryCodes, setCountryCodes] = useState<Array<{value: string, label: string, name: string}>>([]);
   
@@ -48,7 +49,7 @@ export const CountryCodeSelect = ({ value, onChange }: CountryCodeSelectProps) =
         setSearchValue("");
       }}
     >
-      <SelectTrigger className="w-[100px] bg-maxmove-navy border border-maxmove-grey text-maxmove-grey focus:bg-maxmove-navy focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme">
+      <SelectTrigger className={`w-[100px] bg-[#192338] border border-[#294374] text-[#798390] focus:border-[#eeeeee] ${className || ''}`}>
         <SelectValue placeholder="Select code">
           {countryCodes.find(code => code.value === value)?.label || value}
         </SelectValue>
@@ -59,7 +60,7 @@ export const CountryCodeSelect = ({ value, onChange }: CountryCodeSelectProps) =
             placeholder="Search country code or name..."
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="mb-2 bg-maxmove-navy border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-maxmove-navy focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
+            className="mb-2 bg-[#192338] border border-[#294374] text-[#eeeeee] placeholder:text-[#798390] focus:border-[#eeeeee]"
           />
         </div>
         {filteredCountryCodes.map((code) => (
