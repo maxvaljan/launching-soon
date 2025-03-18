@@ -95,7 +95,7 @@ function SignUpContent() {
       <div className="w-full max-w-md space-y-8">
         <SignUpHeader />
         
-        <Card className="bg-white border-0 shadow-sm">
+        <Card className="bg-[#192338] border-0 shadow-sm">
           <CardHeader />
           <CardContent className="-mt-4">
             <Tabs value={accountType} className="w-full">
@@ -122,7 +122,7 @@ function SignUpContent() {
                 Already have an account?{" "}
                 <Button
                   variant="link"
-                  className="text-[#192338] hover:text-[#192338]/80"
+                  className="text-[#ffffff] hover:text-[#ffffff]/80"
                   onClick={() => router.push("/signin")}
                 >
                   Login
@@ -130,9 +130,9 @@ function SignUpContent() {
               </p>
               <p className="text-xs text-[#798390] text-center px-2 mt-6">
                 By signing up, you agree to our {" "}
-                <a href="/terms" className="text-[#192338] hover:underline">Terms of Service</a>{" "}
+                <a href="/terms" className="text-[#eeeeee] hover:underline">Terms of Service</a>{" "}
                 and{" "}
-                <a href="/privacy-policy" className="text-[#192338] hover:underline">Privacy Policy</a>.
+                <a href="/privacy-policy" className="text-[#eeeeee] hover:underline">Privacy Policy</a>.
               </p>
             </div>
           </CardContent>

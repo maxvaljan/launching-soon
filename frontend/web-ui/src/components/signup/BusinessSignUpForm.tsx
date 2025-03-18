@@ -63,7 +63,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Company name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
+                <Input placeholder="Company name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,7 +76,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             <FormItem>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] focus-visible:border-[#eeeeee]">
+                  <SelectTrigger className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]">
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
                 </FormControl>
@@ -98,7 +98,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="First name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
+                  <Input placeholder="First name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,7 +110,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Last name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
+                  <Input placeholder="Last name" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -123,7 +123,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Work email" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
+                <Input type="email" placeholder="Work email" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -136,7 +136,7 @@ export const BusinessSignUpForm = ({ onSubmit, isLoading }: BusinessSignUpFormPr
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:border-[#eeeeee]" />
+                <Input type="password" placeholder="Password" {...field} className="h-11 rounded-lg border border-[#798390] bg-[#192338] text-[#eeeeee] placeholder:text-[#798390] focus-visible:ring-2 focus-visible:ring-[#eeeeee] focus-visible:border-[#eeeeee]" />
               </FormControl>
               <FormMessage />
             </FormItem>
