@@ -48,7 +48,7 @@ export default function ResetPassword() {
     <div className="relative w-full h-screen flex flex-col overflow-hidden bg-white">
       <Button
         variant="ghost"
-        onClick={() => window.location.href = "/#waitlist"}
+        onClick={() => window.location.href = "/signin"}
         className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
@@ -91,7 +91,7 @@ export default function ResetPassword() {
                 Please check your inbox and follow the instructions to reset your password.
               </p>
               <Button
-                onClick={() => window.location.href = "/#waitlist"}
+                onClick={() => window.location.href = "/signin"}
                 className="bg-maxmove-800 hover:bg-maxmove-900 text-white py-6 font-semibold"
               >
                 Return to Login

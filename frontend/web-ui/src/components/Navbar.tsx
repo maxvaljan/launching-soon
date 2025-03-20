@@ -134,13 +134,13 @@ const Navbar = () => {
       
       // 5. Force a hard redirect to clear any React state
       console.log("Redirecting to signin page...");
-      window.location.href = "/#waitlist?ts=" + new Date().getTime();
+      window.location.href = "/signin?ts=" + new Date().getTime();
     } catch (error) {
       console.error("Error signing out:", error);
       
       // Fallback - force redirect even if errors occur
       if (typeof window !== 'undefined') {
-        window.location.href = "/#waitlist";
+        window.location.href = "/signin";
       }
     }
   };

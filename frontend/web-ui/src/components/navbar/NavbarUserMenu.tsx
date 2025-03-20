@@ -115,7 +115,7 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
                 : "bg-white/90 backdrop-blur-sm hover:bg-white text-maxmove-navy shadow-lg"
               : "bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md"
           }`}
-          onClick={() => window.location.href = "/#waitlist"}
+          onClick={() => window.location.href = "/signin"}
         >
           Sign In
         </Button>

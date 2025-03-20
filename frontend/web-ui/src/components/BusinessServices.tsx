@@ -41,7 +41,7 @@ const BusinessServices = () => {
   const router = useRouter();
 
   const handleSignUp = () => {
-    router.push("/#waitlist");
+    router.push("/signup?type=business");
   };
 
   return (

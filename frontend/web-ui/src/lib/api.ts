@@ -309,7 +309,7 @@ export const apiClient = {
         // Force a hard reload if we're dealing with cookies
         if (response.headers.get('X-Auth-Logout') === 'true') {
           if (typeof window !== 'undefined') {
-            window.location.href = '/#waitlist?ts=' + new Date().getTime();
+            window.location.href = '/signin?ts=' + new Date().getTime();
             return { success: true };
           }
         }
