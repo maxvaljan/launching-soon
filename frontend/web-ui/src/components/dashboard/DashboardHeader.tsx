@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Settings as SettingsIcon, User, Home, UserCog } from "lucide-react";
+import { Settings as SettingsIcon, User, Home, UserCog, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/lib/supabase";
 
@@ -106,23 +107,44 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-600 hover:text-gray-900"
+                  className="flex items-center justify-center h-9 w-9 rounded-full bg-maxmove-navy/10 hover:bg-maxmove-navy/15 text-maxmove-navy hover:text-maxmove-navy transition-colors"
                 >
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={() => router.push("/profile")}>
-                  My Profile
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem 
+                  onSelect={() => router.push("/profile")}
+                  className="py-2.5 flex items-center gap-2.5"
+                >
+                  <User className="h-4 w-4 text-maxmove-navy/70" />
+                  <span>My Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => router.push("/account-switch")}>
-                  Switch Account Type
+                <DropdownMenuItem 
+                  onSelect={() => router.push("/account-switch")}
+                  className="py-2.5 flex items-center gap-2.5"
+                >
+                  <svg className="h-4 w-4 text-maxmove-navy/70" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 3 L8 21" />
+                    <path d="M21 3h-6l2 4" />
+                    <path d="M3 21h6l-2-4" />
+                  </svg>
+                  <span>Switch Account Type</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => router.push("/preferences")}>
-                  Preferences
+                <DropdownMenuItem 
+                  onSelect={() => router.push("/dashboard/settings")}
+                  className="py-2.5 flex items-center gap-2.5"
+                >
+                  <Settings className="h-4 w-4 text-maxmove-navy/70" />
+                  <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleSignOut}>
-                  Sign Out
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onSelect={handleSignOut}
+                  className="py-2.5 flex items-center gap-2.5 text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

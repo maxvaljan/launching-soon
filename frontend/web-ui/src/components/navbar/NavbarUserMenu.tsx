@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, User, LogOut } from "lucide-react";
+import { LayoutDashboard, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -24,22 +25,33 @@ interface NavbarUserMenuProps {
 const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isScrolled }: NavbarUserMenuProps) => {
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const checkUserProfile = async () => {
       if (!session) return;
       
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, name, first_name, last_name')
         .eq('id', session.user.id)
         .single();
 
       setIsAdmin(profile?.role === 'admin');
+      setUserName(
+        profile?.name || 
+        (profile?.first_name && profile?.last_name 
+          ? `${profile.first_name} ${profile.last_name}` 
+          : session.user.email || "User")
+      );
     };
 
-    checkAdminStatus();
+    checkUserProfile();
   }, [session]);
+
+  const handleNavigate = (path: string) => {
+    router.push(path);
+  };
 
   return (
     <div className="hidden md:flex items-center space-x-4">
@@ -49,7 +61,7 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
             <Button
               variant="ghost"
               className={`transition-all duration-300 font-medium px-4 py-2 rounded-full ${getTextColor()}`}
-              onClick={() => window.location.href = "/admin"}
+              onClick={() => handleNavigate("/admin")}
             >
               Admin
             </Button>
@@ -57,7 +69,7 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
           <Button
             variant="ghost"
             className={`transition-all duration-300 font-medium px-4 py-2 rounded-full ${getTextColor()}`}
-            onClick={() => window.location.href = "/dashboard"}
+            onClick={() => handleNavigate("/dashboard")}
           >
             <LayoutDashboard className="mr-2 h-4 w-4" />
             Dashboard
@@ -66,40 +78,47 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
-                className="relative h-11 w-11 rounded-full bg-gradient-to-br from-[#9b87f5] via-[#8B5CF6] to-[#7E69AB] hover:scale-105 transition-all duration-300 ease-out"
+                className="relative h-10 w-10 rounded-full bg-gradient-to-br from-[#192338] via-[#1c2d4f] to-[#294374] hover:scale-105 transition-all duration-300 ease-out"
               >
-                <User className="h-5 w-5 text-white" />
-                <div className="absolute inset-0 rounded-full bg-white/10 hover:bg-transparent transition-colors" />
+                <span className="font-medium text-maxmove-creme">
+                  {userName.charAt(0).toUpperCase()}
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end"
               sideOffset={8}
-              className="w-64 rounded-xl backdrop-blur-xl bg-theme-dark border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12)] animate-in zoom-in-95 duration-200"
+              className="w-64"
             >
-              <div className="px-3 pt-3 pb-2">
-                <h3 className="text-sm font-medium text-theme-creme/80">Account</h3>
-              </div>
+              <DropdownMenuLabel className="px-4 py-2.5">My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={() => window.location.href = "/profile"}
-                className="flex items-center gap-3 px-3 py-3 m-1 rounded-lg cursor-pointer text-sm font-medium text-theme-creme hover:bg-theme-blue/80 focus:bg-theme-blue/80 transition-colors"
+                onClick={() => handleNavigate("/profile")}
+                className="px-4 py-2.5"
               >
-                <User className="h-5 w-5 text-theme-creme/80" />
-                <span>My Profile</span>
+                <User className="h-4 w-4 mr-2.5 text-maxmove-navy/70" />
+                <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                onClick={() => window.location.href = "/dashboard"}
-                className="flex items-center gap-3 px-3 py-3 m-1 rounded-lg cursor-pointer text-sm font-medium text-theme-creme hover:bg-theme-blue/80 focus:bg-theme-blue/80 transition-colors"
+                onClick={() => handleNavigate("/dashboard")}
+                className="px-4 py-2.5"
               >
-                <LayoutDashboard className="h-5 w-5 text-theme-creme/80" />
+                <LayoutDashboard className="h-4 w-4 mr-2.5 text-maxmove-navy/70" />
                 <span>Dashboard</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="my-1 bg-theme-creme/20" />
+              <DropdownMenuItem 
+                onClick={() => handleNavigate("/dashboard/settings")}
+                className="px-4 py-2.5"
+              >
+                <Settings className="h-4 w-4 mr-2.5 text-maxmove-navy/70" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
                 onClick={handleSignOut}
-                className="flex items-center gap-3 px-3 py-3 m-1 rounded-lg cursor-pointer text-sm font-medium text-red-300 hover:bg-red-900/30 focus:bg-red-900/30 transition-colors"
+                className="px-4 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50"
               >
-                <LogOut className="h-5 w-5" />
+                <LogOut className="h-4 w-4 mr-2.5" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -115,7 +134,7 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
                 : "bg-white/90 backdrop-blur-sm hover:bg-white text-maxmove-navy shadow-lg"
               : "bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md"
           }`}
-          onClick={() => window.location.href = "/signin"}
+          onClick={() => handleNavigate("/signin")}
         >
           Sign In
         </Button>
