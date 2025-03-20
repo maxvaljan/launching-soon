@@ -11,10 +11,12 @@ export const SignInCard = () => {
   return (
     <div className="w-full h-full overflow-hidden grid md:grid-cols-2">
       <div className="relative hidden md:block h-screen bg-maxmove-800">
-        <img
+        <Image
           src="https://whadz2ols6ge6eli.public.blob.vercel-storage.com/MAXMOVE-9.png"
           alt="MaxMove Delivery"
-          className="h-full w-full object-cover"
+          fill
+          priority
+          className="object-cover"
         />
       </div>
       
@@ -37,7 +39,7 @@ export const SignInCard = () => {
             <div className="mt-4 text-center">
               <p className="mb-3 text-sm text-maxmove-creme">Don&apos;t have an account?</p>
               <Button
-                onClick={() => window.location.href = "/account-type"}
+                onClick={() => router.push('/account-type')}
                 className="w-full bg-maxmove-creme hover:bg-white text-maxmove-navy py-6 font-semibold"
               >
                 Create an Account

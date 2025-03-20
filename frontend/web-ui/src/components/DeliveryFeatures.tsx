@@ -27,11 +27,20 @@ const DeliveryFeatures = () => {
   ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const carouselElement = document.querySelector('[data-embla-container]');
-      if (carouselElement) {
-        const emblaApi = (carouselElement as any).__embla;
-        if (emblaApi) {
+    // Initialize ref for cleanup
+    let timer: NodeJS.Timeout | null = null;
+    
+    // Only run the carousel if we're in the browser
+    if (typeof window !== 'undefined') {
+      timer = setInterval(() => {
+        // Use a safer approach to get the embla API
+        const carouselElement = document.querySelector('[data-embla-container]');
+        if (!carouselElement) return;
+        
+        try {
+          const emblaApi = (carouselElement as any).__embla;
+          if (!emblaApi) return;
+          
           if (currentSlide === images.length - 1) {
             emblaApi.scrollTo(0);
             setCurrentSlide(0);
@@ -39,11 +48,15 @@ const DeliveryFeatures = () => {
             emblaApi.scrollNext();
             setCurrentSlide(prev => prev + 1);
           }
+        } catch (error) {
+          console.error('Error controlling carousel:', error);
         }
-      }
-    }, 5000); // Change slide every 5 seconds
+      }, 5000); // Change slide every 5 seconds
+    }
 
-    return () => clearInterval(timer);
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [currentSlide, images.length]);
 
   return (
@@ -58,10 +71,12 @@ const DeliveryFeatures = () => {
               {images.map((image, index) => (
                 <CarouselItem key={index}>
                   <div className="relative w-full h-[500px]">
-                    <img
+                    <Image
                       src={image.src}
                       alt={image.alt}
-                      className="rounded-2xl w-full h-full object-cover shadow-lg"
+                      fill
+                      priority
+                      className="rounded-2xl object-cover shadow-lg"
                     />
                   </div>
                 </CarouselItem>

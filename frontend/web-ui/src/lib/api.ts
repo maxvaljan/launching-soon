@@ -421,8 +421,7 @@ export const apiClient = {
       // Check for token in sessionStorage as a quick client-side check
       const token = sessionStorage.getItem('auth_token');
       if (!token) {
-        // If no token in sessionStorage, try to refresh from cookies
-        this.refreshToken().catch(() => {});
+        // Don't automatically trigger token refresh, just return false
         return false;
       }
       

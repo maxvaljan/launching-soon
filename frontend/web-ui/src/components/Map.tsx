@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from "@/lib/supabase";
@@ -12,30 +12,27 @@ interface MapProps {
   dropoffLocation?: [number, number];
 }
 
-const Map = ({ pickupLocation, dropoffLocation }: MapProps) => {
+const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string>('');
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
+  // Fetch Mapbox token only once on component mount
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchMapboxToken = async () => {
       try {
-        console.log('Fetching Mapbox token...');
-        
+        // First try the API client approach
         try {
-          // Try to fetch from our backend API first using the API client
           const keyValue = await apiClient.getApiKey('mapbox');
-          
-          if (keyValue) {
-            console.log('Retrieved Mapbox token from API');
+          if (keyValue && isMounted) {
             setMapboxToken(keyValue);
             return;
           }
-          
-          throw new Error('Failed to fetch Mapbox token from API');
         } catch (apiError) {
-          // Fall back to direct Supabase query if API fails
-          console.warn('API fetch failed, falling back to Supabase:', apiError);
+          // Silently fall back to Supabase
         }
         
         // Fallback to direct Supabase query
@@ -45,34 +42,26 @@ const Map = ({ pickupLocation, dropoffLocation }: MapProps) => {
           .eq('key_name', 'mapbox_public_token')
           .single();
 
-        if (error) {
-          console.error('Error fetching Mapbox token:', error);
-          toast.error('Error loading map');
+        if (error || !data?.key_value) {
+          if (isMounted) toast.error('Error loading map');
           return;
         }
 
-        if (!data?.key_value) {
-          console.error('No Mapbox token found');
-          toast.error('Map configuration not found');
-          return;
-        }
-
-        console.log('Retrieved Mapbox token from Supabase');
-        setMapboxToken(data.key_value);
+        if (isMounted) setMapboxToken(data.key_value);
       } catch (err) {
-        console.error('Unexpected error fetching Mapbox token:', err);
-        toast.error('Error initializing map');
+        if (isMounted) toast.error('Error initializing map');
       }
     };
 
     fetchMapboxToken();
+    return () => { isMounted = false; };
   }, []);
 
+  // Initialize map when token is available
   useEffect(() => {
     if (!mapboxToken || !mapContainer.current) return;
 
     try {
-      console.log('Initializing map with token:', mapboxToken);
       mapboxgl.accessToken = mapboxToken;
       
       map.current = new mapboxgl.Map({
@@ -80,41 +69,56 @@ const Map = ({ pickupLocation, dropoffLocation }: MapProps) => {
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [6.9578, 50.9367], // Cologne, Germany
         zoom: 12,
-        attributionControl: false
+        attributionControl: false,
+        renderWorldCopies: false, // Performance improvement
       });
 
-      console.log('Map initialized successfully');
+      // Add performance optimization: reduce unnecessary repaints
+      map.current.on('load', () => {
+        if (map.current) {
+          map.current.resize();
+        }
+      });
     } catch (err) {
-      console.error('Error initializing map:', err);
       toast.error('Error loading map');
     }
 
     return () => {
+      // Clean up markers
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+      
+      // Remove map instance
       map.current?.remove();
     };
   }, [mapboxToken]);
 
-  useEffect(() => {
+  // Handle markers update efficiently with useCallback
+  const updateMarkers = useCallback(() => {
     if (!map.current) return;
 
     try {
-      const markers = document.getElementsByClassName('mapboxgl-marker');
-      while (markers[0]) {
-        markers[0].remove();
-      }
+      // Clean up existing markers more efficiently
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
 
+      // Add pickup marker
       if (pickupLocation) {
-        new mapboxgl.Marker({ color: '#4CAF50' })
+        const marker = new mapboxgl.Marker({ color: '#4CAF50' })
           .setLngLat(pickupLocation)
           .addTo(map.current);
+        markersRef.current.push(marker);
       }
 
+      // Add dropoff marker
       if (dropoffLocation) {
-        new mapboxgl.Marker({ color: '#F44336' })
+        const marker = new mapboxgl.Marker({ color: '#F44336' })
           .setLngLat(dropoffLocation)
           .addTo(map.current);
+        markersRef.current.push(marker);
       }
 
+      // Fit bounds if both locations exist
       if (pickupLocation && dropoffLocation) {
         const bounds = new mapboxgl.LngLatBounds()
           .extend(pickupLocation)
@@ -126,16 +130,20 @@ const Map = ({ pickupLocation, dropoffLocation }: MapProps) => {
         });
       }
     } catch (err) {
-      console.error('Error updating markers:', err);
       toast.error('Error updating map markers');
     }
   }, [pickupLocation, dropoffLocation]);
+
+  // Update markers when locations change
+  useEffect(() => {
+    updateMarkers();
+  }, [updateMarkers]);
 
   return (
     <div className="h-full">
       <div ref={mapContainer} className="w-full h-full" />
     </div>
   );
-};
+});
 
 export default Map;
