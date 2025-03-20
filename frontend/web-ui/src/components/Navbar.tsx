@@ -190,7 +190,13 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={isDarkBackground ? (isScrolled ? "text-maxmove-navy" : "text-maxmove-creme") : "text-maxmove-navy"}
+              className={`rounded-full p-2 ${
+                isDarkBackground 
+                  ? isScrolled 
+                    ? "text-maxmove-navy hover:bg-maxmove-navy/10" 
+                    : "text-maxmove-creme hover:bg-white/10"
+                  : "text-maxmove-navy hover:bg-maxmove-navy/10"
+              }`}
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />

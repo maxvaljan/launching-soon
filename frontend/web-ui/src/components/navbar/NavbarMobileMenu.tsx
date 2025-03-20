@@ -1,7 +1,21 @@
 'use client';
 
 import Link from "next/link";
-import { Truck, Briefcase, User, Building2, GraduationCap, DollarSign, LayoutDashboard } from "lucide-react";
+import { 
+  Truck, 
+  Briefcase, 
+  User, 
+  Building2, 
+  GraduationCap, 
+  DollarSign, 
+  LayoutDashboard, 
+  LogOut,
+  Settings,
+  Map,
+  ChevronRight,
+  Home,
+  UserCircle
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -14,74 +28,112 @@ interface NavbarMobileMenuProps {
 const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenuProps) => {
   const router = useRouter();
   
-  return (
-    <div className="md:hidden bg-white/95 backdrop-blur-md animate-fade-in">
-      <div className="px-2 pt-2 pb-3 space-y-1">
-        <div className="space-y-2">
-          {session && (
-            <Link
-              href="/dashboard"
-              className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-            >
-              <LayoutDashboard className="inline-block mr-2 h-4 w-4" />
-              Dashboard
-            </Link>
-          )}
-          <Link
-            href="/personal-delivery"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <Truck className="inline-block mr-2 h-4 w-4" />
-            Personal Delivery
-          </Link>
-          <Link
-            href="/business"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <Briefcase className="inline-block mr-2 h-4 w-4" />
-            Business Solutions
-          </Link>
-          <Link
-            href="/drivers"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <User className="inline-block mr-2 h-4 w-4" />
-            Drivers
-          </Link>
-          <Link
-            href="/about"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <Building2 className="inline-block mr-2 h-4 w-4" />
-            About Us
-          </Link>
-          <Link
-            href="/career"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <GraduationCap className="inline-block mr-2 h-4 w-4" />
-            Career
-          </Link>
-          <Link
-            href="/investment"
-            className="block px-3 py-2 text-maxmove-700 hover:text-maxmove-900 transition-colors"
-          >
-            <DollarSign className="inline-block mr-2 h-4 w-4" />
-            Investment
-          </Link>
+  const MenuItem = ({ 
+    href, 
+    icon: Icon, 
+    label, 
+    onClick 
+  }: { 
+    href?: string; 
+    icon: any; 
+    label: string; 
+    onClick?: () => void 
+  }) => {
+    const content = (
+      <>
+        <div className="flex items-center flex-1">
+          <Icon className="h-5 w-5 text-maxmove-navy" />
+          <span className="ml-3 font-medium text-maxmove-navy">{label}</span>
         </div>
-        <div className="px-3 py-2">
+        {href && <ChevronRight className="h-4 w-4 text-maxmove-grey" />}
+      </>
+    );
+
+    if (href) {
+      return (
+        <Link
+          href={href}
+          className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-maxmove-navy/5 transition-colors"
+        >
+          {content}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-maxmove-navy/5 transition-colors"
+      >
+        {content}
+      </button>
+    );
+  };
+
+  const CategoryLabel = ({ label }: { label: string }) => (
+    <div className="px-4 py-2 mt-6 mb-2">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-maxmove-grey">
+        {label}
+      </h3>
+    </div>
+  );
+
+  const Divider = () => <div className="h-px bg-maxmove-navy/10 my-2 mx-4" />;
+
+  return (
+    <div className="md:hidden bg-white shadow-lg rounded-b-lg overflow-hidden">
+      <div className="py-3 max-h-[calc(100vh-5rem)] overflow-y-auto">
+        {session && (
+          <>
+            <div className="flex items-center px-4 py-4 bg-maxmove-navy/5 mb-2">
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-maxmove-navy via-maxmove-dark-blue to-maxmove-light-blue flex items-center justify-center">
+                <span className="text-lg font-semibold text-maxmove-creme">
+                  {(typeof session.email === 'string' ? session.email.charAt(0) : (session.user?.email?.charAt(0) || 'U')).toUpperCase()}
+                </span>
+              </div>
+              <div className="ml-3">
+                <p className="font-medium text-maxmove-navy">
+                  {session.email || session.user?.email || 'User'}
+                </p>
+                <p className="text-sm text-maxmove-grey">
+                  {session.role || session.user?.role || 'Customer'}
+                </p>
+              </div>
+            </div>
+
+            <CategoryLabel label="Account" />
+            <MenuItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+            <MenuItem href="/profile" icon={UserCircle} label="Profile" />
+            <MenuItem href="/dashboard/settings" icon={Settings} label="Settings" />
+          </>
+        )}
+
+        <CategoryLabel label="Navigation" />
+        <MenuItem href="/" icon={Home} label="Home" />
+        <MenuItem href="/personal-delivery" icon={Truck} label="Personal Delivery" />
+        <MenuItem href="/business" icon={Briefcase} label="Business Solutions" />
+        <MenuItem href="/drivers" icon={User} label="Drivers" />
+
+        <CategoryLabel label="Company" />
+        <MenuItem href="/about" icon={Building2} label="About Us" />
+        <MenuItem href="/career" icon={GraduationCap} label="Careers" />
+        <MenuItem href="/investment" icon={DollarSign} label="Investment" />
+        <MenuItem href="/roadmap" icon={Map} label="Roadmap" />
+
+        <Divider />
+        <div className="px-4 py-3">
           {session ? (
             <Button
-              className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 flex items-center justify-center gap-2"
               onClick={handleSignOut}
             >
+              <LogOut className="h-4 w-4" />
               Sign Out
             </Button>
           ) : (
             <Button
-              className="w-full bg-maxmove-800 hover:bg-maxmove-900 text-white transition-colors"
-              onClick={() => window.location.href = "/signin"}
+              className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-white font-medium py-2.5"
+              onClick={() => router.push("/signin")}
             >
               Sign In
             </Button>
