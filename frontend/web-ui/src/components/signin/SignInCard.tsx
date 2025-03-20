@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { SignInForm } from "./SignInForm";
 import { GoogleSignInButton } from "./GoogleSignInButton";
+import Image from "next/image";
 
 export const SignInCard = () => {
   const router = useRouter();

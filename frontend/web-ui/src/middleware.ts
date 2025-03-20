@@ -6,7 +6,7 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 const protectedRoutes = [
   '/dashboard',
   '/driver-dashboard',
-  '/admin-dashboard',
+  '/admin',
   '/profile',
   '/account-switch',
   '/wallet',
@@ -29,7 +29,7 @@ const publicRoutes = [
 // Define which routes require specific roles
 const roleBasedRoutes = {
   '/driver-dashboard': ['driver'],
-  '/admin-dashboard': ['admin'],
+  '/admin': ['admin'],
 };
 
 /**
@@ -101,7 +101,7 @@ export async function middleware(request: NextRequest) {
       if (profile?.role === 'driver') {
         redirectUrl = '/driver-dashboard';
       } else if (profile?.role === 'admin') {
-        redirectUrl = '/admin-dashboard';
+        redirectUrl = '/admin';
       } else {
         redirectUrl = '/dashboard/place-order';
       }
