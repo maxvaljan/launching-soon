@@ -77,6 +77,73 @@ export interface OrderStatusDistribution {
   value: number;
 }
 
+// Financial types
+export enum TransactionType {
+  PAYMENT = 'payment',
+  REFUND = 'refund',
+  PAYOUT = 'payout',
+  FEE = 'fee',
+  ADJUSTMENT = 'adjustment'
+}
+
+export enum TransactionStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  REFUNDED = 'refunded'
+}
+
+export interface FinancialTransaction {
+  id: string;
+  order_id?: string;
+  customer_id?: string;
+  driver_id?: string;
+  amount: number;
+  fee_amount?: number;
+  net_amount?: number;
+  currency: string;
+  payment_method?: PaymentMethod;
+  type: TransactionType;
+  status: TransactionStatus;
+  description?: string;
+  metadata?: Record<string, any>;
+  external_id?: string;
+  created_at: string;
+  updated_at: string;
+  customer_name?: string;
+  driver_name?: string;
+}
+
+export interface RevenueByPeriod {
+  period: string;
+  revenue: number;
+  orders: number;
+  fees: number;
+  refunds: number;
+  net_revenue: number;
+}
+
+export interface FinancialSummary {
+  totalRevenue: number;
+  totalFees: number;
+  totalRefunds: number;
+  netRevenue: number;
+  pendingAmount: number;
+  averageOrderValue: number;
+  revenueByPeriod: RevenueByPeriod[];
+  topCustomers: {
+    customer_id: string;
+    customer_name: string;
+    total_spent: number;
+    order_count: number;
+  }[];
+  paymentMethodBreakdown: {
+    name: string;
+    value: number;
+    percentage: number;
+  }[];
+}
+
 // Support ticket types
 export enum TicketStatus {
   OPEN = 'open',
@@ -914,6 +981,364 @@ export const adminService = {
       };
     } catch (error) {
       console.error('Error fetching ticket statistics:', error);
+      throw error;
+    }
+  },
+
+  // Financial Management
+  async getTransactions(timeframe: 'week' | 'month' | 'year' = 'month'): Promise<FinancialTransaction[]> {
+    try {
+      // Calculate date range based on timeframe
+      const endDate = new Date();
+      let startDate = new Date();
+      
+      if (timeframe === 'week') {
+        startDate.setDate(endDate.getDate() - 7);
+      } else if (timeframe === 'month') {
+        startDate.setMonth(endDate.getMonth() - 1);
+      } else if (timeframe === 'year') {
+        startDate.setFullYear(endDate.getFullYear() - 1);
+      }
+      
+      const startDateStr = startDate.toISOString();
+      
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select(`
+          *,
+          profiles!customer_id(name),
+          drivers:profiles!driver_id(name)
+        `)
+        .gte('created_at', startDateStr)
+        .lte('created_at', endDate.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the data to include customer and driver information
+      const formattedTransactions = data?.map(transaction => ({
+        ...transaction,
+        customer_name: transaction.profiles?.name,
+        driver_name: transaction.drivers?.name
+      })) || [];
+
+      return formattedTransactions;
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      throw error;
+    }
+  },
+
+  async getTransactionById(transactionId: string): Promise<FinancialTransaction | null> {
+    try {
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select(`
+          *,
+          profiles!customer_id(name),
+          drivers:profiles!driver_id(name)
+        `)
+        .eq('id', transactionId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the response
+      const formattedTransaction = {
+        ...data,
+        customer_name: data.profiles?.name,
+        driver_name: data.drivers?.name
+      };
+
+      return formattedTransaction;
+    } catch (error) {
+      console.error(`Error fetching transaction ${transactionId}:`, error);
+      throw error;
+    }
+  },
+
+  async getFinancialSummary(timeframe: 'week' | 'month' | 'year' = 'month'): Promise<FinancialSummary> {
+    try {
+      // Calculate date range based on timeframe
+      const endDate = new Date();
+      let startDate = new Date();
+      let periodFormat: 'day' | 'week' | 'month' = 'day';
+      
+      if (timeframe === 'week') {
+        startDate.setDate(endDate.getDate() - 7);
+        periodFormat = 'day';
+      } else if (timeframe === 'month') {
+        startDate.setMonth(endDate.getMonth() - 1);
+        periodFormat = 'day';
+      } else if (timeframe === 'year') {
+        startDate.setFullYear(endDate.getFullYear() - 1);
+        periodFormat = 'month';
+      }
+      
+      const startDateStr = startDate.toISOString();
+      
+      // Fetch transactions for the time period
+      const { data: transactions, error } = await supabase
+        .from('financial_transactions')
+        .select('*')
+        .gte('created_at', startDateStr)
+        .lte('created_at', endDate.toISOString());
+
+      if (error) {
+        throw error;
+      }
+
+      // Calculate summary data
+      const totalRevenue = transactions
+        .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const totalFees = transactions
+        .filter(t => t.type === TransactionType.FEE)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const totalRefunds = transactions
+        .filter(t => t.type === TransactionType.REFUND)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const pendingAmount = transactions
+        .filter(t => t.status === TransactionStatus.PENDING)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const netRevenue = totalRevenue - totalFees - totalRefunds;
+      
+      const paymentCount = transactions
+        .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+        .length;
+        
+      const averageOrderValue = paymentCount > 0 ? totalRevenue / paymentCount : 0;
+
+      // Generate revenue by period
+      const revenueByPeriod: RevenueByPeriod[] = [];
+      if (periodFormat === 'day') {
+        // Generate a date range
+        const daysBetween = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+        for (let i = 0; i < daysBetween; i++) {
+          const date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+          const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+          });
+          
+          // Filter transactions for this day
+          const dayStart = new Date(date);
+          dayStart.setHours(0, 0, 0, 0);
+          
+          const dayEnd = new Date(date);
+          dayEnd.setHours(23, 59, 59, 999);
+          
+          const dayTransactions = transactions.filter(t => {
+            const txDate = new Date(t.created_at);
+            return txDate >= dayStart && txDate <= dayEnd;
+          });
+          
+          const dayRevenue = dayTransactions
+            .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const dayFees = dayTransactions
+            .filter(t => t.type === TransactionType.FEE)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const dayRefunds = dayTransactions
+            .filter(t => t.type === TransactionType.REFUND)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const dayNetRevenue = dayRevenue - dayFees - dayRefunds;
+          
+          const dayOrders = dayTransactions
+            .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+            .length;
+          
+          revenueByPeriod.push({
+            period: formattedDate,
+            revenue: dayRevenue,
+            orders: dayOrders,
+            fees: dayFees,
+            refunds: dayRefunds,
+            net_revenue: dayNetRevenue
+          });
+        }
+      } else if (periodFormat === 'month') {
+        // Handle monthly periods for annual view
+        for (let i = 0; i < 12; i++) {
+          const date = new Date(startDate);
+          date.setMonth(startDate.getMonth() + i);
+          const formattedMonth = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            year: 'numeric'
+          });
+          
+          // Filter transactions for this month
+          const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+          const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+          
+          const monthTransactions = transactions.filter(t => {
+            const txDate = new Date(t.created_at);
+            return txDate >= monthStart && txDate <= monthEnd;
+          });
+          
+          const monthRevenue = monthTransactions
+            .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const monthFees = monthTransactions
+            .filter(t => t.type === TransactionType.FEE)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const monthRefunds = monthTransactions
+            .filter(t => t.type === TransactionType.REFUND)
+            .reduce((sum, t) => sum + (t.amount || 0), 0);
+            
+          const monthNetRevenue = monthRevenue - monthFees - monthRefunds;
+          
+          const monthOrders = monthTransactions
+            .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+            .length;
+          
+          revenueByPeriod.push({
+            period: formattedMonth,
+            revenue: monthRevenue,
+            orders: monthOrders,
+            fees: monthFees,
+            refunds: monthRefunds,
+            net_revenue: monthNetRevenue
+          });
+        }
+      }
+
+      // Calculate top customers
+      const customerMap = new Map<string, { 
+        customer_id: string;
+        customer_name: string;
+        total_spent: number;
+        order_count: number;
+      }>();
+      
+      for (const tx of transactions) {
+        if (tx.type === TransactionType.PAYMENT && 
+            tx.status === TransactionStatus.COMPLETED && 
+            tx.customer_id) {
+          const customerId = tx.customer_id;
+          
+          if (!customerMap.has(customerId)) {
+            customerMap.set(customerId, {
+              customer_id: customerId,
+              customer_name: tx.customer_name || 'Unknown',
+              total_spent: 0,
+              order_count: 0
+            });
+          }
+          
+          const customerData = customerMap.get(customerId)!;
+          customerData.total_spent += tx.amount || 0;
+          customerData.order_count += 1;
+        }
+      }
+      
+      const topCustomers = Array.from(customerMap.values())
+        .sort((a, b) => b.total_spent - a.total_spent)
+        .slice(0, 5);
+
+      // Calculate payment method breakdown
+      const paymentMethods = new Map<string, { count: number; amount: number }>();
+      
+      for (const tx of transactions) {
+        if (tx.type === TransactionType.PAYMENT && 
+            tx.status === TransactionStatus.COMPLETED && 
+            tx.payment_method) {
+          const method = tx.payment_method;
+          
+          if (!paymentMethods.has(method)) {
+            paymentMethods.set(method, {
+              count: 0,
+              amount: 0
+            });
+          }
+          
+          const methodData = paymentMethods.get(method)!;
+          methodData.count += 1;
+          methodData.amount += tx.amount || 0;
+        }
+      }
+      
+      const paymentMethodBreakdown = Array.from(paymentMethods.entries())
+        .map(([name, { amount }]) => ({
+          name,
+          value: amount,
+          percentage: totalRevenue > 0 ? (amount / totalRevenue) * 100 : 0
+        }))
+        .sort((a, b) => b.value - a.value);
+
+      return {
+        totalRevenue,
+        totalFees,
+        totalRefunds,
+        netRevenue,
+        pendingAmount,
+        averageOrderValue,
+        revenueByPeriod,
+        topCustomers,
+        paymentMethodBreakdown
+      };
+    } catch (error) {
+      console.error('Error calculating financial summary:', error);
+      throw error;
+    }
+  },
+
+  async getOrderFinancials(orderId: string): Promise<{
+    order: AdminOrder | null;
+    transactions: FinancialTransaction[];
+    totalPaid: number;
+    totalRefunded: number;
+    netAmount: number;
+  }> {
+    try {
+      // Get order details
+      const order = await this.getOrderById(orderId);
+      
+      // Get all transactions for this order
+      const { data: transactions, error } = await supabase
+        .from('financial_transactions')
+        .select('*')
+        .eq('order_id', orderId)
+        .order('created_at', { ascending: false });
+        
+      if (error) {
+        throw error;
+      }
+      
+      // Calculate totals
+      const totalPaid = transactions
+        .filter(t => t.type === TransactionType.PAYMENT && t.status === TransactionStatus.COMPLETED)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const totalRefunded = transactions
+        .filter(t => t.type === TransactionType.REFUND)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+        
+      const netAmount = totalPaid - totalRefunded;
+      
+      return {
+        order,
+        transactions: transactions || [],
+        totalPaid,
+        totalRefunded,
+        netAmount
+      };
+    } catch (error) {
+      console.error(`Error fetching financials for order ${orderId}:`, error);
       throw error;
     }
   }
