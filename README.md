@@ -6,7 +6,7 @@ MaxMove is a logistics platform similar to Lalamove tailored for the German mark
 
 ```
 maxmove-monorepo/
-├── backend/           # Node.js/Express.js server with Supabase integration (later we will include Golang microservices)
+├── backend/           # Node.js/Express.js server with Supabase integration and Golang microservices
 │   ├── src/           # Source code
 │   │   ├── controllers/   # Request handlers 
 │   │   ├── middleware/    # Express middleware

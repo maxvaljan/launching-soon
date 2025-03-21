@@ -168,6 +168,156 @@ export enum TicketType {
   OTHER = 'other'
 }
 
+// System Monitoring types
+export enum SystemStatus {
+  HEALTHY = 'healthy',
+  DEGRADED = 'degraded',
+  DOWN = 'down',
+  MAINTENANCE = 'maintenance'
+}
+
+export enum AlertLevel {
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical'
+}
+
+export interface SystemComponent {
+  id: string;
+  name: string;
+  type: string;
+  status: SystemStatus;
+  last_checked: string;
+  uptime_percentage: number;
+  metrics?: Record<string, any>;
+  notes?: string;
+}
+
+export interface SystemAlert {
+  id: string;
+  title: string;
+  message: string;
+  level: AlertLevel;
+  component_id?: string;
+  component_name?: string;
+  created_at: string;
+  acknowledged_at?: string;
+  resolved_at?: string;
+  acknowledged_by?: string;
+  acknowledger_name?: string;
+}
+
+export interface SystemLog {
+  id: string;
+  timestamp: string;
+  level: string;
+  source: string;
+  message: string;
+  metadata?: Record<string, any>;
+}
+
+// Document Management types
+export enum DocumentType {
+  INVOICE = 'invoice',
+  CONTRACT = 'contract',
+  DRIVER_LICENSE = 'driver_license',
+  VEHICLE_REGISTRATION = 'vehicle_registration',
+  INSURANCE = 'insurance',
+  TAX_DOCUMENT = 'tax_document',
+  OTHER = 'other'
+}
+
+export enum DocumentStatus {
+  PENDING = 'pending',
+  VERIFIED = 'verified',
+  EXPIRED = 'expired',
+  REJECTED = 'rejected'
+}
+
+export interface Document {
+  id: string;
+  name: string;
+  description?: string;
+  file_path: string;
+  file_size: number;
+  file_type: string;
+  uploaded_by: string;
+  uploader_name?: string;
+  entity_id?: string;
+  entity_type?: string;
+  document_type: DocumentType;
+  tags?: string[];
+  status: DocumentStatus;
+  verified_by?: string;
+  verifier_name?: string;
+  expiry_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Marketing types
+export enum PromoCodeType {
+  PERCENTAGE = 'percentage',
+  FIXED_AMOUNT = 'fixed_amount',
+  FREE_DELIVERY = 'free_delivery'
+}
+
+export enum PromoCodeStatus {
+  ACTIVE = 'active',
+  EXPIRED = 'expired',
+  PAUSED = 'paused',
+  DEPLETED = 'depleted'
+}
+
+export interface PromoCode {
+  id: string;
+  code: string;
+  description: string;
+  type: PromoCodeType;
+  value: number;
+  min_order_amount?: number;
+  max_discount_amount?: number;
+  usage_limit?: number;
+  usage_count: number;
+  status: PromoCodeStatus;
+  customer_id?: string;
+  customer_type?: string;
+  vehicle_type_id?: string;
+  start_date: string;
+  expiry_date?: string;
+  created_at: string;
+  updated_at: string;
+  customer_name?: string;
+}
+
+export interface Campaign {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  audience: string;
+  start_date: string;
+  end_date?: string;
+  budget?: number;
+  spent?: number;
+  conversion_count: number;
+  click_count: number;
+  impression_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerSegment {
+  id: string;
+  name: string;
+  description: string;
+  filter_criteria: Record<string, any>;
+  customer_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SupportTicket {
   id: string;
   customer_id: string;
@@ -1339,6 +1489,751 @@ export const adminService = {
       };
     } catch (error) {
       console.error(`Error fetching financials for order ${orderId}:`, error);
+      throw error;
+    }
+  },
+
+  // Marketing Management
+  async getPromoCodes(): Promise<PromoCode[]> {
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select(`
+          *,
+          profiles!customer_id(name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the data to include customer name
+      const formattedCodes = data?.map(code => ({
+        ...code,
+        customer_name: code.profiles?.name
+      })) || [];
+
+      return formattedCodes;
+    } catch (error) {
+      console.error('Error fetching promo codes:', error);
+      throw error;
+    }
+  },
+
+  async getPromoCodeById(codeId: string): Promise<PromoCode | null> {
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .select(`
+          *,
+          profiles!customer_id(name)
+        `)
+        .eq('id', codeId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the response
+      const formattedCode = {
+        ...data,
+        customer_name: data.profiles?.name
+      };
+
+      return formattedCode;
+    } catch (error) {
+      console.error(`Error fetching promo code ${codeId}:`, error);
+      throw error;
+    }
+  },
+
+  async createPromoCode(codeData: Omit<PromoCode, 'id' | 'created_at' | 'updated_at' | 'usage_count' | 'customer_name'>): Promise<PromoCode> {
+    try {
+      const now = new Date().toISOString();
+      
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .insert([{
+          ...codeData,
+          usage_count: 0,
+          created_at: now,
+          updated_at: now
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error creating promo code:', error);
+      throw error;
+    }
+  },
+
+  async updatePromoCode(codeId: string, codeData: Partial<PromoCode>): Promise<PromoCode> {
+    try {
+      const { data, error } = await supabase
+        .from('promo_codes')
+        .update({
+          ...codeData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', codeId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error updating promo code ${codeId}:`, error);
+      throw error;
+    }
+  },
+
+  async deletePromoCode(codeId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('promo_codes')
+        .delete()
+        .eq('id', codeId);
+
+      if (error) {
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(`Error deleting promo code ${codeId}:`, error);
+      throw error;
+    }
+  },
+
+  async getCampaigns(): Promise<Campaign[]> {
+    try {
+      const { data, error } = await supabase
+        .from('marketing_campaigns')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching marketing campaigns:', error);
+      throw error;
+    }
+  },
+
+  async getCampaignById(campaignId: string): Promise<Campaign | null> {
+    try {
+      const { data, error } = await supabase
+        .from('marketing_campaigns')
+        .select('*')
+        .eq('id', campaignId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching campaign ${campaignId}:`, error);
+      throw error;
+    }
+  },
+
+  async getCustomerSegments(): Promise<CustomerSegment[]> {
+    try {
+      const { data, error } = await supabase
+        .from('customer_segments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching customer segments:', error);
+      throw error;
+    }
+  },
+
+  async getCustomerSegmentById(segmentId: string): Promise<CustomerSegment | null> {
+    try {
+      const { data, error } = await supabase
+        .from('customer_segments')
+        .select('*')
+        .eq('id', segmentId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching customer segment ${segmentId}:`, error);
+      throw error;
+    }
+  },
+
+  async getMarketingStats(): Promise<{
+    totalCampaigns: number;
+    activeCampaigns: number;
+    totalCustomers: number;
+    activePromoCodes: number;
+    totalSegments: number;
+  }> {
+    try {
+      const [
+        campaignsRes,
+        activeCampaignsRes,
+        customersRes,
+        promoCodesRes,
+        segmentsRes
+      ] = await Promise.all([
+        supabase.from('marketing_campaigns').select('id', { count: 'exact', head: true }),
+        supabase.from('marketing_campaigns').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).in('role', ['customer', 'business']),
+        supabase.from('promo_codes').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('customer_segments').select('id', { count: 'exact', head: true })
+      ]);
+      
+      return {
+        totalCampaigns: campaignsRes.count || 0,
+        activeCampaigns: activeCampaignsRes.count || 0,
+        totalCustomers: customersRes.count || 0,
+        activePromoCodes: promoCodesRes.count || 0,
+        totalSegments: segmentsRes.count || 0
+      };
+    } catch (error) {
+      console.error('Error fetching marketing statistics:', error);
+      throw error;
+    }
+  },
+
+  // Document Management
+  async getDocuments(filters?: {
+    document_type?: DocumentType;
+    status?: DocumentStatus;
+    entity_type?: string;
+    entity_id?: string;
+  }): Promise<Document[]> {
+    try {
+      let query = supabase
+        .from('documents')
+        .select(`
+          *,
+          uploaders:profiles!uploaded_by(name),
+          verifiers:profiles!verified_by(name)
+        `)
+        .order('created_at', { ascending: false });
+      
+      // Apply filters if provided
+      if (filters?.document_type) {
+        query = query.eq('document_type', filters.document_type);
+      }
+      
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      
+      if (filters?.entity_type) {
+        query = query.eq('entity_type', filters.entity_type);
+      }
+      
+      if (filters?.entity_id) {
+        query = query.eq('entity_id', filters.entity_id);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Format the data to include uploader and verifier information
+      const formattedDocs = data?.map(doc => ({
+        ...doc,
+        uploader_name: doc.uploaders?.name,
+        verifier_name: doc.verifiers?.name
+      })) || [];
+      
+      return formattedDocs;
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      throw error;
+    }
+  },
+  
+  async getDocumentById(documentId: string): Promise<Document | null> {
+    try {
+      const { data, error } = await supabase
+        .from('documents')
+        .select(`
+          *,
+          uploaders:profiles!uploaded_by(name),
+          verifiers:profiles!verified_by(name)
+        `)
+        .eq('id', documentId)
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Format the response
+      const formattedDoc = {
+        ...data,
+        uploader_name: data.uploaders?.name,
+        verifier_name: data.verifiers?.name
+      };
+      
+      return formattedDoc;
+    } catch (error) {
+      console.error(`Error fetching document ${documentId}:`, error);
+      throw error;
+    }
+  },
+  
+  async uploadDocument(documentData: Omit<Document, 'id' | 'created_at' | 'updated_at' | 'uploader_name' | 'verifier_name' | 'file_path' | 'file_size' | 'file_type'>, file: File): Promise<Document> {
+    try {
+      // 1. Upload the file to storage
+      const fileExt = file.name.split('.').pop();
+      const filePath = `documents/${documentData.document_type}/${Date.now()}_${file.name}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+        
+      if (uploadError) {
+        throw uploadError;
+      }
+      
+      // 2. Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+      
+      // 3. Create the document record
+      const { data, error } = await supabase
+        .from('documents')
+        .insert([{
+          ...documentData,
+          file_path: publicUrl,
+          file_size: file.size,
+          file_type: file.type,
+          status: DocumentStatus.PENDING,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+        
+      if (error) {
+        // If record insertion fails, delete the uploaded file
+        await supabase.storage.from('documents').remove([filePath]);
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      throw error;
+    }
+  },
+  
+  async updateDocumentStatus(documentId: string, status: DocumentStatus, verifiedBy?: string): Promise<Document> {
+    try {
+      const updateData: any = {
+        status,
+        updated_at: new Date().toISOString()
+      };
+      
+      if (status === DocumentStatus.VERIFIED && verifiedBy) {
+        updateData.verified_by = verifiedBy;
+      }
+      
+      const { data, error } = await supabase
+        .from('documents')
+        .update(updateData)
+        .eq('id', documentId)
+        .select()
+        .single();
+        
+      if (error) {
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error(`Error updating document status ${documentId}:`, error);
+      throw error;
+    }
+  },
+  
+  async deleteDocument(documentId: string): Promise<boolean> {
+    try {
+      // First get the document to find the file path
+      const { data: document, error: fetchError } = await supabase
+        .from('documents')
+        .select('file_path')
+        .eq('id', documentId)
+        .single();
+        
+      if (fetchError) {
+        throw fetchError;
+      }
+      
+      // Delete the document record
+      const { error: deleteError } = await supabase
+        .from('documents')
+        .delete()
+        .eq('id', documentId);
+        
+      if (deleteError) {
+        throw deleteError;
+      }
+      
+      // Extract the storage path from the URL
+      const urlParts = document.file_path.split('/');
+      const storagePath = urlParts.slice(urlParts.indexOf('documents')).join('/');
+      
+      // Delete the file from storage
+      await supabase.storage
+        .from('documents')
+        .remove([storagePath]);
+      
+      return true;
+    } catch (error) {
+      console.error(`Error deleting document ${documentId}:`, error);
+      throw error;
+    }
+  },
+  
+  async getDocumentStats(): Promise<{
+    totalDocuments: number;
+    pendingVerification: number;
+    verified: number;
+    expired: number;
+    rejected: number;
+    documentTypeBreakdown: { type: string; count: number }[];
+  }> {
+    try {
+      const [
+        totalRes,
+        pendingRes,
+        verifiedRes,
+        expiredRes,
+        rejectedRes
+      ] = await Promise.all([
+        supabase.from('documents').select('id', { count: 'exact', head: true }),
+        supabase.from('documents').select('id', { count: 'exact', head: true }).eq('status', DocumentStatus.PENDING),
+        supabase.from('documents').select('id', { count: 'exact', head: true }).eq('status', DocumentStatus.VERIFIED),
+        supabase.from('documents').select('id', { count: 'exact', head: true }).eq('status', DocumentStatus.EXPIRED),
+        supabase.from('documents').select('id', { count: 'exact', head: true }).eq('status', DocumentStatus.REJECTED)
+      ]);
+      
+      // Get document type breakdown
+      const { data: typeData, error: typeError } = await supabase
+        .from('documents')
+        .select('document_type');
+        
+      if (typeError) {
+        throw typeError;
+      }
+      
+      // Count by document type
+      const typeCounts = typeData?.reduce((acc, doc) => {
+        acc[doc.document_type] = (acc[doc.document_type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+      
+      const documentTypeBreakdown = Object.entries(typeCounts).map(([type, count]) => ({
+        type,
+        count
+      }));
+      
+      return {
+        totalDocuments: totalRes.count || 0,
+        pendingVerification: pendingRes.count || 0,
+        verified: verifiedRes.count || 0,
+        expired: expiredRes.count || 0,
+        rejected: rejectedRes.count || 0,
+        documentTypeBreakdown
+      };
+    } catch (error) {
+      console.error('Error fetching document statistics:', error);
+      throw error;
+    }
+  },
+
+  // System Monitoring
+  async getSystemComponents(): Promise<SystemComponent[]> {
+    try {
+      const { data, error } = await supabase
+        .from('system_components')
+        .select('*')
+        .order('name', { ascending: true });
+      
+      if (error) {
+        throw error;
+      }
+      
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching system components:', error);
+      throw error;
+    }
+  },
+  
+  async getSystemAlerts(includeResolved: boolean = false): Promise<SystemAlert[]> {
+    try {
+      let query = supabase
+        .from('system_alerts')
+        .select(`
+          *,
+          components:component_id(name),
+          acknowledgers:profiles!acknowledged_by(name)
+        `)
+        .order('created_at', { ascending: false });
+      
+      if (!includeResolved) {
+        query = query.is('resolved_at', null);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Format the data to include component and acknowledger information
+      const formattedAlerts = data?.map(alert => ({
+        ...alert,
+        component_name: alert.components?.name,
+        acknowledger_name: alert.acknowledgers?.name
+      })) || [];
+      
+      return formattedAlerts;
+    } catch (error) {
+      console.error('Error fetching system alerts:', error);
+      throw error;
+    }
+  },
+  
+  async acknowledgeAlert(alertId: string, userId: string): Promise<SystemAlert> {
+    try {
+      const { data, error } = await supabase
+        .from('system_alerts')
+        .update({
+          acknowledged_at: new Date().toISOString(),
+          acknowledged_by: userId
+        })
+        .eq('id', alertId)
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error(`Error acknowledging alert ${alertId}:`, error);
+      throw error;
+    }
+  },
+  
+  async resolveAlert(alertId: string): Promise<SystemAlert> {
+    try {
+      const { data, error } = await supabase
+        .from('system_alerts')
+        .update({
+          resolved_at: new Date().toISOString()
+        })
+        .eq('id', alertId)
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error(`Error resolving alert ${alertId}:`, error);
+      throw error;
+    }
+  },
+  
+  async getSystemLogs(limit: number = 100, source?: string, level?: string): Promise<SystemLog[]> {
+    try {
+      let query = supabase
+        .from('system_logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(limit);
+      
+      if (source) {
+        query = query.eq('source', source);
+      }
+      
+      if (level) {
+        query = query.eq('level', level);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching system logs:', error);
+      throw error;
+    }
+  },
+  
+  async getSystemOverview(): Promise<{
+    components: { 
+      total: number;
+      healthy: number;
+      degraded: number;
+      down: number;
+      maintenance: number;
+    };
+    alerts: {
+      total: number;
+      critical: number;
+      error: number;
+      warning: number;
+      info: number;
+    };
+    logs: {
+      total: number;
+      error: number;
+      warning: number;
+      info: number;
+      debug: number;
+    };
+    performance: {
+      api_response_time: number;
+      db_query_time: number;
+      server_load: number;
+      memory_usage: number;
+    };
+  }> {
+    try {
+      // Get component counts by status
+      const [
+        totalComponents,
+        healthyComponents,
+        degradedComponents,
+        downComponents,
+        maintenanceComponents
+      ] = await Promise.all([
+        supabase.from('system_components').select('id', { count: 'exact', head: true }),
+        supabase.from('system_components').select('id', { count: 'exact', head: true }).eq('status', SystemStatus.HEALTHY),
+        supabase.from('system_components').select('id', { count: 'exact', head: true }).eq('status', SystemStatus.DEGRADED),
+        supabase.from('system_components').select('id', { count: 'exact', head: true }).eq('status', SystemStatus.DOWN),
+        supabase.from('system_components').select('id', { count: 'exact', head: true }).eq('status', SystemStatus.MAINTENANCE)
+      ]);
+      
+      // Get alert counts by level
+      const [
+        totalAlerts,
+        criticalAlerts,
+        errorAlerts,
+        warningAlerts,
+        infoAlerts
+      ] = await Promise.all([
+        supabase.from('system_alerts').select('id', { count: 'exact', head: true }).is('resolved_at', null),
+        supabase.from('system_alerts').select('id', { count: 'exact', head: true }).eq('level', AlertLevel.CRITICAL).is('resolved_at', null),
+        supabase.from('system_alerts').select('id', { count: 'exact', head: true }).eq('level', AlertLevel.ERROR).is('resolved_at', null),
+        supabase.from('system_alerts').select('id', { count: 'exact', head: true }).eq('level', AlertLevel.WARNING).is('resolved_at', null),
+        supabase.from('system_alerts').select('id', { count: 'exact', head: true }).eq('level', AlertLevel.INFO).is('resolved_at', null)
+      ]);
+      
+      // Get log counts by level for the last day
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      const oneDayAgoStr = oneDayAgo.toISOString();
+      
+      const [
+        totalLogs,
+        errorLogs,
+        warningLogs,
+        infoLogs,
+        debugLogs
+      ] = await Promise.all([
+        supabase.from('system_logs').select('id', { count: 'exact', head: true }).gte('timestamp', oneDayAgoStr),
+        supabase.from('system_logs').select('id', { count: 'exact', head: true }).eq('level', 'error').gte('timestamp', oneDayAgoStr),
+        supabase.from('system_logs').select('id', { count: 'exact', head: true }).eq('level', 'warning').gte('timestamp', oneDayAgoStr),
+        supabase.from('system_logs').select('id', { count: 'exact', head: true }).eq('level', 'info').gte('timestamp', oneDayAgoStr),
+        supabase.from('system_logs').select('id', { count: 'exact', head: true }).eq('level', 'debug').gte('timestamp', oneDayAgoStr)
+      ]);
+      
+      // Get latest performance metrics
+      const { data: performanceData, error: performanceError } = await supabase
+        .from('system_performance')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (performanceError && performanceError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        throw performanceError;
+      }
+      
+      // Default values if no performance data found
+      const performance = performanceData || {
+        api_response_time: 150, // ms
+        db_query_time: 50, // ms
+        server_load: 0.5, // 0-1 scale
+        memory_usage: 0.3 // 0-1 scale
+      };
+      
+      return {
+        components: {
+          total: totalComponents.count || 0,
+          healthy: healthyComponents.count || 0,
+          degraded: degradedComponents.count || 0,
+          down: downComponents.count || 0,
+          maintenance: maintenanceComponents.count || 0
+        },
+        alerts: {
+          total: totalAlerts.count || 0,
+          critical: criticalAlerts.count || 0,
+          error: errorAlerts.count || 0,
+          warning: warningAlerts.count || 0,
+          info: infoAlerts.count || 0
+        },
+        logs: {
+          total: totalLogs.count || 0,
+          error: errorLogs.count || 0,
+          warning: warningLogs.count || 0,
+          info: infoLogs.count || 0,
+          debug: debugLogs.count || 0
+        },
+        performance
+      };
+    } catch (error) {
+      console.error('Error fetching system overview:', error);
       throw error;
     }
   }
