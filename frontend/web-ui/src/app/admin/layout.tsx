@@ -12,7 +12,7 @@ import {
   BarChart,
   Settings,
   LogOut,
-  Mail,
+  Truck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageLoading } from '@/components/ui/loading';
@@ -112,6 +112,10 @@ export default function AdminLayout({
                 <Link href="/admin/analytics" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
                   <BarChart className="mr-2 h-4 w-4" />
                   Analytics
+                </Link>
+                <Link href="/admin/vehicles" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <Truck className="mr-2 h-4 w-4" />
+                  Vehicles
                 </Link>
                 <Link href="/admin/settings" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
                   <Settings className="mr-2 h-4 w-4" />
