@@ -10,8 +10,8 @@ interface NavWrapperProps {
 export default function NavWrapper({ children }: NavWrapperProps) {
   const pathname = usePathname();
   
-  // Only render the navbar if we're not in the dashboard section, signin page, signup page, or account-type page
-  const showNavbar = !pathname?.startsWith('/dashboard') && pathname !== '/signin' && !pathname?.startsWith('/signup') && pathname !== '/account-type';
+  // Only render the navbar if we're not in the dashboard or admin section, signin page, signup page, or account-type page
+  const showNavbar = !pathname?.startsWith('/dashboard') && !pathname?.startsWith('/admin') && pathname !== '/signin' && !pathname?.startsWith('/signup') && pathname !== '/account-type';
   
   return (
     <>

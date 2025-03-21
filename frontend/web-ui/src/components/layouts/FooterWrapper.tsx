@@ -10,8 +10,9 @@ interface FooterWrapperProps {
 export default function FooterWrapper({ children }: FooterWrapperProps) {
   const pathname = usePathname();
   
-  // Exclude footer from sign in, account type, sign up, and password reset pages
+  // Exclude footer from admin, sign in, account type, sign up, and password reset pages
   const showFooter = !(
+    pathname?.startsWith('/admin') ||
     pathname === '/signin' ||
     pathname === '/account-type' ||
     pathname === '/signup' ||
