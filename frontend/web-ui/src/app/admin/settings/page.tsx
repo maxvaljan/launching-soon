@@ -18,9 +18,6 @@ export default function AdminSettingsPage() {
   });
 
   const [serviceSettings, setServiceSettings] = useState({
-    serviceRadius: 50,
-    minOrderAmount: 15,
-    cancelTimeLimit: 30,
     enableRating: true,
     enableLiveTracking: true,
     enableMultipleStops: false
@@ -148,32 +145,7 @@ export default function AdminSettingsPage() {
           <h2 className="text-xl font-semibold mb-4">Service Settings</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Service Radius (miles)</label>
-                <Input 
-                  type="number"
-                  value={serviceSettings.serviceRadius}
-                  onChange={(e) => setServiceSettings({...serviceSettings, serviceRadius: parseInt(e.target.value) || 0})}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Minimum Order Amount ($)</label>
-                <Input 
-                  type="number"
-                  value={serviceSettings.minOrderAmount}
-                  onChange={(e) => setServiceSettings({...serviceSettings, minOrderAmount: parseInt(e.target.value) || 0})}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Order Cancellation Time Limit (minutes)</label>
-                <Input 
-                  type="number"
-                  value={serviceSettings.cancelTimeLimit}
-                  onChange={(e) => setServiceSettings({...serviceSettings, cancelTimeLimit: parseInt(e.target.value) || 0})}
-                />
-              </div>
+              {/* Service settings fields removed */}
             </div>
             
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
