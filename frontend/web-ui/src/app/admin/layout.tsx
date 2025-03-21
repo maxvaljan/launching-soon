@@ -13,6 +13,11 @@ import {
   Settings,
   LogOut,
   Truck,
+  MessageSquare,
+  FileText,
+  LineChart,
+  HardDrive,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageLoading } from '@/components/ui/loading';
@@ -116,6 +121,26 @@ export default function AdminLayout({
                 <Link href="/admin/vehicles" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
                   <Truck className="mr-2 h-4 w-4" />
                   Vehicles
+                </Link>
+                <Link href="/admin/support" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Support
+                </Link>
+                <Link href="/admin/finance" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <LineChart className="mr-2 h-4 w-4" />
+                  Finance
+                </Link>
+                <Link href="/admin/marketing" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Marketing
+                </Link>
+                <Link href="/admin/documents" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <HardDrive className="mr-2 h-4 w-4" />
+                  Documents
+                </Link>
+                <Link href="/admin/monitoring" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
+                  <AlertCircle className="mr-2 h-4 w-4" />
+                  Monitoring
                 </Link>
                 <Link href="/admin/settings" className="flex items-center py-2 px-4 rounded-md hover:bg-gray-100 text-gray-700">
                   <Settings className="mr-2 h-4 w-4" />

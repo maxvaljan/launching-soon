@@ -77,6 +77,60 @@ export interface OrderStatusDistribution {
   value: number;
 }
 
+// Support ticket types
+export enum TicketStatus {
+  OPEN = 'open',
+  IN_PROGRESS = 'in_progress',
+  RESOLVED = 'resolved',
+  CLOSED = 'closed'
+}
+
+export enum TicketPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+
+export enum TicketType {
+  GENERAL_INQUIRY = 'general_inquiry',
+  TECHNICAL_ISSUE = 'technical_issue',
+  BILLING_ISSUE = 'billing_issue',
+  FEATURE_REQUEST = 'feature_request',
+  COMPLAINT = 'complaint',
+  OTHER = 'other'
+}
+
+export interface SupportTicket {
+  id: string;
+  customer_id: string;
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  type: TicketType;
+  assigned_to?: string;
+  attachments?: string[];
+  created_at: string;
+  updated_at: string;
+  resolved_at?: string;
+  customer_name?: string;
+  customer_email?: string;
+  assignee_name?: string;
+}
+
+export interface TicketMessage {
+  id: string;
+  ticket_id: string;
+  sender_id: string;
+  message: string;
+  attachments?: string[];
+  is_internal: boolean;
+  created_at: string;
+  sender_name?: string;
+  sender_role?: string;
+}
+
 // Settings types
 export interface AdminSettings {
   id: string;
@@ -616,6 +670,250 @@ export const adminService = {
       return true;
     } catch (error) {
       console.error(`Error deleting vehicle ${vehicleId}:`, error);
+      throw error;
+    }
+  },
+
+  // Support Ticket Management
+  async getTickets(): Promise<SupportTicket[]> {
+    try {
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .select(`
+          *,
+          profiles!customer_id(name, email),
+          assignee:profiles!assigned_to(name)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the data to include customer and assignee information
+      const formattedTickets = data?.map(ticket => ({
+        ...ticket,
+        customer_name: ticket.profiles?.name,
+        customer_email: ticket.profiles?.email,
+        assignee_name: ticket.assignee?.name
+      })) || [];
+
+      return formattedTickets;
+    } catch (error) {
+      console.error('Error fetching support tickets:', error);
+      throw error;
+    }
+  },
+
+  async getTicketById(ticketId: string): Promise<SupportTicket | null> {
+    try {
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .select(`
+          *,
+          profiles!customer_id(name, email),
+          assignee:profiles!assigned_to(name)
+        `)
+        .eq('id', ticketId)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the response
+      const formattedTicket = {
+        ...data,
+        customer_name: data.profiles?.name,
+        customer_email: data.profiles?.email,
+        assignee_name: data.assignee?.name
+      };
+
+      return formattedTicket;
+    } catch (error) {
+      console.error(`Error fetching ticket ${ticketId}:`, error);
+      throw error;
+    }
+  },
+
+  async createTicket(ticketData: Omit<SupportTicket, 'id' | 'created_at' | 'updated_at'>): Promise<SupportTicket> {
+    try {
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .insert([{
+          ...ticketData,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error creating support ticket:', error);
+      throw error;
+    }
+  },
+
+  async updateTicket(ticketId: string, ticketData: Partial<SupportTicket>): Promise<SupportTicket> {
+    try {
+      const updateData = {
+        ...ticketData,
+        updated_at: new Date().toISOString()
+      };
+      
+      // If status is being changed to resolved, set resolved_at
+      if (ticketData.status === TicketStatus.RESOLVED && !ticketData.resolved_at) {
+        updateData.resolved_at = new Date().toISOString();
+      }
+
+      const { data, error } = await supabase
+        .from('support_tickets')
+        .update(updateData)
+        .eq('id', ticketId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error updating ticket ${ticketId}:`, error);
+      throw error;
+    }
+  },
+  
+  async assignTicket(ticketId: string, assigneeId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('support_tickets')
+        .update({
+          assigned_to: assigneeId,
+          status: TicketStatus.IN_PROGRESS,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', ticketId);
+
+      if (error) {
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(`Error assigning ticket ${ticketId}:`, error);
+      throw error;
+    }
+  },
+
+  async getTicketMessages(ticketId: string): Promise<TicketMessage[]> {
+    try {
+      const { data, error } = await supabase
+        .from('ticket_messages')
+        .select(`
+          *,
+          profiles!sender_id(name, role)
+        `)
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      // Format the data to include sender information
+      const formattedMessages = data?.map(message => ({
+        ...message,
+        sender_name: message.profiles?.name,
+        sender_role: message.profiles?.role
+      })) || [];
+
+      return formattedMessages;
+    } catch (error) {
+      console.error(`Error fetching messages for ticket ${ticketId}:`, error);
+      throw error;
+    }
+  },
+
+  async addTicketMessage(messageData: Omit<TicketMessage, 'id' | 'created_at'>): Promise<TicketMessage> {
+    try {
+      const { data, error } = await supabase
+        .from('ticket_messages')
+        .insert([{
+          ...messageData,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      // Update the ticket's updated_at timestamp
+      await supabase
+        .from('support_tickets')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', messageData.ticket_id);
+
+      return data;
+    } catch (error) {
+      console.error('Error adding ticket message:', error);
+      throw error;
+    }
+  },
+
+  async getTicketStats(): Promise<{
+    open: number;
+    inProgress: number;
+    resolved: number;
+    closed: number;
+    totalTickets: number;
+    averageResolutionTime: number;
+  }> {
+    try {
+      const [openRes, inProgressRes, resolvedRes, closedRes] = await Promise.all([
+        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', TicketStatus.OPEN),
+        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', TicketStatus.IN_PROGRESS),
+        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', TicketStatus.RESOLVED),
+        supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', TicketStatus.CLOSED)
+      ]);
+      
+      // Get resolved tickets to calculate average resolution time
+      const { data: resolvedTickets } = await supabase
+        .from('support_tickets')
+        .select('created_at, resolved_at')
+        .not('resolved_at', 'is', null);
+      
+      let averageResolutionTime = 0;
+      
+      if (resolvedTickets && resolvedTickets.length > 0) {
+        const totalResolutionTime = resolvedTickets.reduce((total, ticket) => {
+          const createdDate = new Date(ticket.created_at);
+          const resolvedDate = new Date(ticket.resolved_at);
+          const resolutionTime = resolvedDate.getTime() - createdDate.getTime();
+          return total + resolutionTime;
+        }, 0);
+        
+        // Average resolution time in hours
+        averageResolutionTime = totalResolutionTime / resolvedTickets.length / (1000 * 60 * 60);
+      }
+      
+      return {
+        open: openRes.count || 0,
+        inProgress: inProgressRes.count || 0,
+        resolved: resolvedRes.count || 0,
+        closed: closedRes.count || 0,
+        totalTickets: (openRes.count || 0) + (inProgressRes.count || 0) + (resolvedRes.count || 0) + (closedRes.count || 0),
+        averageResolutionTime
+      };
+    } catch (error) {
+      console.error('Error fetching ticket statistics:', error);
       throw error;
     }
   }
