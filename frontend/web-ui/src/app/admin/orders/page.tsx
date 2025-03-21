@@ -22,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { OrderStatus, PaymentMethod } from '../../../../../shared/types/order';
+import { OrderStatus, PaymentMethod } from '@/lib/services/admin';
 import { MoreHorizontal, Search, Filter, FileText, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 

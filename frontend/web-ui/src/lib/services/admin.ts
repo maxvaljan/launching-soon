@@ -1,7 +1,29 @@
 import { supabase } from '../supabase';
 import { apiClient } from '../api';
-import { UserRole } from '../../../../../shared/types/user';
-import { OrderStatus, PaymentMethod } from '../../../../../shared/types/order';
+
+// User types
+export enum UserRole {
+  ADMIN = 'admin',
+  CUSTOMER = 'customer',
+  DRIVER = 'driver',
+  BUSINESS = 'business'
+}
+
+// Order types
+export enum OrderStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  IN_TRANSIT = 'in_transit',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
+export enum PaymentMethod {
+  CARD = 'card',
+  CASH = 'cash',
+  WALLET = 'wallet',
+  OTHER = 'other'
+}
 
 // User types
 export interface AdminUser {

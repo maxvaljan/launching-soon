@@ -21,10 +21,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { UserRole } from '../../../../../shared/types/user';
+import { AdminUser, adminService } from '@/lib/services/admin';
 import { MoreHorizontal, Search, UserPlus, Filter } from 'lucide-react';
 import { toast } from 'sonner';
-import { AdminUser, adminService } from '@/lib/services/admin';
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
