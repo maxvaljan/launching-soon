@@ -27,6 +27,7 @@ const publicRoutes = [
 ];
 
 // Define which routes require specific roles
+// The 'startsWith' check in the code will ensure that all /admin/* paths are protected
 const roleBasedRoutes = {
   '/driver-dashboard': ['driver'],
   '/admin': ['admin'],
@@ -175,5 +176,6 @@ export const config = {
      * - api routes
      */
     '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
+    '/admin/:path*', // Explicitly match all admin routes
   ],
 };
