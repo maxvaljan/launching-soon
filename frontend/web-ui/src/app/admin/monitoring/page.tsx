@@ -28,7 +28,6 @@ import {
   XCircle,
   Disc,
   Globe,
-  Memory,
   MoreHorizontal
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -287,7 +286,7 @@ export default function AdminMonitoringPage() {
       case 'api':
         return <ActivitySquare className="h-5 w-5" />;
       case 'cache':
-        return <Memory className="h-5 w-5" />;
+        return <HardDrive className="h-5 w-5" />;
       case 'cdn':
         return <Globe className="h-5 w-5" />;
       default:
