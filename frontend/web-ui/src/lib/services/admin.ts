@@ -1,7 +1,7 @@
 import { supabase } from '../supabase';
 import { apiClient } from '../api';
-import { UserRole } from '../../../shared/types/user';
-import { OrderStatus, PaymentMethod } from '../../../shared/types/order';
+import { UserRole } from '../../../../../shared/types/user';
+import { OrderStatus, PaymentMethod } from '../../../../../shared/types/order';
 
 // User types
 export interface AdminUser {
