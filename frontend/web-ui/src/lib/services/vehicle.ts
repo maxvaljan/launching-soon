@@ -8,6 +8,8 @@ export interface Vehicle {
   dimensions: string;
   max_weight: string;
   image_url?: string;
+  icon_type?: string;
+  custom_icon_url?: string;
   active: boolean;
 }
 
@@ -41,11 +43,14 @@ const mapVehicleData = (vehicles: any[]): Vehicle[] => {
   return vehicles.map(vehicle => ({
     id: vehicle.id,
     name: vehicle.name,
-    category: getCategoryFromName(vehicle.name),
+    // Use explicit icon_type if available, otherwise infer from name
+    category: vehicle.icon_type || getCategoryFromName(vehicle.name),
     description: `Base price: ${formatPrice(vehicle.base_price)}, ${formatPricePerKm(vehicle.price_per_km)}`,
     dimensions: vehicle.capacity || 'Standard',
     max_weight: `${vehicle.max_weight} kg`,
     image_url: vehicle.image_url,
+    icon_type: vehicle.icon_type,
+    custom_icon_url: vehicle.custom_icon_url,
     active: vehicle.active
   }));
 };

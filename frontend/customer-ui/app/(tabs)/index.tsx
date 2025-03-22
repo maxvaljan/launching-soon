@@ -102,17 +102,32 @@ export default function HomeScreen() {
           ) : vehicles && vehicles.length > 0 ? (
             // If we have vehicles from the API, use those
             vehicles.map(vehicle => {
-              // Determine which icon to use based on the vehicle category
+              // Handle custom icon or use built-in icons
               let icon;
-              const category = vehicle.category?.toLowerCase() || '';
-              if (category.includes('motorcycle') || category.includes('courier')) {
-                icon = <MotorcycleSvg />;
-              } else if (category.includes('van')) {
-                icon = <VanSvg />;
-              } else if (category.includes('truck') || category.includes('lorry')) {
-                icon = <TruckSvg />;
+              
+              // If there's a custom icon URL, create an image component
+              if (vehicle.custom_icon_url) {
+                // Custom SVG component would be rendered here
+                // For React Native, you'd need to use Image or SvgUri from react-native-svg
+                // For now we'll fall back to standard icons
+                const category = (vehicle.icon_type || vehicle.category || '').toLowerCase();
+                if (category === 'bike' || category.includes('motorcycle') || category.includes('courier')) {
+                  icon = <MotorcycleSvg />;
+                } else if (category === 'truck' || category.includes('van') || category.includes('lorry')) {
+                  icon = <TruckSvg />;
+                } else {
+                  icon = <CarSvg />;
+                }
               } else {
-                icon = <CarSvg />;
+                // Use built-in icons based on category or icon_type
+                const category = (vehicle.icon_type || vehicle.category || '').toLowerCase();
+                if (category === 'bike' || category.includes('motorcycle') || category.includes('courier')) {
+                  icon = <MotorcycleSvg />;
+                } else if (category === 'truck' || category.includes('van') || category.includes('lorry')) {
+                  icon = <TruckSvg />;
+                } else {
+                  icon = <CarSvg />;
+                }
               }
               
               return (

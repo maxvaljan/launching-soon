@@ -367,6 +367,8 @@ export interface VehicleType {
   base_price: number;
   price_per_km: number;
   image_url?: string;
+  icon_type?: string;
+  custom_icon_url?: string;
   active: boolean;
   created_at: string;
 }

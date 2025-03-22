@@ -7,11 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload, Car, Bike, Truck } from 'lucide-react';
 import { adminService, VehicleType } from '@/lib/services/admin';
 
 // Schema for vehicle form validation
@@ -22,6 +23,8 @@ const vehicleFormSchema = z.object({
   base_price: z.coerce.number().positive('Must be a positive number'),
   price_per_km: z.coerce.number().positive('Must be a positive number'),
   image_url: z.string().optional(),
+  icon_type: z.string().default('car'),
+  custom_icon_url: z.string().optional(),
   active: z.boolean().default(true),
 });
 
@@ -38,6 +41,8 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isNewVehicle = !vehicle?.id;
 
+  const [iconTab, setIconTab] = useState('built-in');
+  
   // Initialize form with vehicle data or empty values
   const form = useForm<VehicleFormValues>({
     resolver: zodResolver(vehicleFormSchema),
@@ -48,6 +53,8 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
       base_price: vehicle?.base_price || 0,
       price_per_km: vehicle?.price_per_km || 0,
       image_url: vehicle?.image_url || '',
+      icon_type: vehicle?.icon_type || 'car',
+      custom_icon_url: vehicle?.custom_icon_url || '',
       active: vehicle?.active ?? true,
     },
   });
@@ -176,6 +183,80 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
                   </FormItem>
                 )}
               />
+            </div>
+            
+            <div className="mt-4">
+              <FormLabel className="block mb-2">Vehicle Icon</FormLabel>
+              <Tabs 
+                defaultValue="built-in" 
+                value={iconTab} 
+                onValueChange={setIconTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="built-in">Built-in Icons</TabsTrigger>
+                  <TabsTrigger value="custom">Custom SVG URL</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="built-in" className="mt-0">
+                  <div className="grid grid-cols-3 gap-3">
+                    <FormField
+                      control={form.control}
+                      name="icon_type"
+                      render={({ field }) => (
+                        <>
+                          <div 
+                            className={`flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer ${field.value === 'car' ? 'bg-blue-50 border-blue-400' : 'hover:bg-gray-50'}`}
+                            onClick={() => field.onChange('car')}
+                          >
+                            <Car size={32} className="mb-2" />
+                            <span className="text-sm font-medium">Car</span>
+                          </div>
+                        
+                          <div 
+                            className={`flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer ${field.value === 'bike' ? 'bg-blue-50 border-blue-400' : 'hover:bg-gray-50'}`}
+                            onClick={() => field.onChange('bike')}
+                          >
+                            <Bike size={32} className="mb-2" />
+                            <span className="text-sm font-medium">Motorcycle</span>
+                          </div>
+                        
+                          <div 
+                            className={`flex flex-col items-center justify-center p-4 border rounded-md cursor-pointer ${field.value === 'truck' ? 'bg-blue-50 border-blue-400' : 'hover:bg-gray-50'}`}
+                            onClick={() => field.onChange('truck')}
+                          >
+                            <Truck size={32} className="mb-2" />
+                            <span className="text-sm font-medium">Truck/Van</span>
+                          </div>
+                        </>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="custom" className="mt-0">
+                  <FormField
+                    control={form.control}
+                    name="custom_icon_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="space-y-2">
+                            <Input 
+                              placeholder="https://example.com/icon.svg" 
+                              {...field} 
+                            />
+                            <p className="text-xs text-gray-500">
+                              Enter the URL to a custom SVG icon. For best results, use a simple, single-color SVG file.
+                            </p>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
 
             <FormField
