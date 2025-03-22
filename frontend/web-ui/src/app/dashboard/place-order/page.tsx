@@ -172,11 +172,20 @@ export default function PlaceOrderPage() {
 
   const handleAddStop = () => {
     if (stops.length < 20) {
-      setStops([...stops, { address: '', type: 'stop' }]);
+      // Create a new array with the new stop inserted before the dropoff location
+      const newStops = [...stops];
+      // Insert the new stop at the second-to-last position (just before dropoff)
+      newStops.splice(newStops.length - 1, 0, { address: '', type: 'stop' });
+      setStops(newStops);
     }
   };
 
   const handleRemoveStop = (index: number) => {
+    // Don't allow removing the pickup (first) or dropoff (last) stops
+    if (index === 0 || index === stops.length - 1) {
+      return;
+    }
+    
     const newStops = stops.filter((_, i) => i !== index);
     setStops(newStops);
   };
@@ -325,67 +334,93 @@ export default function PlaceOrderPage() {
               ROUTE (MAX. 20 STOPS)
             </Label>
             
-            <div className="space-y-3">
+            <div className="border border-gray-200 rounded-lg p-6 relative">
               {stops.map((stop, index) => (
                 <div key={index} className="relative">
-                  <Input
-                    placeholder={stop.type === 'pickup' 
-                      ? "Pick-up location" 
-                      : stop.type === 'dropoff' 
-                        ? "Drop-off location" 
-                        : "Stop location"
-                    }
-                    className="pl-10 h-12 border-gray-300"
-                    value={stop.address}
-                    onChange={(e) => handleAddressChange(e.target.value, index)}
-                  />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                    <div className={`w-4 h-4 rounded-full ${
-                      stop.type === 'pickup' 
-                        ? 'bg-green-500' 
-                        : stop.type === 'dropoff' 
-                          ? 'bg-red-500'
-                          : 'bg-blue-500'
-                    }`} />
-                  </div>
-                  
-                  {index > 1 && (
-                    <button 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      onClick={() => handleRemoveStop(index)}
-                    >
-                      ×
-                    </button>
+                  {/* Vertical dotted line connecting stops */}
+                  {index < stops.length - 1 && (
+                    <div className="absolute left-[20px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
                   )}
                   
-                  {activeInput === index && suggestions.length > 0 && (
-                    <div 
-                      ref={suggestionsRef}
-                      className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
-                    >
-                      {suggestions.map((suggestion, i) => (
-                        <div 
-                          key={i}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => handleSuggestionSelect(suggestion, index)}
-                        >
-                          {suggestion.place_name}
+                  <div className="flex items-center mb-4 relative z-10">
+                    {/* Stop icon based on type */}
+                    <div className="mr-3">
+                      {stop.type === 'pickup' ? (
+                        <div className="w-5 h-5 rounded-full bg-[#FF5A1F] border-2 border-white"></div>
+                      ) : stop.type === 'dropoff' ? (
+                        <div className="w-5 h-5 flex items-center justify-center">
+                          <svg className="text-[#FF5A1F]" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21C12 21 19 15.5 19 10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10C5 15.5 12 21 12 21Z" fill="currentColor" />
+                            <circle cx="12" cy="10" r="3" fill="white" />
+                          </svg>
                         </div>
-                      ))}
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-gray-400 border-2 border-white"></div>
+                      )}
                     </div>
-                  )}
+                    
+                    {/* Input field */}
+                    <div className="flex-1 relative">
+                      <input
+                        type="text"
+                        placeholder={
+                          stop.type === 'pickup' 
+                            ? "Pick-up location" 
+                            : stop.type === 'dropoff' 
+                              ? "Drop-off location" 
+                              : "Mid-stop location"
+                        }
+                        className="w-full py-2 bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-gray-400 outline-none text-gray-700"
+                        value={stop.address}
+                        onChange={(e) => handleAddressChange(e.target.value, index)}
+                      />
+                      
+                      {/* X button to remove stop */}
+                      <button 
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
+                        onClick={() => handleRemoveStop(index)}
+                        aria-label="Remove this stop"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M18 6L6 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M6 6L18 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      
+                      {/* Address suggestions dropdown */}
+                      {activeInput === index && suggestions.length > 0 && (
+                        <div 
+                          ref={suggestionsRef}
+                          className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
+                        >
+                          {suggestions.map((suggestion, i) => (
+                            <div 
+                              key={i}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => handleSuggestionSelect(suggestion, index)}
+                            >
+                              {suggestion.place_name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
+              
+              {/* Add Stop button */}
+              <button 
+                className="flex items-center text-[#FF5A1F] mt-2"
+                onClick={handleAddStop}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                  <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Add Stop
+              </button>
             </div>
-            
-            <Button 
-              variant="outline" 
-              className="w-full justify-start h-12 border-dashed border-gray-300"
-              onClick={handleAddStop}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Stop
-            </Button>
           </div>
           
           {/* Vehicle Type Section */}
