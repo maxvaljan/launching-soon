@@ -75,4 +75,7 @@ export async function PATCH(
       { status: 500 }
     );
   }
-} 
+}
+
+// Default export for Next.js API route compatibility
+export const dynamic = 'force-dynamic'; 

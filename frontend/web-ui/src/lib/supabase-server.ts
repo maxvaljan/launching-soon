@@ -23,6 +23,8 @@ export async function createServerSupabaseClient() {
 }
 
 /**
- * Direct server client for cases where cookies aren't needed
+ * Get direct server client for cases where cookies aren't needed
  */
-export const serverSupabase = createClient(supabaseUrl, supabaseAnonKey); 
+export async function getServerSupabase() {
+  return createClient(supabaseUrl, supabaseAnonKey);
+} 
