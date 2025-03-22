@@ -63,9 +63,17 @@ export async function PUT(
     
     // Check user authentication and admin role
     const user = await getCurrentUser();
+    
+    // Log auth status for debugging
+    console.log(`Vehicle update attempt for ID ${id}`, { 
+      authenticated: !!user,
+      userRole: user?.role,
+      userId: user?.id
+    });
+    
     if (!user || user.role !== 'admin') {
       return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
+        { success: false, message: 'Unauthorized - Admin role required' },
         { status: 403 }
       );
     }
@@ -90,21 +98,7 @@ export async function PUT(
       }
     }
     
-    // Check if vehicle exists
-    const { data: existingVehicle, error: checkError } = await supabase
-      .from('vehicle_types')
-      .select('id')
-      .eq('id', id)
-      .single();
-    
-    if (checkError || !existingVehicle) {
-      return NextResponse.json(
-        { success: false, message: 'Vehicle type not found' },
-        { status: 404 }
-      );
-    }
-    
-    // Update vehicle
+    // Update vehicle type
     const { data, error } = await supabase
       .from('vehicle_types')
       .update(vehicleData)
@@ -113,9 +107,9 @@ export async function PUT(
       .single();
     
     if (error) {
-      console.error(`Error updating vehicle type ${id}:`, error);
+      console.error(`Error updating vehicle: ${error.message}`);
       return NextResponse.json(
-        { success: false, message: error.message || 'Failed to update vehicle type' },
+        { success: false, message: error.message || 'Failed to update vehicle' },
         { status: 500 }
       );
     }
@@ -125,15 +119,21 @@ export async function PUT(
       data
     });
   } catch (error) {
-    console.error(`Error in PUT /api/vehicles/types/[id]:`, error);
+    console.error('Error in PUT /api/vehicles/types/[id]:', error);
+    
+    // Provide more detailed error message
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Internal server error';
+      
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { success: false, message: errorMessage },
       { status: 500 }
     );
   }
 }
 
-// DELETE /api/vehicles/types/[id] - Delete a vehicle type
+// DELETE /api/vehicles/types/[id] - Delete a vehicle type by ID
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -143,9 +143,17 @@ export async function DELETE(
     
     // Check user authentication and admin role
     const user = await getCurrentUser();
+    
+    // Log auth status for debugging
+    console.log(`Vehicle delete attempt for ID ${id}`, { 
+      authenticated: !!user,
+      userRole: user?.role,
+      userId: user?.id
+    });
+    
     if (!user || user.role !== 'admin') {
       return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
+        { success: false, message: 'Unauthorized - Admin role required' },
         { status: 403 }
       );
     }
@@ -167,56 +175,64 @@ export async function DELETE(
       .single();
     
     if (checkError || !existingVehicle) {
+      const errorMessage = checkError ? checkError.message : 'Vehicle not found';
+      console.error(`Error checking vehicle existence: ${errorMessage}`);
       return NextResponse.json(
-        { success: false, message: 'Vehicle type not found' },
-        { status: 404 }
+        { success: false, message: errorMessage },
+        { status: checkError?.code === 'PGRST116' ? 404 : 500 }
       );
     }
     
-    // Check if vehicle is used in orders
-    const { data: orders, error: orderError } = await supabase
+    // Check if vehicle is referenced in orders
+    const { count: orderCount, error: orderError } = await supabase
       .from('orders')
-      .select('id')
-      .eq('vehicle_type_id', id)
-      .limit(1);
+      .select('id', { count: 'exact', head: true })
+      .eq('vehicle_type_id', id);
     
     if (orderError) {
-      console.error(`Error checking orders for vehicle ${id}:`, orderError);
+      console.error(`Error checking vehicle references in orders: ${orderError.message}`);
       return NextResponse.json(
-        { success: false, message: 'Failed to check for vehicle usage in orders' },
+        { success: false, message: 'Error checking if vehicle is in use' },
         { status: 500 }
       );
     }
     
-    if (orders && orders.length > 0) {
+    // Prevent deletion if vehicle is used in orders
+    if (orderCount && orderCount > 0) {
       return NextResponse.json(
-        { success: false, message: 'Cannot delete vehicle type that is used in orders' },
+        { success: false, message: 'Cannot delete vehicle that is used in orders' },
         { status: 400 }
       );
     }
     
-    // Delete vehicle
-    const { error } = await supabase
+    // Delete the vehicle
+    const { error: deleteError } = await supabase
       .from('vehicle_types')
       .delete()
       .eq('id', id);
     
-    if (error) {
-      console.error(`Error deleting vehicle type ${id}:`, error);
+    if (deleteError) {
+      console.error(`Error deleting vehicle: ${deleteError.message}`);
       return NextResponse.json(
-        { success: false, message: error.message || 'Failed to delete vehicle type' },
+        { success: false, message: deleteError.message || 'Failed to delete vehicle' },
         { status: 500 }
       );
     }
     
     return NextResponse.json({
       success: true,
-      message: `Vehicle type with ID ${id} deleted successfully`
+      message: 'Vehicle deleted successfully'
     });
   } catch (error) {
-    console.error(`Error in DELETE /api/vehicles/types/[id]:`, error);
+    console.error('Error in DELETE /api/vehicles/types/[id]:', error);
+    
+    // Provide more detailed error message
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Internal server error';
+      
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
+      { success: false, message: errorMessage },
       { status: 500 }
     );
   }

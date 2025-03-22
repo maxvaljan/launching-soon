@@ -172,12 +172,18 @@ export const vehicleService = {
         credentials: 'include',
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update vehicle');
+        const errorMessage = result.message || 'Failed to update vehicle';
+        
+        if (response.status === 403) {
+          throw new Error('You do not have permission to update vehicles. Admin access required.');
+        }
+        
+        throw new Error(errorMessage);
       }
 
-      const result = await response.json();
       return result.data ? mapVehicleData([result.data])[0] : null;
     } catch (error) {
       console.error(`Error updating vehicle ${id}:`, error);
@@ -222,9 +228,16 @@ export const vehicleService = {
         credentials: 'include',
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete vehicle');
+        const errorMessage = result.message || 'Failed to delete vehicle';
+        
+        if (response.status === 403) {
+          throw new Error('You do not have permission to delete vehicles. Admin access required.');
+        }
+        
+        throw new Error(errorMessage);
       }
 
       return true;
