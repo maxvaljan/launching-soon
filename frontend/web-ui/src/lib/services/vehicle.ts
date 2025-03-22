@@ -1,4 +1,4 @@
-import { supabase } from '../supabase';
+import { supabase, createSupabaseClient } from '../supabase';
 
 export interface Vehicle {
   id: string;
@@ -77,7 +77,9 @@ export const vehicleService = {
   // Get all vehicles
   async getAllVehicles(): Promise<Vehicle[]> {
     try {
-      const { data, error } = await supabase
+      // Use createSupabaseClient to ensure consistent API
+      const supabaseClient = createSupabaseClient();
+      const { data, error } = await supabaseClient
         .from('vehicle_types')
         .select('*')
         .order('display_order', { ascending: true });
@@ -96,7 +98,9 @@ export const vehicleService = {
   // Get all active vehicles for customer display
   async getActiveVehicles(): Promise<Vehicle[]> {
     try {
-      const { data, error } = await supabase
+      // Use createSupabaseClient to ensure consistent API
+      const supabaseClient = createSupabaseClient();
+      const { data, error } = await supabaseClient
         .from('vehicle_types')
         .select('*')
         .eq('active', true)
@@ -116,7 +120,9 @@ export const vehicleService = {
   // Get a specific vehicle by ID
   async getVehicleById(id: string): Promise<Vehicle | null> {
     try {
-      const { data, error } = await supabase
+      // Use createSupabaseClient to ensure consistent API
+      const supabaseClient = createSupabaseClient();
+      const { data, error } = await supabaseClient
         .from('vehicle_types')
         .select('*')
         .eq('id', id)

@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, createSupabaseClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
 // GET /api/vehicles/types - Get all vehicle types
 export async function GET(request: NextRequest) {
   try {
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
+    
     // Parse query params for active filter
     const { searchParams } = new URL(request.url);
     const activeOnly = searchParams.get('active') === 'true';
     
     // Build query
-    let query = supabase
+    let query = supabaseClient
       .from('vehicle_types')
       .select('*')
       .order('display_order', { ascending: true });
@@ -57,6 +60,9 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
+    
     // Parse request body
     const vehicleData = await request.json();
     
@@ -84,7 +90,7 @@ export async function POST(request: NextRequest) {
     vehicleData.display_order = vehicleData.display_order || 0;
     
     // Insert new vehicle type
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('vehicle_types')
       .insert([vehicleData])
       .select()

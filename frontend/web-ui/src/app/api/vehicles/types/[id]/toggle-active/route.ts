@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, createSupabaseClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
 // PATCH /api/vehicles/types/[id]/toggle-active - Toggle vehicle active status
@@ -19,6 +19,9 @@ export async function PATCH(
       );
     }
     
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
+    
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidPattern.test(id)) {
@@ -29,7 +32,7 @@ export async function PATCH(
     }
     
     // Get current vehicle status
-    const { data: vehicle, error: fetchError } = await supabase
+    const { data: vehicle, error: fetchError } = await supabaseClient
       .from('vehicle_types')
       .select('active')
       .eq('id', id)
@@ -46,7 +49,7 @@ export async function PATCH(
     const newStatus = !vehicle.active;
     
     // Update the vehicle status
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('vehicle_types')
       .update({ active: newStatus })
       .eq('id', id)

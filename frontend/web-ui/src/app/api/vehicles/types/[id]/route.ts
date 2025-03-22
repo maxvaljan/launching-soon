@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, createSupabaseClient } from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 
 // GET /api/vehicles/types/[id] - Get a vehicle type by ID
@@ -9,6 +9,9 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+    
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
 
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -19,7 +22,7 @@ export async function GET(
       );
     }
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('vehicle_types')
       .select('*')
       .eq('id', id)
@@ -87,6 +90,9 @@ export async function PUT(
       );
     }
     
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
+    
     // Parse request body
     const vehicleData = await request.json();
     
@@ -99,7 +105,7 @@ export async function PUT(
     }
     
     // Update vehicle type
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('vehicle_types')
       .update(vehicleData)
       .eq('id', id)
@@ -167,8 +173,11 @@ export async function DELETE(
       );
     }
     
+    // Create a consistent Supabase client
+    const supabaseClient = createSupabaseClient();
+    
     // Check if vehicle exists
-    const { data: existingVehicle, error: checkError } = await supabase
+    const { data: existingVehicle, error: checkError } = await supabaseClient
       .from('vehicle_types')
       .select('id')
       .eq('id', id)
@@ -184,7 +193,7 @@ export async function DELETE(
     }
     
     // Check if vehicle is referenced in orders
-    const { count: orderCount, error: orderError } = await supabase
+    const { count: orderCount, error: orderError } = await supabaseClient
       .from('orders')
       .select('id', { count: 'exact', head: true })
       .eq('vehicle_type_id', id);
@@ -206,7 +215,7 @@ export async function DELETE(
     }
     
     // Delete the vehicle
-    const { error: deleteError } = await supabase
+    const { error: deleteError } = await supabaseClient
       .from('vehicle_types')
       .delete()
       .eq('id', id);

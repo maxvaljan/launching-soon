@@ -17,23 +17,16 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
  * For browser environments, which improves auth reliability
  */
 export const supabase = typeof window !== 'undefined' 
-  ? createClientComponentClient({
-      supabaseUrl,
-      supabaseKey: supabaseAnonKey,
-      options: {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        },
-        global: {
-          headers: {
-            'x-client-info': 'nextjs'
-          }
-        }
-      }
-    })
+  ? createClientComponentClient()
   : createClient(supabaseUrl, supabaseAnonKey);
+
+// Export a consistent API function to create a client when needed
+// This helps prevent "c.supabase.from is not a function" errors
+export const createSupabaseClient = () => {
+  return typeof window !== 'undefined' 
+    ? createClientComponentClient()
+    : createClient(supabaseUrl, supabaseAnonKey);
+};
 
 /**
  * Checks if the current user session is valid
