@@ -17,6 +17,7 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const routeRef = useRef<string | null>(null);
 
   // Fetch Mapbox token only once on component mount
   useEffect(() => {
@@ -66,12 +67,21 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
+        style: 'mapbox://styles/mapbox/light-v11', // Using a light theme for minimalist look
         center: [6.9578, 50.9367], // Cologne, Germany
         zoom: 12,
         attributionControl: false,
         renderWorldCopies: false, // Performance improvement
       });
+
+      // Add zoom and rotation controls
+      map.current.addControl(
+        new mapboxgl.NavigationControl({
+          visualizePitch: true,
+          showCompass: true,
+        }),
+        'bottom-right'
+      );
 
       // Add performance optimization: reduce unnecessary repaints
       map.current.on('load', () => {
@@ -93,6 +103,62 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
     };
   }, [mapboxToken]);
 
+  // Handle route drawing between points
+  const drawRoute = useCallback(async () => {
+    if (!map.current || !pickupLocation || !dropoffLocation || !mapboxToken) return;
+    
+    try {
+      // Remove any existing route
+      if (routeRef.current && map.current.getSource(routeRef.current)) {
+        map.current.removeLayer(`${routeRef.current}-layer`);
+        map.current.removeSource(routeRef.current);
+      }
+      
+      // Create a unique ID for this route
+      const routeId = `route-${Date.now()}`;
+      routeRef.current = routeId;
+      
+      // Get directions from Mapbox
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${pickupLocation[0]},${pickupLocation[1]};${dropoffLocation[0]},${dropoffLocation[1]}?steps=true&geometries=geojson&access_token=${mapboxToken}`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0].geometry;
+        
+        // Add the route to the map
+        if (map.current) {
+          map.current.addSource(routeId, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: route
+            }
+          });
+          
+          map.current.addLayer({
+            id: `${routeId}-layer`,
+            type: 'line',
+            source: routeId,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round'
+            },
+            paint: {
+              'line-color': '#192338', // MaxMove navy color
+              'line-width': 4,
+              'line-opacity': 0.8
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error drawing route:', err);
+    }
+  }, [pickupLocation, dropoffLocation, mapboxToken]);
+
   // Handle markers update efficiently with useCallback
   const updateMarkers = useCallback(() => {
     if (!map.current) return;
@@ -102,9 +168,35 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
 
+      // Create custom marker elements for a more modern look
+      const createCustomMarker = (type: 'pickup' | 'dropoff') => {
+        const element = document.createElement('div');
+        element.className = 'custom-marker';
+        element.style.width = '24px';
+        element.style.height = '24px';
+        element.style.borderRadius = '50%';
+        element.style.display = 'flex';
+        element.style.justifyContent = 'center';
+        element.style.alignItems = 'center';
+        element.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        
+        if (type === 'pickup') {
+          element.style.backgroundColor = '#4CAF50'; // Green
+          element.innerHTML = '<span style="color: white; font-weight: bold;">P</span>';
+        } else {
+          element.style.backgroundColor = '#F44336'; // Red
+          element.innerHTML = '<span style="color: white; font-weight: bold;">D</span>';
+        }
+        
+        return element;
+      };
+
       // Add pickup marker
       if (pickupLocation) {
-        const marker = new mapboxgl.Marker({ color: '#4CAF50' })
+        const marker = new mapboxgl.Marker({
+          element: createCustomMarker('pickup'),
+          anchor: 'center'
+        })
           .setLngLat(pickupLocation)
           .addTo(map.current);
         markersRef.current.push(marker);
@@ -112,7 +204,10 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
 
       // Add dropoff marker
       if (dropoffLocation) {
-        const marker = new mapboxgl.Marker({ color: '#F44336' })
+        const marker = new mapboxgl.Marker({
+          element: createCustomMarker('dropoff'),
+          anchor: 'center'
+        })
           .setLngLat(dropoffLocation)
           .addTo(map.current);
         markersRef.current.push(marker);
@@ -125,14 +220,31 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
           .extend(dropoffLocation);
 
         map.current.fitBounds(bounds, {
-          padding: 100,
+          padding: { top: 100, bottom: 100, left: 100, right: 100 },
+          duration: 1000
+        });
+        
+        // Draw a route between the points
+        drawRoute();
+      } else if (pickupLocation) {
+        // If only pickup is provided, center on it
+        map.current.flyTo({
+          center: pickupLocation,
+          zoom: 14,
+          duration: 1000
+        });
+      } else if (dropoffLocation) {
+        // If only dropoff is provided, center on it
+        map.current.flyTo({
+          center: dropoffLocation,
+          zoom: 14,
           duration: 1000
         });
       }
     } catch (err) {
       toast.error('Error updating map markers');
     }
-  }, [pickupLocation, dropoffLocation]);
+  }, [pickupLocation, dropoffLocation, drawRoute]);
 
   // Update markers when locations change
   useEffect(() => {
@@ -140,10 +252,12 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
   }, [updateMarkers]);
 
   return (
-    <div className="h-full">
+    <div className="h-full rounded-md overflow-hidden shadow-sm border border-gray-200">
       <div ref={mapContainer} className="w-full h-full" />
     </div>
   );
 });
+
+Map.displayName = 'Map';
 
 export default Map;

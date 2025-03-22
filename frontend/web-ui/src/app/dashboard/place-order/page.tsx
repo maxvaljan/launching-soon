@@ -4,11 +4,16 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import Map from "@/components/Map";
-import VehicleSelection from "@/components/VehicleSelection";
 import { Button } from "@/components/ui/button";
+import { ArrowDown, Info, MapPin, Plus, MapIcon, ChevronDown } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { PopoverTrigger, Popover, PopoverContent } from "@/components/ui/popover";
 
 // New order management components
-import RouteManager from "@/components/order/RouteManager";
 import FileImportActions from "@/components/order/FileImportActions";
 import PastOrdersDialog from "@/components/order/PastOrdersDialog";
 
@@ -29,8 +34,18 @@ interface PastOrder {
   dropoff_address: string;
 }
 
+interface VehicleType {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  dimensions: string;
+  max_weight: string;
+}
+
 export default function PlaceOrderPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
   const [stops, setStops] = useState<Stop[]>([
     { address: '', type: 'pickup' },
     { address: '', type: 'dropoff' }
@@ -40,6 +55,14 @@ export default function PlaceOrderPage() {
   const [pastOrdersOpen, setPastOrdersOpen] = useState(false);
   const [pastOrders, setPastOrders] = useState<PastOrder[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [additionalServices, setAdditionalServices] = useState({
+    standards: false,
+    secureZone: false,
+    refrigeratedChilled: false,
+    refrigeratedFrozen: false,
+    tailboard: false,
+    doorToDoor: false,
+  });
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const mapboxTokenRef = useRef<string | null>(null);
 
@@ -79,7 +102,35 @@ export default function PlaceOrderPage() {
     };
 
     fetchMapboxToken();
+    fetchVehicleTypes();
   }, []);
+
+  const fetchVehicleTypes = async () => {
+    try {
+      // Use relative URL for API endpoints in Next.js
+      const response = await fetch('/api/vehicles/types');
+      
+      if (response.ok) {
+        const data = await response.json();
+        setVehicleTypes(data.data || []);
+        return;
+      }
+    } catch (error) {
+      console.warn('API fetch failed, falling back to Supabase');
+    }
+
+    // Fallback to direct Supabase query
+    try {
+      const { data, error } = await supabase
+        .from('vehicle_types')
+        .select('*');
+
+      if (error) throw error;
+      setVehicleTypes(data || []);
+    } catch (error) {
+      console.error('Error fetching vehicle types:', error);
+    }
+  };
 
   const handleAddressChange = async (value: string, index: number) => {
     if (!mapboxTokenRef.current) return;
@@ -120,7 +171,7 @@ export default function PlaceOrderPage() {
   };
 
   const handleAddStop = () => {
-    if (stops.length < 20) { // Updated to 20 to match RouteManager
+    if (stops.length < 20) {
       setStops([...stops, { address: '', type: 'stop' }]);
     }
   };
@@ -233,51 +284,283 @@ export default function PlaceOrderPage() {
     }
   };
 
+  const toggleAdditionalService = (service: keyof typeof additionalServices) => {
+    setAdditionalServices({
+      ...additionalServices,
+      [service]: !additionalServices[service]
+    });
+  };
+
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
       {/* Left Side - Order Form */}
       <div className="lg:w-1/2 p-6 flex flex-col h-full">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-maxmove-900">
-            Place New Order
+          <h1 className="text-2xl font-bold text-maxmove-navy">
+            Place Order
           </h1>
-          <FileImportActions 
-            isLoading={isLoading} 
-            onPastOrders={handleOpenPastOrders} 
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="bg-white border-maxmove-gray">
+                Import Addresses <ChevronDown className="ml-2 w-4 h-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-0" align="end">
+              <div className="flex flex-col">
+                <Button variant="ghost" className="justify-start text-left h-10" onClick={handleOpenPastOrders}>
+                  Load from Past Orders
+                </Button>
+                <Button variant="ghost" className="justify-start text-left h-10">
+                  Import CSV
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
-        <div className="flex-1 flex flex-col space-y-6 overflow-auto pr-4 pb-4 custom-scrollbar">
-          <RouteManager />
+        <div className="flex-1 overflow-auto pr-2 pb-4 custom-scrollbar space-y-6">
+          {/* Route Section */}
+          <div className="space-y-4">
+            <Label className="text-sm text-gray-500 font-medium">
+              ROUTE (MAX. 20 STOPS)
+            </Label>
+            
+            <div className="space-y-3">
+              {stops.map((stop, index) => (
+                <div key={index} className="relative">
+                  <Input
+                    placeholder={stop.type === 'pickup' 
+                      ? "Pick-up location" 
+                      : stop.type === 'dropoff' 
+                        ? "Drop-off location" 
+                        : "Stop location"
+                    }
+                    className="pl-10 h-12 border-gray-300"
+                    value={stop.address}
+                    onChange={(e) => handleAddressChange(e.target.value, index)}
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    <div className={`w-4 h-4 rounded-full ${
+                      stop.type === 'pickup' 
+                        ? 'bg-green-500' 
+                        : stop.type === 'dropoff' 
+                          ? 'bg-red-500'
+                          : 'bg-blue-500'
+                    }`} />
+                  </div>
+                  
+                  {index > 1 && (
+                    <button 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      onClick={() => handleRemoveStop(index)}
+                    >
+                      ×
+                    </button>
+                  )}
+                  
+                  {activeInput === index && suggestions.length > 0 && (
+                    <div 
+                      ref={suggestionsRef}
+                      className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
+                    >
+                      {suggestions.map((suggestion, i) => (
+                        <div 
+                          key={i}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                          onClick={() => handleSuggestionSelect(suggestion, index)}
+                        >
+                          {suggestion.place_name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <Button 
+              variant="outline" 
+              className="w-full justify-start h-12 border-dashed border-gray-300"
+              onClick={handleAddStop}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Stop
+            </Button>
+          </div>
           
-          <VehicleSelection onVehicleSelect={setSelectedVehicle} />
+          {/* Vehicle Type Section */}
+          <div className="space-y-4">
+            <Label className="text-sm text-gray-500 font-medium">
+              VEHICLE TYPE
+            </Label>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {vehicleTypes.map(vehicle => (
+                <div 
+                  key={vehicle.id}
+                  className={`cursor-pointer group rounded-md border p-4 text-center transition-all ${
+                    selectedVehicle === vehicle.id 
+                      ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme' 
+                      : 'border-gray-200 hover:border-maxmove-gray'
+                  }`}
+                  onClick={() => setSelectedVehicle(vehicle.id)}
+                >
+                  <div className="text-4xl mb-2">
+                    {vehicle.category.includes('car') ? '🚗' : 
+                     vehicle.category.includes('van') ? '🚐' : 
+                     vehicle.category.includes('truck') ? '🚚' : 
+                     vehicle.category.includes('bike') ? '🛵' : '🚚'}
+                  </div>
+                  <p className="font-medium text-sm">{vehicle.name}</p>
+                  <p className="text-xs text-gray-500">{vehicle.max_weight && `Up to ${vehicle.max_weight}`}</p>
+                  {selectedVehicle === vehicle.id && (
+                    <div className="mt-2 text-xs font-medium text-maxmove-navy">
+                      <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                      Selected
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Additional Services Section */}
+          <div className="space-y-4">
+            <Label className="text-sm text-gray-500 font-medium">
+              ADDITIONAL SERVICES
+            </Label>
+            
+            <div className="space-y-3 bg-white p-4 rounded-md border border-gray-200">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="vehicle-standards" 
+                  checked={additionalServices.standards}
+                  onCheckedChange={() => toggleAdditionalService('standards')}
+                />
+                <label 
+                  htmlFor="vehicle-standards"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Vehicle Standards
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="secure-zone" 
+                  checked={additionalServices.secureZone}
+                  onCheckedChange={() => toggleAdditionalService('secureZone')}
+                />
+                <label 
+                  htmlFor="secure-zone"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Secure zone (extra delivery time required)
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="refrigerated-chilled" 
+                  checked={additionalServices.refrigeratedChilled}
+                  onCheckedChange={() => toggleAdditionalService('refrigeratedChilled')}
+                />
+                <label 
+                  htmlFor="refrigerated-chilled"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Refrigerated Service (Chilled 0-10°C)
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="refrigerated-frozen" 
+                  checked={additionalServices.refrigeratedFrozen}
+                  onCheckedChange={() => toggleAdditionalService('refrigeratedFrozen')}
+                />
+                <label 
+                  htmlFor="refrigerated-frozen"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Refrigerated Service (Frozen -15°C)
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="tailboard" 
+                  checked={additionalServices.tailboard}
+                  onCheckedChange={() => toggleAdditionalService('tailboard')}
+                />
+                <label 
+                  htmlFor="tailboard"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Tailboard
+                </label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="door-to-door" 
+                  checked={additionalServices.doorToDoor}
+                  onCheckedChange={() => toggleAdditionalService('doorToDoor')}
+                />
+                <label 
+                  htmlFor="door-to-door"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Door-to-door (loading & unloading)
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-4">
+            <Button 
+              onClick={handleCreateOrder} 
+              className="w-full h-12 bg-maxmove-navy hover:bg-maxmove-dark-blue text-white"
+            >
+              Continue to Checkout
+            </Button>
+          </div>
         </div>
-
-        <div className="pt-6 border-t mt-6">
-          <Button 
-            className="w-full"
-            size="lg"
-            onClick={handleCreateOrder}
-            disabled={!selectedVehicle || !stops[0].coordinates || !stops[stops.length - 1].coordinates}
-          >
-            Create Order
-          </Button>
-        </div>
-
-        <PastOrdersDialog 
-          open={pastOrdersOpen} 
-          onOpenChange={setPastOrdersOpen} 
-          pastOrders={pastOrders} 
-        />
       </div>
-
+      
       {/* Right Side - Map */}
-      <div className="lg:w-1/2 h-[400px] lg:h-full">
-        <Map
+      <div className="lg:w-1/2 h-[50vh] lg:h-full relative">
+        <Map 
           pickupLocation={stops[0].coordinates}
           dropoffLocation={stops[stops.length - 1].coordinates}
         />
+        <div className="absolute bottom-4 right-4 flex space-x-2">
+          <Button 
+            variant="outline" 
+            className="bg-white shadow-md text-maxmove-navy"
+            size="sm"
+          >
+            <MapIcon className="h-4 w-4 mr-2" />
+            Terrain
+          </Button>
+          <Button 
+            variant="outline" 
+            className="bg-white shadow-md text-maxmove-navy"
+            size="sm"
+          >
+            <MapPin className="h-4 w-4 mr-2" />
+            My Location
+          </Button>
+        </div>
       </div>
+      
+      {pastOrdersOpen && (
+        <PastOrdersDialog 
+          open={pastOrdersOpen}
+          onOpenChange={setPastOrdersOpen}
+          pastOrders={pastOrders}
+        />
+      )}
     </div>
   );
 }
