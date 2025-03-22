@@ -131,8 +131,7 @@ export default function AdminVehiclesPage() {
   const filteredVehicles = vehicles.filter(vehicle => {
     const matchesSearch = 
       vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehicle.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehicle.category.toLowerCase().includes(searchTerm.toLowerCase());
+      vehicle.description.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesActive = 
       activeFilter === 'all' || 
@@ -190,9 +189,7 @@ export default function AdminVehiclesPage() {
           <TableCaption>A list of all vehicle types in the system</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">Order</TableHead>
               <TableHead>Vehicle Type</TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>Dimensions</TableHead>
               <TableHead>Max Weight</TableHead>
               <TableHead>Price</TableHead>
@@ -212,9 +209,6 @@ export default function AdminVehiclesPage() {
             ) : (
               filteredVehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
-                  <TableCell>
-                    <Badge variant="outline">{vehicle.display_order}</Badge>
-                  </TableCell>
                   <TableCell className="font-medium">
                     <div className="flex items-center">
                       {vehicle.svg_icon ? (
@@ -228,7 +222,6 @@ export default function AdminVehiclesPage() {
                       {vehicle.name}
                     </div>
                   </TableCell>
-                  <TableCell>{vehicle.category}</TableCell>
                   <TableCell>{vehicle.dimensions}</TableCell>
                   <TableCell>{vehicle.max_weight}</TableCell>
                   <TableCell>

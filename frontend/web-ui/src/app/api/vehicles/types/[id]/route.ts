@@ -1,0 +1,223 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
+import { getCurrentUser } from '@/lib/auth';
+
+// GET /api/vehicles/types/[id] - Get a vehicle type by ID
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+
+    // Validate UUID format
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidPattern.test(id)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid ID format' },
+        { status: 400 }
+      );
+    }
+    
+    const { data, error } = await supabase
+      .from('vehicle_types')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return NextResponse.json(
+          { success: false, message: 'Vehicle type not found' },
+          { status: 404 }
+        );
+      }
+      
+      console.error(`Error fetching vehicle type ${id}:`, error);
+      return NextResponse.json(
+        { success: false, message: 'Failed to fetch vehicle type' },
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({
+      success: true,
+      data
+    });
+  } catch (error) {
+    console.error(`Error in GET /api/vehicles/types/[id]:`, error);
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/vehicles/types/[id] - Update a vehicle type
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    
+    // Check user authentication and admin role
+    const user = await getCurrentUser();
+    if (!user || user.role !== 'admin') {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 403 }
+      );
+    }
+    
+    // Validate UUID format
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidPattern.test(id)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid ID format' },
+        { status: 400 }
+      );
+    }
+    
+    // Parse request body
+    const vehicleData = await request.json();
+    
+    // Ensure numeric fields are properly formatted
+    const numericFields = ['base_price', 'price_per_km', 'minimum_distance', 'display_order'];
+    for (const field of numericFields) {
+      if (vehicleData[field] !== undefined) {
+        vehicleData[field] = Number(vehicleData[field]);
+      }
+    }
+    
+    // Check if vehicle exists
+    const { data: existingVehicle, error: checkError } = await supabase
+      .from('vehicle_types')
+      .select('id')
+      .eq('id', id)
+      .single();
+    
+    if (checkError || !existingVehicle) {
+      return NextResponse.json(
+        { success: false, message: 'Vehicle type not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Update vehicle
+    const { data, error } = await supabase
+      .from('vehicle_types')
+      .update(vehicleData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error(`Error updating vehicle type ${id}:`, error);
+      return NextResponse.json(
+        { success: false, message: error.message || 'Failed to update vehicle type' },
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({
+      success: true,
+      data
+    });
+  } catch (error) {
+    console.error(`Error in PUT /api/vehicles/types/[id]:`, error);
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/vehicles/types/[id] - Delete a vehicle type
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    
+    // Check user authentication and admin role
+    const user = await getCurrentUser();
+    if (!user || user.role !== 'admin') {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 403 }
+      );
+    }
+    
+    // Validate UUID format
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidPattern.test(id)) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid ID format' },
+        { status: 400 }
+      );
+    }
+    
+    // Check if vehicle exists
+    const { data: existingVehicle, error: checkError } = await supabase
+      .from('vehicle_types')
+      .select('id')
+      .eq('id', id)
+      .single();
+    
+    if (checkError || !existingVehicle) {
+      return NextResponse.json(
+        { success: false, message: 'Vehicle type not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Check if vehicle is used in orders
+    const { data: orders, error: orderError } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('vehicle_type_id', id)
+      .limit(1);
+    
+    if (orderError) {
+      console.error(`Error checking orders for vehicle ${id}:`, orderError);
+      return NextResponse.json(
+        { success: false, message: 'Failed to check for vehicle usage in orders' },
+        { status: 500 }
+      );
+    }
+    
+    if (orders && orders.length > 0) {
+      return NextResponse.json(
+        { success: false, message: 'Cannot delete vehicle type that is used in orders' },
+        { status: 400 }
+      );
+    }
+    
+    // Delete vehicle
+    const { error } = await supabase
+      .from('vehicle_types')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error(`Error deleting vehicle type ${id}:`, error);
+      return NextResponse.json(
+        { success: false, message: error.message || 'Failed to delete vehicle type' },
+        { status: 500 }
+      );
+    }
+    
+    return NextResponse.json({
+      success: true,
+      message: `Vehicle type with ID ${id} deleted successfully`
+    });
+  } catch (error) {
+    console.error(`Error in DELETE /api/vehicles/types/[id]:`, error);
+    return NextResponse.json(
+      { success: false, message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+} 

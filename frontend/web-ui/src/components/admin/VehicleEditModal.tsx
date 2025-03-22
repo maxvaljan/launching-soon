@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 const vehicleFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   description: z.string().min(5, 'Description must be at least 5 characters'),
-  category: z.string().min(1, 'Category is required'),
+  category: z.string().optional(),
   dimensions: z.string().min(1, 'Dimensions are required'),
   max_weight: z.string().min(1, 'Max weight is required'),
   base_price: z.coerce.number().min(0, 'Must be 0 or higher'),
@@ -28,7 +28,7 @@ const vehicleFormSchema = z.object({
   minimum_distance: z.coerce.number().min(0, 'Must be 0 or higher'),
   svg_icon: z.string().optional(),
   active: z.boolean().default(true),
-  display_order: z.coerce.number().int().min(0, 'Must be 0 or higher')
+  display_order: z.coerce.number().int().optional()
 });
 
 type VehicleFormValues = z.infer<typeof vehicleFormSchema>;
@@ -73,11 +73,18 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
     try {
       setIsSubmitting(true);
       
+      // Ensure category is never undefined
+      const vehicleData = {
+        ...values,
+        category: values.category || 'default',  // Provide a default value
+        display_order: values.display_order || 0 // Provide a default value
+      };
+      
       if (isNewVehicle) {
-        await vehicleService.createVehicle(values);
+        await vehicleService.createVehicle(vehicleData);
         toast.success('Vehicle created successfully');
       } else if (vehicle) {
-        await vehicleService.updateVehicle(vehicle.id, values);
+        await vehicleService.updateVehicle(vehicle.id, vehicleData);
         toast.success('Vehicle updated successfully');
       }
       
@@ -152,20 +159,6 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. van, car, bike_motorcycle" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="dimensions"
                 render={({ field }) => (
                   <FormItem>
@@ -177,9 +170,7 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
                   </FormItem>
                 )}
               />
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="max_weight"
@@ -189,23 +180,6 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
                     <FormControl>
                       <Input placeholder="e.g. 500kg" {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="display_order"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Order</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Lower numbers display first
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
