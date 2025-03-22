@@ -11,10 +11,15 @@ import { Info } from 'lucide-react';
 interface VehicleType {
   id: string;
   name: string;
-  category: string;
   description: string;
-  dimensions: string;
+  max_dimensions: string;
   max_weight: string;
+  base_price: number;
+  price_per_km: number;
+  minimum_distance: number;
+  icon_path?: string;
+  active: boolean;
+  created_at?: string;
 }
 
 interface VehicleSelectionProps {
@@ -108,11 +113,8 @@ export default function VehicleSelection({ onVehicleSelect }: VehicleSelectionPr
             <div className="flex flex-col items-center justify-between h-full">
               <div className="text-center space-y-1">
                 <div className="text-3xl mb-2">
-                  {/* This could be replaced with your vehicle icon component */}
-                  {vehicle.category.includes('car') ? '🚗' : 
-                   vehicle.category.includes('van') ? '🚐' : 
-                   vehicle.category.includes('truck') ? '🚚' : 
-                   vehicle.category.includes('bike') ? '🛵' : '🚚'}
+                  {/* Use a default truck icon */}
+                  🚚
                 </div>
                 <h3 className="font-semibold text-maxmove-800">{vehicle.name}</h3>
                 <p className="text-xs text-gray-500 truncate max-w-full">{vehicle.description}</p>
