@@ -49,14 +49,6 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
 
   // Render the appropriate vehicle icon
   const renderVehicleIcon = () => {
-    // If it has an icon_type that matches our icon library, use that
-    if (vehicle.icon_type) {
-      const IconComponent = VehicleIcons.getVehicleIconById(vehicle.icon_type);
-      if (IconComponent) {
-        return <IconComponent size={48} className="text-maxmove-800" />;
-      }
-    }
-    
     // If it has a custom icon URL, use that with fallback
     if (vehicle.custom_icon_url) {
       return (
@@ -77,30 +69,8 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
       );
     }
     
-    // Default icons based on category
-    switch (vehicle.category.toLowerCase()) {
-      case 'motorcycle':
-      case 'bike_motorcycle':
-        return <VehicleIcons.Courier1 size={48} className="text-maxmove-800" />;
-      case 'car':
-        return <VehicleIcons.Auto1 size={48} className="text-maxmove-800" />;
-      case 'van':
-        return <VehicleIcons.Van1 size={48} className="text-maxmove-800" />;
-      case 'minivan':
-        return <VehicleIcons.Minivan1 size={48} className="text-maxmove-800" />;
-      case 'truck':
-      case 'light_truck':
-        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
-      case 'medium_truck':
-        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
-      case 'heavy_truck':
-        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
-      case 'towing':
-        return <VehicleIcons.Towing1 size={48} className="text-maxmove-800" />;
-      default:
-        // Default to car icon
-        return <Car size={48} className="text-maxmove-800" />;
-    }
+    // Default to lucide-react Car icon for all vehicles
+    return <Car size={48} className="text-maxmove-800" />;
   };
 
   return (

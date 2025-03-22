@@ -23,13 +23,7 @@ export default function AdminSettingsPage() {
     enableMultipleStops: false
   });
 
-  const [stripeSettings, setStripeSettings] = useState({
-    enableStripe: true,
-    testMode: true,
-    publishableKey: 'pk_test_51...',
-    secretKey: '••••••••••••••••••••••',
-    webhookSecret: '••••••••••••••••••••••'
-  });
+  // Stripe settings removed
 
   const [notificationSettings, setNotificationSettings] = useState({
     enableEmailNotifications: true,
@@ -52,10 +46,7 @@ export default function AdminSettingsPage() {
     toast.success('Service settings updated successfully');
   };
 
-  const handleSaveStripe = () => {
-    // In a real app, this would save to the database
-    toast.success('Payment settings updated successfully');
-  };
+  // Stripe settings handler removed
 
   const handleSaveNotifications = () => {
     // In a real app, this would save to the database
@@ -187,65 +178,7 @@ export default function AdminSettingsPage() {
           </div>
         </Card>
         
-        {/* Payment Settings */}
-        <Card className="p-6 bg-white">
-          <h2 className="text-xl font-semibold mb-4">Payment Settings</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-              <div>
-                <h3 className="font-medium">Enable Stripe Payments</h3>
-                <p className="text-sm text-gray-500">Process payments through Stripe</p>
-              </div>
-              <Switch 
-                checked={stripeSettings.enableStripe}
-                onCheckedChange={(checked) => setStripeSettings({...stripeSettings, enableStripe: checked})}
-              />
-            </div>
-            
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-              <div>
-                <h3 className="font-medium">Stripe Test Mode</h3>
-                <p className="text-sm text-gray-500">Use Stripe in test mode (no real charges)</p>
-              </div>
-              <Switch 
-                checked={stripeSettings.testMode}
-                onCheckedChange={(checked) => setStripeSettings({...stripeSettings, testMode: checked})}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Stripe Publishable Key</label>
-                <Input 
-                  value={stripeSettings.publishableKey}
-                  onChange={(e) => setStripeSettings({...stripeSettings, publishableKey: e.target.value})}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Stripe Secret Key</label>
-                <Input 
-                  type="password"
-                  value={stripeSettings.secretKey}
-                  onChange={(e) => setStripeSettings({...stripeSettings, secretKey: e.target.value})}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-1">Stripe Webhook Secret</label>
-                <Input 
-                  type="password"
-                  value={stripeSettings.webhookSecret}
-                  onChange={(e) => setStripeSettings({...stripeSettings, webhookSecret: e.target.value})}
-                />
-              </div>
-            </div>
-            
-            <Button className="mt-2" onClick={handleSaveStripe}>
-              Save Payment Settings
-            </Button>
-          </div>
-        </Card>
+        {/* Payment Settings section removed */}
         
         {/* Notification Settings */}
         <Card className="p-6 bg-white">
