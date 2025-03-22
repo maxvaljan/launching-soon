@@ -336,7 +336,7 @@ export default function PlaceOrderPage() {
                 <div key={index} className="relative">
                   {/* Vertical dotted line connecting stops */}
                   {index < stops.length - 1 && (
-                    <div className="absolute left-[15px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
+                    <div className="absolute left-[13px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
                   )}
                   
                   <div className="flex items-center mb-4 relative z-10">
