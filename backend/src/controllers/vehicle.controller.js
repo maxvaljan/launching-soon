@@ -25,6 +25,29 @@ const vehicleController = {
   },
   
   /**
+   * Get active vehicle types
+   */
+  getActiveVehicleTypes: async (req, res, next) => {
+    try {
+      const { data, error } = await supabaseService.getClient()
+        .from('vehicle_types')
+        .select('*')
+        .eq('active', true)
+        .order('display_order', { ascending: true });
+      
+      if (error) throw error;
+      
+      res.status(200).json({
+        success: true,
+        count: data.length,
+        data
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  
+  /**
    * Get vehicle type by ID
    */
   getVehicleTypeById: async (req, res, next) => {
@@ -66,7 +89,9 @@ const vehicleController = {
         base_price,
         price_per_km,
         minimum_distance,
-        icon_path
+        svg_icon,
+        active,
+        display_order
       } = req.body;
       
       // Validate required fields
@@ -84,7 +109,9 @@ const vehicleController = {
         base_price: base_price || 500, // Default 5 EUR
         price_per_km: price_per_km || 100, // Default 1 EUR per km
         minimum_distance: minimum_distance || 1, // Default 1 km
-        icon_path: icon_path || null,
+        svg_icon: svg_icon || null,
+        active: active !== undefined ? active : true, // Default to active
+        display_order: display_order || 0, // Default to 0
         created_at: new Date().toISOString()
       };
       
@@ -120,7 +147,9 @@ const vehicleController = {
         base_price,
         price_per_km,
         minimum_distance,
-        icon_path
+        svg_icon,
+        active,
+        display_order
       } = req.body;
       
       // Check if vehicle type exists
@@ -144,11 +173,50 @@ const vehicleController = {
       if (base_price !== undefined) updateData.base_price = base_price;
       if (price_per_km !== undefined) updateData.price_per_km = price_per_km;
       if (minimum_distance !== undefined) updateData.minimum_distance = minimum_distance;
-      if (icon_path !== undefined) updateData.icon_path = icon_path;
+      if (svg_icon !== undefined) updateData.svg_icon = svg_icon;
+      if (active !== undefined) updateData.active = active;
+      if (display_order !== undefined) updateData.display_order = display_order;
       
       const { data, error } = await supabaseService.getClient()
         .from('vehicle_types')
         .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      res.status(200).json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  
+  /**
+   * Toggle vehicle type active status
+   */
+  toggleVehicleActive: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      
+      // Check if vehicle type exists and get current status
+      const { data: existingVehicle, error: checkError } = await supabaseService.getClient()
+        .from('vehicle_types')
+        .select('id, active')
+        .eq('id', id)
+        .single();
+      
+      if (checkError || !existingVehicle) {
+        throw new ApiError(404, `Vehicle type with ID ${id} not found`);
+      }
+      
+      // Toggle the active status
+      const { data, error } = await supabaseService.getClient()
+        .from('vehicle_types')
+        .update({ active: !existingVehicle.active })
         .eq('id', id)
         .select()
         .single();

@@ -7,10 +7,13 @@ export interface Vehicle {
   description: string;
   dimensions: string;
   max_weight: string;
-  image_url?: string;
-  icon_type?: string;
-  custom_icon_url?: string;
+  base_price: number;
+  price_per_km: number;
+  minimum_distance: number;
+  svg_icon?: string;
   active: boolean;
+  display_order: number;
+  created_at?: string;
 }
 
 const vehicleCategories: Record<string, string> = {
@@ -38,20 +41,22 @@ const getCategoryFromName = (name: string): string => {
   return 'car';
 };
 
-// Map vehicle data from the database format to the customer-facing format
-const mapVehicleData = (vehicles: any[]): Vehicle[] => {
-  return vehicles.map(vehicle => ({
-    id: vehicle.id,
-    name: vehicle.name,
-    // Use explicit icon_type if available, otherwise infer from name
-    category: vehicle.icon_type || getCategoryFromName(vehicle.name),
-    description: `Base price: ${formatPrice(vehicle.base_price)}, ${formatPricePerKm(vehicle.price_per_km)}`,
-    dimensions: vehicle.capacity || 'Standard',
-    max_weight: `${vehicle.max_weight} kg`,
-    image_url: vehicle.image_url,
-    icon_type: vehicle.icon_type,
-    custom_icon_url: vehicle.custom_icon_url,
-    active: vehicle.active
+// Mapping function to ensure consistent data structure
+const mapVehicleData = (data: any[]): Vehicle[] => {
+  return data.map(item => ({
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    description: item.description,
+    dimensions: item.dimensions,
+    max_weight: item.max_weight,
+    base_price: Number(item.base_price) || 0,
+    price_per_km: Number(item.price_per_km) || 0,
+    minimum_distance: Number(item.minimum_distance) || 0,
+    svg_icon: item.svg_icon || null,
+    active: item.active !== undefined ? item.active : true,
+    display_order: item.display_order || 0,
+    created_at: item.created_at
   }));
 };
 
@@ -69,6 +74,25 @@ const formatPricePerKm = (price: number): string => {
 };
 
 export const vehicleService = {
+  // Get all vehicles
+  async getAllVehicles(): Promise<Vehicle[]> {
+    try {
+      const { data, error } = await supabase
+        .from('vehicle_types')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? mapVehicleData(data) : [];
+    } catch (error) {
+      console.error('Error fetching all vehicles:', error);
+      return [];
+    }
+  },
+
   // Get all active vehicles for customer display
   async getActiveVehicles(): Promise<Vehicle[]> {
     try {
@@ -76,7 +100,7 @@ export const vehicleService = {
         .from('vehicle_types')
         .select('*')
         .eq('active', true)
-        .order('base_price', { ascending: true });
+        .order('display_order', { ascending: true });
 
       if (error) {
         throw error;
@@ -106,6 +130,94 @@ export const vehicleService = {
     } catch (error) {
       console.error(`Error fetching vehicle ${id}:`, error);
       return null;
+    }
+  },
+
+  // Create a new vehicle
+  async createVehicle(vehicleData: Omit<Vehicle, 'id' | 'created_at'>): Promise<Vehicle | null> {
+    try {
+      const { data, error } = await supabase
+        .from('vehicle_types')
+        .insert([vehicleData])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? mapVehicleData([data])[0] : null;
+    } catch (error) {
+      console.error('Error creating vehicle:', error);
+      throw error;
+    }
+  },
+
+  // Update a vehicle
+  async updateVehicle(id: string, vehicleData: Partial<Vehicle>): Promise<Vehicle | null> {
+    try {
+      const { data, error } = await supabase
+        .from('vehicle_types')
+        .update(vehicleData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? mapVehicleData([data])[0] : null;
+    } catch (error) {
+      console.error(`Error updating vehicle ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Toggle vehicle active status
+  async toggleVehicleActive(id: string): Promise<Vehicle | null> {
+    try {
+      // First get the current vehicle to know its active status
+      const vehicle = await this.getVehicleById(id);
+      
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+      
+      const { data, error } = await supabase
+        .from('vehicle_types')
+        .update({ active: !vehicle.active })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? mapVehicleData([data])[0] : null;
+    } catch (error) {
+      console.error(`Error toggling active status for vehicle ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Delete a vehicle
+  async deleteVehicle(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('vehicle_types')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(`Error deleting vehicle ${id}:`, error);
+      throw error;
     }
   },
 

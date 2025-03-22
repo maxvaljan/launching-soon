@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import { 
   Table, 
   TableBody, 
@@ -22,20 +21,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Search, Plus, Filter, Truck, Edit, Trash, Image } from 'lucide-react';
+import { MoreHorizontal, Search, Plus, Filter, Truck, Edit, Trash, ToggleLeft, ArrowUpDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
-import { adminService, VehicleType } from '@/lib/services/admin';
+import { vehicleService, Vehicle } from '@/lib/services/vehicle';
 import { VehicleEditModal } from '@/components/admin/VehicleEditModal';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 
 export default function AdminVehiclesPage() {
-  const [vehicles, setVehicles] = useState<VehicleType[]>([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(undefined);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<string | null>(null);
 
@@ -47,19 +47,17 @@ export default function AdminVehiclesPage() {
     try {
       setLoading(true);
       
-      const data = await adminService.getVehicles();
+      const data = await vehicleService.getAllVehicles();
       setVehicles(data);
     } catch (error) {
       console.error('Error fetching vehicles:', error);
       toast.error('Failed to load vehicles');
-      // For demo purposes, use sample data if the query fails
-      setVehicles(sampleVehicles);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenEditModal = (vehicle?: VehicleType) => {
+  const handleOpenEditModal = (vehicle?: Vehicle) => {
     setSelectedVehicle(vehicle);
     setEditModalOpen(true);
   };
@@ -73,7 +71,7 @@ export default function AdminVehiclesPage() {
     if (!vehicleToDelete) return;
     
     try {
-      await adminService.deleteVehicle(vehicleToDelete);
+      await vehicleService.deleteVehicle(vehicleToDelete);
       toast.success('Vehicle deleted successfully');
       fetchVehicles(); // Refresh the list
     } catch (error) {
@@ -85,26 +83,27 @@ export default function AdminVehiclesPage() {
     }
   };
 
-  const handleToggleVehicleStatus = async (vehicle: VehicleType) => {
+  const handleToggleVehicleStatus = async (vehicle: Vehicle) => {
     try {
-      const updatedVehicle = await adminService.updateVehicle(
-        vehicle.id, 
-        { active: !vehicle.active }
-      );
+      const updatedVehicle = await vehicleService.toggleVehicleActive(vehicle.id);
       
-      toast.success(`Vehicle ${updatedVehicle.active ? 'activated' : 'deactivated'}`);
-      
-      // Update the local state
-      setVehicles(vehicles.map(v => 
-        v.id === vehicle.id ? { ...v, active: !v.active } : v
-      ));
+      if (updatedVehicle) {
+        toast.success(`Vehicle ${updatedVehicle.active ? 'activated' : 'deactivated'}`);
+        
+        // Update the local state
+        setVehicles(vehicles.map(v => 
+          v.id === vehicle.id ? updatedVehicle : v
+        ));
+      }
     } catch (error) {
       console.error('Error toggling vehicle status:', error);
       toast.error('Failed to update vehicle status');
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -115,14 +114,15 @@ export default function AdminVehiclesPage() {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
-    }).format(price);
+      currency: 'EUR',
+    }).format(price / 100); // Assuming prices are stored in cents
   };
 
   const filteredVehicles = vehicles.filter(vehicle => {
     const matchesSearch = 
       vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      vehicle.capacity.toLowerCase().includes(searchTerm.toLowerCase());
+      vehicle.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.category.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesActive = 
       activeFilter === 'all' || 
@@ -166,6 +166,7 @@ export default function AdminVehiclesPage() {
             className="border border-gray-300 rounded-md p-2 text-sm"
             value={activeFilter}
             onChange={(e) => setActiveFilter(e.target.value)}
+            aria-label="Filter vehicles"
           >
             <option value="all">All Vehicles</option>
             <option value="active">Active Only</option>
@@ -174,16 +175,17 @@ export default function AdminVehiclesPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border shadow">
+      <div className="bg-white rounded-lg border shadow overflow-hidden">
         <Table>
           <TableCaption>A list of all vehicle types in the system</TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[80px]">Order</TableHead>
               <TableHead>Vehicle Type</TableHead>
-              <TableHead>Capacity</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Dimensions</TableHead>
               <TableHead>Max Weight</TableHead>
-              <TableHead>Base Price</TableHead>
-              <TableHead>Price/km</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -191,7 +193,7 @@ export default function AdminVehiclesPage() {
           <TableBody>
             {filteredVehicles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   {searchTerm || activeFilter !== 'all'
                     ? 'No vehicles match your search or filter criteria.'
                     : 'No vehicles found in the system.'}
@@ -200,32 +202,32 @@ export default function AdminVehiclesPage() {
             ) : (
               filteredVehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
+                  <TableCell>
+                    <Badge variant="outline">{vehicle.display_order}</Badge>
+                  </TableCell>
                   <TableCell className="font-medium">
                     <div className="flex items-center">
-                      {vehicle.image_url ? (
-                        <div className="h-8 w-8 mr-2 rounded-full overflow-hidden">
-                          <img
-                            src={vehicle.image_url}
-                            alt={vehicle.name}
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                              // If image fails to load, show fallback icon
-                              (e.target as HTMLImageElement).style.display = 'none';
-                              (e.currentTarget.parentNode as HTMLElement).innerHTML = 
-                                '<div class="flex items-center justify-center h-8 w-8 bg-gray-100 text-gray-500 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M2 8h20"/></svg></div>';
-                            }}
-                          />
-                        </div>
+                      {vehicle.svg_icon ? (
+                        <div 
+                          className="h-8 w-8 mr-2 flex items-center justify-center text-gray-700"
+                          dangerouslySetInnerHTML={{ __html: vehicle.svg_icon }}
+                        />
                       ) : (
                         <Truck className="mr-2 h-5 w-5 text-gray-400" />
                       )}
                       {vehicle.name}
                     </div>
                   </TableCell>
-                  <TableCell>{vehicle.capacity}</TableCell>
-                  <TableCell>{vehicle.max_weight} kg</TableCell>
-                  <TableCell>{formatPrice(vehicle.base_price)}</TableCell>
-                  <TableCell>{formatPrice(vehicle.price_per_km)}/km</TableCell>
+                  <TableCell>{vehicle.category}</TableCell>
+                  <TableCell>{vehicle.dimensions}</TableCell>
+                  <TableCell>{vehicle.max_weight}</TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      Base: {formatPrice(vehicle.base_price)}
+                      <br />
+                      Per km: {formatPrice(vehicle.price_per_km)}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       vehicle.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
@@ -247,12 +249,13 @@ export default function AdminVehiclesPage() {
                           Edit Vehicle
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleToggleVehicleStatus(vehicle)}>
+                          <ToggleLeft className="mr-2 h-4 w-4" />
                           {vehicle.active ? 'Deactivate' : 'Activate'} Vehicle
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
+                          className="text-red-600 focus:text-red-600"
                           onClick={() => handleOpenDeleteDialog(vehicle.id)}
-                          className="text-red-600"
                         >
                           <Trash className="mr-2 h-4 w-4" />
                           Delete Vehicle
@@ -267,49 +270,18 @@ export default function AdminVehiclesPage() {
         </Table>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <Card className="p-6 bg-blue-50 border-blue-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-blue-600 text-sm font-medium">Total Vehicles</p>
-              <h3 className="text-2xl font-bold mt-1">{vehicles.length}</h3>
-            </div>
-            <Truck className="h-8 w-8 text-blue-500" />
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-green-50 border-green-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-green-600 text-sm font-medium">Active Vehicles</p>
-              <h3 className="text-2xl font-bold mt-1">{vehicles.filter(v => v.active).length}</h3>
-            </div>
-            <Truck className="h-8 w-8 text-green-500" />
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-amber-50 border-amber-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-amber-600 text-sm font-medium">Avg. Base Price</p>
-              <h3 className="text-2xl font-bold mt-1">
-                {formatPrice(
-                  vehicles.reduce((sum, v) => sum + v.base_price, 0) / (vehicles.length || 1)
-                )}
-              </h3>
-            </div>
-            <Truck className="h-8 w-8 text-amber-500" />
-          </div>
-        </Card>
-      </div>
-
-      {/* Edit Vehicle Modal */}
-      <VehicleEditModal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        vehicle={selectedVehicle}
-        onVehicleSaved={fetchVehicles}
-      />
+      {/* Edit Modal */}
+      {editModalOpen && (
+        <VehicleEditModal
+          isOpen={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setSelectedVehicle(undefined);
+          }}
+          vehicle={selectedVehicle}
+          onVehicleSaved={fetchVehicles}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -318,12 +290,15 @@ export default function AdminVehiclesPage() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              vehicle type from the system.
+              selected vehicle type from the system.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteVehicle} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogCancel onClick={() => setVehicleToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-red-600 hover:bg-red-700"
+              onClick={handleDeleteVehicle}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -332,57 +307,3 @@ export default function AdminVehiclesPage() {
     </div>
   );
 }
-
-// Sample vehicle data for development/fallback
-const sampleVehicles: VehicleType[] = [
-  {
-    id: '1',
-    name: 'Motorcycle',
-    capacity: 'Small',
-    max_weight: 20,
-    base_price: 5.99,
-    price_per_km: 0.5,
-    active: true,
-    created_at: '2023-01-15T09:00:00Z'
-  },
-  {
-    id: '2',
-    name: 'Sedan',
-    capacity: 'Medium',
-    max_weight: 150,
-    base_price: 9.99,
-    price_per_km: 0.75,
-    active: true,
-    created_at: '2023-02-05T14:30:00Z'
-  },
-  {
-    id: '3',
-    name: 'Van',
-    capacity: 'Large',
-    max_weight: 500,
-    base_price: 14.99,
-    price_per_km: 1.25,
-    active: true,
-    created_at: '2023-03-10T11:45:00Z'
-  },
-  {
-    id: '4',
-    name: 'Truck',
-    capacity: 'Extra Large',
-    max_weight: 1500,
-    base_price: 24.99,
-    price_per_km: 2.00,
-    active: true,
-    created_at: '2023-04-18T16:20:00Z'
-  },
-  {
-    id: '5',
-    name: 'Cargo Truck',
-    capacity: 'XXL',
-    max_weight: 3000,
-    base_price: 39.99,
-    price_per_km: 3.50,
-    active: false,
-    created_at: '2023-05-22T10:15:00Z'
-  }
-];

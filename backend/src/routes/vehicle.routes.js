@@ -11,6 +11,13 @@ const { authMiddleware, roleMiddleware } = require('../middleware/auth');
 router.get('/types', vehicleController.getAllVehicleTypes);
 
 /**
+ * @route   GET /api/vehicles/types/active
+ * @desc    Get active vehicle types
+ * @access  Public
+ */
+router.get('/types/active', vehicleController.getActiveVehicleTypes);
+
+/**
  * @route   GET /api/vehicles/types/:id
  * @desc    Get vehicle type by ID
  * @access  Public
@@ -39,6 +46,18 @@ router.put(
   authMiddleware,
   roleMiddleware(['admin']),
   vehicleController.updateVehicleType
+);
+
+/**
+ * @route   PATCH /api/vehicles/types/:id/toggle-active
+ * @desc    Toggle vehicle active status
+ * @access  Private/Admin
+ */
+router.patch(
+  '/types/:id/toggle-active',
+  authMiddleware,
+  roleMiddleware(['admin']),
+  vehicleController.toggleVehicleActive
 );
 
 /**
