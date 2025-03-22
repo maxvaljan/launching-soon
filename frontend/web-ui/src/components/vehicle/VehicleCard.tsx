@@ -2,12 +2,12 @@
 
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import VehicleIcon from "./VehicleIcon";
-import Image from "next/image";
 import { formatWeight, formatDimensions } from "@/lib/vehicleUtils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Car } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import * as VehicleIcons from "@/components/icons/vehicles";
+// Import the vehicle icon components for improved performance and type checking
 
 interface VehicleType {
   id: string;
@@ -16,6 +16,7 @@ interface VehicleType {
   description: string;
   dimensions: string;
   max_weight: string;
+  icon_type?: string;
   custom_icon_url?: string;
 }
 
@@ -46,6 +47,62 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
     }
   };
 
+  // Render the appropriate vehicle icon
+  const renderVehicleIcon = () => {
+    // If it has an icon_type that matches our icon library, use that
+    if (vehicle.icon_type) {
+      const IconComponent = VehicleIcons.getVehicleIconById(vehicle.icon_type);
+      if (IconComponent) {
+        return <IconComponent size={48} className="text-maxmove-800" />;
+      }
+    }
+    
+    // If it has a custom icon URL, use that with fallback
+    if (vehicle.custom_icon_url) {
+      return (
+        <div className="w-16 h-16 relative flex items-center justify-center">
+          <img 
+            src={vehicle.custom_icon_url} 
+            alt={vehicle.name} 
+            className="w-full h-full object-contain"
+            onError={(e) => {
+              // Fallback to standard icon if custom SVG fails to load
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.parentElement!.innerHTML = `<div class="flex items-center justify-center h-16 w-16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-car"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.6-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+              </div>`;
+            }}
+          />
+        </div>
+      );
+    }
+    
+    // Default icons based on category
+    switch (vehicle.category.toLowerCase()) {
+      case 'motorcycle':
+      case 'bike_motorcycle':
+        return <VehicleIcons.Courier1 size={48} className="text-maxmove-800" />;
+      case 'car':
+        return <VehicleIcons.Auto1 size={48} className="text-maxmove-800" />;
+      case 'van':
+        return <VehicleIcons.Van1 size={48} className="text-maxmove-800" />;
+      case 'minivan':
+        return <VehicleIcons.Minivan1 size={48} className="text-maxmove-800" />;
+      case 'truck':
+      case 'light_truck':
+        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
+      case 'medium_truck':
+        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
+      case 'heavy_truck':
+        return <VehicleIcons.MiniLkw1 size={48} className="text-maxmove-800" />;
+      case 'towing':
+        return <VehicleIcons.Towing1 size={48} className="text-maxmove-800" />;
+      default:
+        // Default to car icon
+        return <Car size={48} className="text-maxmove-800" />;
+    }
+  };
+
   return (
     <Card 
       className={cn(
@@ -56,27 +113,10 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
       onClick={handleCardClick}
     >
       <div className={HOVER_ANIMATION_STYLES}>
-        {vehicle.custom_icon_url ? (
-          <div className="w-16 h-16 relative flex items-center justify-center">
-            <img 
-              src={vehicle.custom_icon_url} 
-              alt={vehicle.name} 
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                // Fallback to standard icon if custom SVG fails to load
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement!.innerHTML = `<div class="flex items-center justify-center h-16 w-16">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-car"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.6-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
-                </div>`;
-              }}
-            />
-          </div>
-        ) : (
-          <VehicleIcon category={vehicle.category} name={vehicle.name} />
-        )}
+        {renderVehicleIcon()}
       </div>
       
-      <h3 className={cn("text-lg font-medium text-maxmove-900", HOVER_ANIMATION_STYLES)}>
+      <h3 className={cn("text-lg font-medium text-maxmove-900 mt-3", HOVER_ANIMATION_STYLES)}>
         {vehicle.name}
       </h3>
       
