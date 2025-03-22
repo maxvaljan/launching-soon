@@ -77,6 +77,11 @@ export async function getUserRole() {
       return null;
     }
     
+    // First check if the user is the special admin account
+    if (sessionData.session?.user?.email === 'max.valjan@icloud.com') {
+      return 'admin';
+    }
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('role')

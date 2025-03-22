@@ -66,6 +66,21 @@ export async function middleware(request: NextRequest) {
                            !!session.expires_at && 
                            session.expires_at * 1000 > Date.now();
 
+    // Special handling for max.valjan@icloud.com - always redirect to admin when authenticated
+    if (isValidSession && !path.startsWith('/admin')) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profile?.email === 'max.valjan@icloud.com') {
+        const redirectUrl = new URL('/admin', request.url);
+        redirectUrl.searchParams.set('ts', Date.now().toString()); // Add cache buster
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
+
     // Check if the path is a protected route
     const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
     const isAuthRoute = path === '/signin' || path === '/signup' || path === '/reset-password';
@@ -92,17 +107,18 @@ export async function middleware(request: NextRequest) {
       // Determine where to redirect based on user role
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, email')
         .eq('id', session.user.id)
         .single();
 
       // Create redirect response with cache-busting
       let redirectUrl: string;
       
-      if (profile?.role === 'driver') {
-        redirectUrl = '/driver-dashboard';
-      } else if (profile?.role === 'admin') {
+      // First check for the specific admin email account
+      if (profile?.email === 'max.valjan@icloud.com' || profile?.role === 'admin') {
         redirectUrl = '/admin';
+      } else if (profile?.role === 'driver') {
+        redirectUrl = '/driver-dashboard';
       } else {
         redirectUrl = '/dashboard/place-order';
       }
@@ -121,9 +137,14 @@ export async function middleware(request: NextRequest) {
           // Get the user's role from the profiles table
           const { data: profile } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, email')
             .eq('id', session.user.id)
             .single();
+
+          // Special handling for max.valjan@icloud.com - always allowed admin access
+          if (profile?.email === 'max.valjan@icloud.com' && routePath === '/admin') {
+            break; // Allow access
+          }
 
           // If user doesn't have the required role, redirect them
           if (!profile || !allowedRoles.includes(profile.role)) {

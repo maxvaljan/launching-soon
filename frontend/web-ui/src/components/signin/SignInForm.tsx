@@ -68,7 +68,9 @@ export const SignInForm = () => {
       // Add a small delay before redirecting to ensure toast is seen
       setTimeout(() => {
         // Redirect based on role
-        if (data.user.role === 'driver') {
+        if (data.user.role === 'admin' || data.user.email === 'max.valjan@icloud.com') {
+          window.location.href = '/admin';
+        } else if (data.user.role === 'driver') {
           window.location.href = '/driver-dashboard';
         } else {
           window.location.href = '/dashboard/place-order';
