@@ -336,7 +336,7 @@ export default function PlaceOrderPage() {
                 <div key={index} className="relative">
                   {/* Vertical dotted line connecting stops */}
                   {index < stops.length - 1 && (
-                    <div className="absolute left-[18.5px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
+                    <div className="absolute left-[15px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
                   )}
                   
                   <div className="flex items-center mb-4 relative z-10">
@@ -563,7 +563,7 @@ export default function PlaceOrderPage() {
       </div>
       
       {/* Right Side - Map - Full height and width */}
-      <div className="lg:w-1/2 h-[50vh] lg:h-screen">
+      <div className="lg:w-1/2 h-[50vh] lg:h-[calc(100vh-65px)] lg:fixed lg:right-0 lg:top-[65px]">
         <Map 
           pickupLocation={stops[0].coordinates}
           dropoffLocation={stops[stops.length - 1].coordinates}
