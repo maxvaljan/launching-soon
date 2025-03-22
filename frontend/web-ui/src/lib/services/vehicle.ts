@@ -1,4 +1,4 @@
-import { supabase, createSupabaseClient } from '../supabase';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export interface Vehicle {
   id: string;
@@ -77,18 +77,22 @@ export const vehicleService = {
   // Get all vehicles
   async getAllVehicles(): Promise<Vehicle[]> {
     try {
-      // Use createSupabaseClient to ensure consistent API
-      const supabaseClient = createSupabaseClient();
-      const { data, error } = await supabaseClient
-        .from('vehicle_types')
-        .select('*')
-        .order('display_order', { ascending: true });
+      // Use the API route instead of direct Supabase access
+      const response = await fetch('/api/vehicles/types', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch vehicles');
       }
 
-      return data ? mapVehicleData(data) : [];
+      return result.data ? mapVehicleData(result.data) : [];
     } catch (error) {
       console.error('Error fetching all vehicles:', error);
       return [];
@@ -98,19 +102,22 @@ export const vehicleService = {
   // Get all active vehicles for customer display
   async getActiveVehicles(): Promise<Vehicle[]> {
     try {
-      // Use createSupabaseClient to ensure consistent API
-      const supabaseClient = createSupabaseClient();
-      const { data, error } = await supabaseClient
-        .from('vehicle_types')
-        .select('*')
-        .eq('active', true)
-        .order('display_order', { ascending: true });
+      // Use the API route with active filter
+      const response = await fetch('/api/vehicles/types?active=true', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch active vehicles');
       }
 
-      return data ? mapVehicleData(data) : [];
+      return result.data ? mapVehicleData(result.data) : [];
     } catch (error) {
       console.error('Error fetching active vehicles:', error);
       return [];
@@ -120,19 +127,22 @@ export const vehicleService = {
   // Get a specific vehicle by ID
   async getVehicleById(id: string): Promise<Vehicle | null> {
     try {
-      // Use createSupabaseClient to ensure consistent API
-      const supabaseClient = createSupabaseClient();
-      const { data, error } = await supabaseClient
-        .from('vehicle_types')
-        .select('*')
-        .eq('id', id)
-        .single();
+      // Use the API route instead of direct Supabase access
+      const response = await fetch(`/api/vehicles/types/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || `Failed to fetch vehicle ${id}`);
       }
 
-      return data ? mapVehicleData([data])[0] : null;
+      return result.data ? mapVehicleData([result.data])[0] : null;
     } catch (error) {
       console.error(`Error fetching vehicle ${id}:`, error);
       return null;

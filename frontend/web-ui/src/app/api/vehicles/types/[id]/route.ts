@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, createSupabaseClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { getCurrentUser } from '@/lib/auth';
 
 // GET /api/vehicles/types/[id] - Get a vehicle type by ID
@@ -10,8 +10,8 @@ export async function GET(
   try {
     const { id } = params;
     
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
 
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -90,8 +90,8 @@ export async function PUT(
       );
     }
     
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
     
     // Parse request body
     const vehicleData = await request.json();
@@ -173,8 +173,8 @@ export async function DELETE(
       );
     }
     
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
     
     // Check if vehicle exists
     const { data: existingVehicle, error: checkError } = await supabaseClient

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, createSupabaseClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { getCurrentUser } from '@/lib/auth';
 
 // PATCH /api/vehicles/types/[id]/toggle-active - Toggle vehicle active status
@@ -19,8 +19,8 @@ export async function PATCH(
       );
     }
     
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
     
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

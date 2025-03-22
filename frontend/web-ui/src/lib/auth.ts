@@ -1,8 +1,8 @@
 'use server';
 
-import { supabase } from './supabase';
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createServerSupabaseClient } from './supabase-server';
 
 /**
  * Gets the currently authenticated user with their role
@@ -11,8 +11,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 export async function getCurrentUser() {
   try {
     // Create a server-side Supabase client using cookies
-    const cookieStore = cookies();
-    const serverSupabase = createServerComponentClient({ cookies: () => cookieStore });
+    const serverSupabase = createServerSupabaseClient();
     
     // Get session data from server-side client
     const { data: sessionData } = await serverSupabase.auth.getSession();

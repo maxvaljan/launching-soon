@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, createSupabaseClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { getCurrentUser } from '@/lib/auth';
 
 // GET /api/vehicles/types - Get all vehicle types
 export async function GET(request: NextRequest) {
   try {
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
     
     // Parse query params for active filter
     const { searchParams } = new URL(request.url);
@@ -60,8 +60,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Create a consistent Supabase client
-    const supabaseClient = createSupabaseClient();
+    // Create a server-side Supabase client
+    const supabaseClient = createServerSupabaseClient();
     
     // Parse request body
     const vehicleData = await request.json();
