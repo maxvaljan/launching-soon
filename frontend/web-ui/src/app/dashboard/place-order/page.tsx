@@ -301,13 +301,10 @@ export default function PlaceOrderPage() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-57px)]">
+    <div className="flex flex-col lg:flex-row h-screen">
       {/* Left Side - Order Form */}
-      <div className="lg:w-1/2 p-6 flex flex-col h-full">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-maxmove-navy">
-            Place Order
-          </h1>
+      <div className="lg:w-1/2 p-6 flex flex-col h-full overflow-hidden">
+        <div className="flex justify-end mb-6">
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="bg-white border-maxmove-gray">
@@ -343,13 +340,13 @@ export default function PlaceOrderPage() {
                   )}
                   
                   <div className="flex items-center mb-4 relative z-10">
-                    {/* Stop icon based on type */}
+                    {/* Stop icon based on type - Changed colors from orange to navy blue */}
                     <div className="mr-3">
                       {stop.type === 'pickup' ? (
-                        <div className="w-5 h-5 rounded-full bg-[#FF5A1F] border-2 border-white"></div>
+                        <div className="w-5 h-5 rounded-full bg-maxmove-navy border-2 border-white"></div>
                       ) : stop.type === 'dropoff' ? (
                         <div className="w-5 h-5 flex items-center justify-center">
-                          <svg className="text-[#FF5A1F]" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="text-maxmove-navy" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 21C12 21 19 15.5 19 10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10C5 15.5 12 21 12 21Z" fill="currentColor" />
                             <circle cx="12" cy="10" r="3" fill="white" />
                           </svg>
@@ -375,17 +372,19 @@ export default function PlaceOrderPage() {
                         onChange={(e) => handleAddressChange(e.target.value, index)}
                       />
                       
-                      {/* X button to remove stop */}
-                      <button 
-                        className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
-                        onClick={() => handleRemoveStop(index)}
-                        aria-label="Remove this stop"
-                      >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M18 6L6 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M6 6L18 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
+                      {/* X button to remove stop - Only show for mid-stops */}
+                      {stop.type === 'stop' && (
+                        <button 
+                          className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center"
+                          onClick={() => handleRemoveStop(index)}
+                          aria-label="Remove this stop"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M6 6L18 18" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      )}
                       
                       {/* Address suggestions dropdown */}
                       {activeInput === index && suggestions.length > 0 && (
@@ -409,9 +408,9 @@ export default function PlaceOrderPage() {
                 </div>
               ))}
               
-              {/* Add Stop button */}
+              {/* Add Stop button - Changed colors */}
               <button 
-                className="flex items-center text-[#FF5A1F] mt-2"
+                className="flex items-center text-maxmove-navy mt-2"
                 onClick={handleAddStop}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
@@ -563,30 +562,13 @@ export default function PlaceOrderPage() {
         </div>
       </div>
       
-      {/* Right Side - Map */}
-      <div className="lg:w-1/2 h-[50vh] lg:h-full relative">
+      {/* Right Side - Map - Full height and width */}
+      <div className="lg:w-1/2 h-[50vh] lg:h-screen">
         <Map 
           pickupLocation={stops[0].coordinates}
           dropoffLocation={stops[stops.length - 1].coordinates}
+          hideControls={true}
         />
-        <div className="absolute bottom-4 right-4 flex space-x-2">
-          <Button 
-            variant="outline" 
-            className="bg-white shadow-md text-maxmove-navy"
-            size="sm"
-          >
-            <MapIcon className="h-4 w-4 mr-2" />
-            Terrain
-          </Button>
-          <Button 
-            variant="outline" 
-            className="bg-white shadow-md text-maxmove-navy"
-            size="sm"
-          >
-            <MapPin className="h-4 w-4 mr-2" />
-            My Location
-          </Button>
-        </div>
       </div>
       
       {pastOrdersOpen && (

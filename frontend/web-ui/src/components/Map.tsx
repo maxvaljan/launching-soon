@@ -10,9 +10,10 @@ import { apiClient } from '@/lib/api';
 interface MapProps {
   pickupLocation?: [number, number];
   dropoffLocation?: [number, number];
+  hideControls?: boolean;
 }
 
-const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
+const Map = memo(({ pickupLocation, dropoffLocation, hideControls = false }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState<string>('');
@@ -74,14 +75,16 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
         renderWorldCopies: false, // Performance improvement
       });
 
-      // Add zoom and rotation controls
-      map.current.addControl(
-        new mapboxgl.NavigationControl({
-          visualizePitch: true,
-          showCompass: true,
-        }),
-        'bottom-right'
-      );
+      // Add zoom and rotation controls only if hideControls is false
+      if (!hideControls) {
+        map.current.addControl(
+          new mapboxgl.NavigationControl({
+            visualizePitch: true,
+            showCompass: true,
+          }),
+          'bottom-right'
+        );
+      }
 
       // Add performance optimization: reduce unnecessary repaints
       map.current.on('load', () => {
@@ -101,7 +104,7 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
       // Remove map instance
       map.current?.remove();
     };
-  }, [mapboxToken]);
+  }, [mapboxToken, hideControls]);
 
   // Handle route drawing between points
   const drawRoute = useCallback(async () => {
@@ -181,10 +184,10 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
         element.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
         
         if (type === 'pickup') {
-          element.style.backgroundColor = '#4CAF50'; // Green
+          element.style.backgroundColor = '#192338'; // Changed to MaxMove navy
           element.innerHTML = '<span style="color: white; font-weight: bold;">P</span>';
         } else {
-          element.style.backgroundColor = '#F44336'; // Red
+          element.style.backgroundColor = '#192338'; // Changed to MaxMove navy
           element.innerHTML = '<span style="color: white; font-weight: bold;">D</span>';
         }
         
@@ -252,7 +255,7 @@ const Map = memo(({ pickupLocation, dropoffLocation }: MapProps) => {
   }, [updateMarkers]);
 
   return (
-    <div className="h-full rounded-md overflow-hidden shadow-sm border border-gray-200">
+    <div className="h-full w-full">
       <div ref={mapContainer} className="w-full h-full" />
     </div>
   );
