@@ -6,7 +6,7 @@ import { getCurrentUser } from '@/lib/auth';
 export async function GET(request: NextRequest) {
   try {
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
     
     // Parse query params for active filter
     const { searchParams } = new URL(request.url);
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
     
     // Parse request body
     const vehicleData = await request.json();

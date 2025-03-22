@@ -20,7 +20,7 @@ export async function PATCH(
     }
     
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
     
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

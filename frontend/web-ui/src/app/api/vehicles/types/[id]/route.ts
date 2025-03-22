@@ -11,7 +11,7 @@ export async function GET(
     const { id } = params;
     
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
 
     // Validate UUID format
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -91,7 +91,7 @@ export async function PUT(
     }
     
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
     
     // Parse request body
     const vehicleData = await request.json();
@@ -177,7 +177,7 @@ export async function DELETE(
     }
     
     // Create a server-side Supabase client
-    const supabaseClient = createServerSupabaseClient();
+    const supabaseClient = await createServerSupabaseClient();
     
     // Check if vehicle exists
     const { data: existingVehicle, error: checkError } = await supabaseClient

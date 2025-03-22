@@ -11,7 +11,7 @@ import { createServerSupabaseClient } from './supabase-server';
 export async function getCurrentUser() {
   try {
     // Create a server-side Supabase client using cookies
-    const serverSupabase = createServerSupabaseClient();
+    const serverSupabase = await createServerSupabaseClient();
     
     // Get session data from server-side client
     const { data: sessionData } = await serverSupabase.auth.getSession();

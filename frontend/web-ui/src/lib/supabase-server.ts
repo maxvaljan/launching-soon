@@ -11,7 +11,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 /**
  * Creates a Supabase client for use in server components and API routes
  */
-export function createServerSupabaseClient() {
+export async function createServerSupabaseClient() {
   try {
     const cookieStore = cookies();
     return createServerComponentClient({ cookies: () => cookieStore });
