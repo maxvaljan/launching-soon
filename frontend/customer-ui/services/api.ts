@@ -196,6 +196,10 @@ export const getVehicleTypes = async () => {
   return api.get('/vehicles/types');
 };
 
+export const getActiveVehicles = async () => {
+  return api.get('/vehicles/active');
+};
+
 // Payment API methods
 export const addPaymentMethod = async (paymentMethodId: string) => {
   return api.post('/payment/methods', { paymentMethodId });

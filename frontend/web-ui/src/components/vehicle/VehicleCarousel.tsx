@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -9,23 +10,57 @@ import {
 } from "@/components/ui/carousel";
 import VehicleCard from "./VehicleCard";
 import { getVehicleSortOrder } from "@/lib/vehicleUtils";
-
-interface VehicleType {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  dimensions: string;
-  max_weight: string;
-}
+import { Vehicle, vehicleService } from "@/lib/services/vehicle";
+import { cn } from '@/lib/utils';
 
 interface VehicleCarouselProps {
-  vehicles: VehicleType[];
   selectedVehicle?: string | null;
   onVehicleSelect?: (vehicleId: string) => void;
+  className?: string;
+  static?: boolean; // If true, uses static data instead of fetching from DB
 }
 
-const VehicleCarousel = ({ vehicles, selectedVehicle, onVehicleSelect }: VehicleCarouselProps) => {
+const VehicleCarousel = ({ 
+  selectedVehicle, 
+  onVehicleSelect, 
+  className,
+  static: useStaticData = false
+}: VehicleCarouselProps) => {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (useStaticData) {
+      setVehicles(staticVehicles);
+      setLoading(false);
+      return;
+    }
+
+    const loadVehicles = async () => {
+      try {
+        setLoading(true);
+        const activeVehicles = await vehicleService.getActiveVehicles();
+        setVehicles(activeVehicles);
+      } catch (error) {
+        console.error('Error loading vehicles:', error);
+        // Fallback to static data if DB fetch fails
+        setVehicles(staticVehicles);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadVehicles();
+  }, [useStaticData]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center">
+        <div className="animate-pulse text-gray-400">Loading vehicles...</div>
+      </div>
+    );
+  }
+
   if (!vehicles.length) return null;
 
   const sortedVehicles = [...vehicles].sort((a, b) => {
@@ -36,7 +71,7 @@ const VehicleCarousel = ({ vehicles, selectedVehicle, onVehicleSelect }: Vehicle
 
   return (
     <Carousel
-      className="w-full"
+      className={cn("w-full", className)}
       opts={{
         align: "start",
         skipSnaps: true,
@@ -59,5 +94,54 @@ const VehicleCarousel = ({ vehicles, selectedVehicle, onVehicleSelect }: Vehicle
     </Carousel>
   );
 };
+
+// Static vehicle data for fallback
+const staticVehicles: Vehicle[] = [
+  {
+    id: '1',
+    name: 'Motorcycle',
+    category: 'motorcycle',
+    description: 'Small deliveries, quick transport',
+    dimensions: 'Small',
+    max_weight: '20 kg',
+    active: true
+  },
+  {
+    id: '2',
+    name: 'Sedan',
+    category: 'car',
+    description: 'Standard deliveries, mid-sized packages',
+    dimensions: 'Medium',
+    max_weight: '150 kg',
+    active: true
+  },
+  {
+    id: '3',
+    name: 'Van',
+    category: 'van',
+    description: 'Large deliveries, furniture, appliances',
+    dimensions: 'Large',
+    max_weight: '500 kg',
+    active: true
+  },
+  {
+    id: '4',
+    name: 'Truck',
+    category: 'truck',
+    description: 'Heavy freight, multiple items',
+    dimensions: 'Extra Large',
+    max_weight: '1500 kg',
+    active: true
+  },
+  {
+    id: '5',
+    name: 'Cargo Truck',
+    category: 'truck',
+    description: 'Commercial loads, bulk transportation',
+    dimensions: 'XXL',
+    max_weight: '3000 kg',
+    active: true
+  }
+];
 
 export default VehicleCarousel;

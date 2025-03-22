@@ -22,27 +22,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Search, Plus, Filter, Truck, Edit, Trash } from 'lucide-react';
+import { MoreHorizontal, Search, Plus, Filter, Truck, Edit, Trash, Image } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
-
-interface VehicleType {
-  id: string;
-  name: string;
-  capacity: string;
-  max_weight: number;
-  base_price: number;
-  price_per_km: number;
-  image_url?: string;
-  active: boolean;
-  created_at: string;
-}
+import { adminService, VehicleType } from '@/lib/services/admin';
+import { VehicleEditModal } from '@/components/admin/VehicleEditModal';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function AdminVehiclesPage() {
   const [vehicles, setVehicles] = useState<VehicleType[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(undefined);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [vehicleToDelete, setVehicleToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchVehicles();
@@ -52,17 +47,8 @@ export default function AdminVehiclesPage() {
     try {
       setLoading(true);
       
-      // This would be a real query in a production app
-      const { data, error } = await supabase
-        .from('vehicle_types')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      setVehicles(data || sampleVehicles);
+      const data = await adminService.getVehicles();
+      setVehicles(data);
     } catch (error) {
       console.error('Error fetching vehicles:', error);
       toast.error('Failed to load vehicles');
@@ -73,40 +59,48 @@ export default function AdminVehiclesPage() {
     }
   };
 
-  const handleVehicleAction = async (action: string, vehicleId: string) => {
+  const handleOpenEditModal = (vehicle?: VehicleType) => {
+    setSelectedVehicle(vehicle);
+    setEditModalOpen(true);
+  };
+
+  const handleOpenDeleteDialog = (vehicleId: string) => {
+    setVehicleToDelete(vehicleId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteVehicle = async () => {
+    if (!vehicleToDelete) return;
+    
     try {
-      switch (action) {
-        case 'edit':
-          toast.info(`Editing vehicle ${vehicleId}`);
-          // In a real app, this would open a modal with the vehicle details
-          break;
-        case 'toggle':
-          // Toggle the active status
-          const vehicleToToggle = vehicles.find(v => v.id === vehicleId);
-          if (vehicleToToggle) {
-            const updatedVehicle = { ...vehicleToToggle, active: !vehicleToToggle.active };
-            
-            // Update in the database (mock for now)
-            toast.success(`Vehicle ${updatedVehicle.active ? 'activated' : 'deactivated'}`);
-            
-            // Update local state
-            setVehicles(vehicles.map(v => v.id === vehicleId ? updatedVehicle : v));
-          }
-          break;
-        case 'delete':
-          if (confirm('Are you sure you want to delete this vehicle type? This action cannot be undone.')) {
-            // In a real app, delete from the database
-            toast.success('Vehicle type deleted');
-            // Update the UI
-            setVehicles(vehicles.filter(v => v.id !== vehicleId));
-          }
-          break;
-        default:
-          break;
-      }
+      await adminService.deleteVehicle(vehicleToDelete);
+      toast.success('Vehicle deleted successfully');
+      fetchVehicles(); // Refresh the list
     } catch (error) {
-      console.error(`Error performing action ${action}:`, error);
-      toast.error('Operation failed');
+      console.error('Error deleting vehicle:', error);
+      toast.error('Failed to delete vehicle');
+    } finally {
+      setDeleteDialogOpen(false);
+      setVehicleToDelete(null);
+    }
+  };
+
+  const handleToggleVehicleStatus = async (vehicle: VehicleType) => {
+    try {
+      const updatedVehicle = await adminService.updateVehicle(
+        vehicle.id, 
+        { active: !vehicle.active }
+      );
+      
+      toast.success(`Vehicle ${updatedVehicle.active ? 'activated' : 'deactivated'}`);
+      
+      // Update the local state
+      setVehicles(vehicles.map(v => 
+        v.id === vehicle.id ? { ...v, active: !v.active } : v
+      ));
+    } catch (error) {
+      console.error('Error toggling vehicle status:', error);
+      toast.error('Failed to update vehicle status');
     }
   };
 
@@ -146,7 +140,10 @@ export default function AdminVehiclesPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Vehicle Management</h1>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => handleOpenEditModal()}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add Vehicle Type
         </Button>
@@ -205,7 +202,23 @@ export default function AdminVehiclesPage() {
                 <TableRow key={vehicle.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center">
-                      <Truck className="mr-2 h-4 w-4 text-gray-400" />
+                      {vehicle.image_url ? (
+                        <div className="h-8 w-8 mr-2 rounded-full overflow-hidden">
+                          <img
+                            src={vehicle.image_url}
+                            alt={vehicle.name}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              // If image fails to load, show fallback icon
+                              (e.target as HTMLImageElement).style.display = 'none';
+                              (e.currentTarget.parentNode as HTMLElement).innerHTML = 
+                                '<div class="flex items-center justify-center h-8 w-8 bg-gray-100 text-gray-500 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M2 8h20"/></svg></div>';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <Truck className="mr-2 h-5 w-5 text-gray-400" />
+                      )}
                       {vehicle.name}
                     </div>
                   </TableCell>
@@ -229,16 +242,16 @@ export default function AdminVehiclesPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleVehicleAction('edit', vehicle.id)}>
+                        <DropdownMenuItem onClick={() => handleOpenEditModal(vehicle)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Vehicle
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleVehicleAction('toggle', vehicle.id)}>
+                        <DropdownMenuItem onClick={() => handleToggleVehicleStatus(vehicle)}>
                           {vehicle.active ? 'Deactivate' : 'Activate'} Vehicle
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
-                          onClick={() => handleVehicleAction('delete', vehicle.id)}
+                          onClick={() => handleOpenDeleteDialog(vehicle.id)}
                           className="text-red-600"
                         >
                           <Trash className="mr-2 h-4 w-4" />
@@ -289,11 +302,38 @@ export default function AdminVehiclesPage() {
           </div>
         </Card>
       </div>
+
+      {/* Edit Vehicle Modal */}
+      <VehicleEditModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        vehicle={selectedVehicle}
+        onVehicleSaved={fetchVehicles}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              vehicle type from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteVehicle} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
 
-// Sample vehicle data for demonstration
+// Sample vehicle data for development/fallback
 const sampleVehicles: VehicleType[] = [
   {
     id: '1',

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { MapPin } from 'lucide-react-native';
 import { OrderStops, Stop } from '@/components/OrderStops';
 import { VehicleCard } from '@/components/VehicleCard';
 import { MotorcycleSvg, CarSvg, VanSvg, TruckSvg } from '@/assets/images/vehicles';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
+import { getActiveVehicles } from '@/services/api';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -14,10 +14,33 @@ export default function HomeScreen() {
   const colors = Colors[colorScheme];
   
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [stops, setStops] = useState<Stop[]>([
     { id: '1', type: 'pickup', address: '' },
     { id: '2', type: 'dropoff', address: '' },
   ]);
+
+  const [vehicles, setVehicles] = useState([]);
+  
+  // Fetch vehicles from the API
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const response = await getActiveVehicles();
+        
+        if (response.data && response.data.vehicles) {
+          setVehicles(response.data.vehicles);
+        }
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
 
   const handleAddStop = () => {
     if (stops.length < 5) {
@@ -70,62 +93,99 @@ export default function HomeScreen() {
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Available vehicles
           </Text>
-
-          <VehicleCard
-            icon={<MotorcycleSvg />}
-            title="Courier"
-            description="Small items, documents"
-            selected={selectedVehicle === 'courier'}
-            onPress={() => setSelectedVehicle('courier')}
-          />
           
-          <VehicleCard
-            icon={<CarSvg />}
-            title="Car"
-            description="Small and medium parcels"
-            selected={selectedVehicle === 'car'}
-            onPress={() => setSelectedVehicle('car')}
-          />
-          
-          <VehicleCard
-            icon={<CarSvg />}
-            title="MPV (Weight<25KG x 2)"
-            description="Multiple medium parcels"
-            selected={selectedVehicle === 'mpv'}
-            onPress={() => setSelectedVehicle('mpv')}
-          />
-          
-          <VehicleCard
-            icon={<VanSvg />}
-            title="1.7M Van"
-            description="Furniture, home appliances"
-            selected={selectedVehicle === 'van1.7'}
-            onPress={() => setSelectedVehicle('van1.7')}
-          />
-          
-          <VehicleCard
-            icon={<VanSvg />}
-            title="2.4M Van"
-            description="Larger furniture, multiple items"
-            selected={selectedVehicle === 'van2.4'}
-            onPress={() => setSelectedVehicle('van2.4')}
-          />
-          
-          <VehicleCard
-            icon={<TruckSvg />}
-            title="Lorry 10ft"
-            description="Commercial goods, bulk items"
-            selected={selectedVehicle === 'lorry10'}
-            onPress={() => setSelectedVehicle('lorry10')}
-          />
-          
-          <VehicleCard
-            icon={<TruckSvg />}
-            title="Lorry 14ft"
-            description="Moving, large quantity goods"
-            selected={selectedVehicle === 'lorry14'}
-            onPress={() => setSelectedVehicle('lorry14')}
-          />
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={{ color: colors.text, marginTop: 8 }}>Loading vehicles...</Text>
+            </View>
+          ) : vehicles && vehicles.length > 0 ? (
+            // If we have vehicles from the API, use those
+            vehicles.map(vehicle => {
+              // Determine which icon to use based on the vehicle category
+              let icon;
+              const category = vehicle.category?.toLowerCase() || '';
+              if (category.includes('motorcycle') || category.includes('courier')) {
+                icon = <MotorcycleSvg />;
+              } else if (category.includes('van')) {
+                icon = <VanSvg />;
+              } else if (category.includes('truck') || category.includes('lorry')) {
+                icon = <TruckSvg />;
+              } else {
+                icon = <CarSvg />;
+              }
+              
+              return (
+                <VehicleCard
+                  key={vehicle.id}
+                  icon={icon}
+                  title={vehicle.name}
+                  description={vehicle.description}
+                  selected={selectedVehicle === vehicle.id}
+                  onPress={() => setSelectedVehicle(vehicle.id)}
+                />
+              );
+            })
+          ) : (
+            // Fallback to hardcoded vehicles if API returns no data
+            <>
+              <VehicleCard
+                icon={<MotorcycleSvg />}
+                title="Courier"
+                description="Small items, documents"
+                selected={selectedVehicle === 'courier'}
+                onPress={() => setSelectedVehicle('courier')}
+              />
+              
+              <VehicleCard
+                icon={<CarSvg />}
+                title="Car"
+                description="Small and medium parcels"
+                selected={selectedVehicle === 'car'}
+                onPress={() => setSelectedVehicle('car')}
+              />
+              
+              <VehicleCard
+                icon={<CarSvg />}
+                title="MPV (Weight<25KG x 2)"
+                description="Multiple medium parcels"
+                selected={selectedVehicle === 'mpv'}
+                onPress={() => setSelectedVehicle('mpv')}
+              />
+              
+              <VehicleCard
+                icon={<VanSvg />}
+                title="1.7M Van"
+                description="Furniture, home appliances"
+                selected={selectedVehicle === 'van1.7'}
+                onPress={() => setSelectedVehicle('van1.7')}
+              />
+              
+              <VehicleCard
+                icon={<VanSvg />}
+                title="2.4M Van"
+                description="Larger furniture, multiple items"
+                selected={selectedVehicle === 'van2.4'}
+                onPress={() => setSelectedVehicle('van2.4')}
+              />
+              
+              <VehicleCard
+                icon={<TruckSvg />}
+                title="Lorry 10ft"
+                description="Commercial goods, bulk items"
+                selected={selectedVehicle === 'lorry10'}
+                onPress={() => setSelectedVehicle('lorry10')}
+              />
+              
+              <VehicleCard
+                icon={<TruckSvg />}
+                title="Lorry 14ft"
+                description="Moving, large quantity goods"
+                selected={selectedVehicle === 'lorry14'}
+                onPress={() => setSelectedVehicle('lorry14')}
+              />
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -166,5 +226,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
     marginBottom: 16,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
   }
 });
