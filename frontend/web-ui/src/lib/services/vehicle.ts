@@ -46,14 +46,14 @@ const mapVehicleData = (data: any[]): Vehicle[] => {
   return data.map(item => ({
     id: item.id,
     name: item.name,
-    category: item.category,
+    category: item.category || getCategoryFromName(item.name),
     description: item.description,
-    dimensions: item.dimensions,
+    dimensions: item.dimensions || item.max_dimensions, // Handle both field names
     max_weight: item.max_weight,
     base_price: Number(item.base_price) || 0,
     price_per_km: Number(item.price_per_km) || 0,
     minimum_distance: Number(item.minimum_distance) || 0,
-    svg_icon: item.svg_icon || null,
+    svg_icon: item.svg_icon || item.icon_path || null, // Handle both field names
     active: item.active !== undefined ? item.active : true,
     display_order: item.display_order || 0,
     created_at: item.created_at
@@ -152,13 +152,27 @@ export const vehicleService = {
   // Create a new vehicle
   async createVehicle(vehicleData: Omit<Vehicle, 'id' | 'created_at'>): Promise<Vehicle | null> {
     try {
+      // Transform data to match database column names
+      const dbVehicleData = {
+        name: vehicleData.name,
+        description: vehicleData.description,
+        max_dimensions: vehicleData.dimensions, 
+        max_weight: vehicleData.max_weight,
+        base_price: vehicleData.base_price,
+        price_per_km: vehicleData.price_per_km,
+        minimum_distance: vehicleData.minimum_distance,
+        icon_path: vehicleData.svg_icon,
+        active: vehicleData.active,
+        // Omit category and display_order as they don't exist in DB
+      };
+
       // Make API call to the backend instead of direct Supabase access
       const response = await fetch('/api/vehicles/types', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(vehicleData),
+        body: JSON.stringify(dbVehicleData),
         credentials: 'include',
       });
 
@@ -178,13 +192,27 @@ export const vehicleService = {
   // Update a vehicle
   async updateVehicle(id: string, vehicleData: Partial<Vehicle>): Promise<Vehicle | null> {
     try {
+      // Transform data to match database column names
+      const dbVehicleData: any = {};
+      
+      if (vehicleData.name) dbVehicleData.name = vehicleData.name;
+      if (vehicleData.description) dbVehicleData.description = vehicleData.description;
+      if (vehicleData.dimensions) dbVehicleData.max_dimensions = vehicleData.dimensions;
+      if (vehicleData.max_weight) dbVehicleData.max_weight = vehicleData.max_weight;
+      if (vehicleData.base_price !== undefined) dbVehicleData.base_price = vehicleData.base_price;
+      if (vehicleData.price_per_km !== undefined) dbVehicleData.price_per_km = vehicleData.price_per_km;
+      if (vehicleData.minimum_distance !== undefined) dbVehicleData.minimum_distance = vehicleData.minimum_distance;
+      if (vehicleData.svg_icon !== undefined) dbVehicleData.icon_path = vehicleData.svg_icon;
+      if (vehicleData.active !== undefined) dbVehicleData.active = vehicleData.active;
+      // Omit category and display_order as they don't exist in DB
+
       // Make API call to the backend instead of direct Supabase access
       const response = await fetch(`/api/vehicles/types/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(vehicleData),
+        body: JSON.stringify(dbVehicleData),
         credentials: 'include',
       });
 
@@ -270,42 +298,40 @@ export const vehicleService = {
     maxPrice?: number;
   }): Promise<Vehicle[]> {
     try {
-      let query = supabase
-        .from('vehicle_types')
-        .select('*')
-        .eq('active', true);
+      // Use the API route with active filter
+      const response = await fetch('/api/vehicles/types?active=true', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch vehicles for search');
+      }
+
+      // Get all active vehicles
+      let vehicles = result.data ? mapVehicleData(result.data) : [];
+
+      // Client-side filtering for criteria
       if (criteria.maxWeight) {
-        query = query.gte('max_weight', criteria.maxWeight);
+        // Parse max_weight string to extract numeric value for comparison
+        vehicles = vehicles.filter(vehicle => {
+          const weightMatch = vehicle.max_weight.match(/(\d+)/);
+          const weightValue = weightMatch ? parseInt(weightMatch[0], 10) : 0;
+          return weightValue >= criteria.maxWeight!;
+        });
       }
 
       if (criteria.maxPrice) {
-        query = query.lte('base_price', criteria.maxPrice);
+        vehicles = vehicles.filter(vehicle => vehicle.base_price <= criteria.maxPrice!);
       }
 
-      const { data, error } = await query.order('base_price', { ascending: true });
-
-      if (error) {
-        throw error;
-      }
-
-      // Client-side filtering for more complex criteria
-      let filteredData = data || [];
-      
-      if (criteria.minCapacity) {
-        // This is just an example - in a real app you'd have a more sophisticated way to compare capacities
-        const capacityOrder = ['Small', 'Medium', 'Large', 'Extra Large', 'XXL'];
-        const minCapacityIndex = capacityOrder.indexOf(criteria.minCapacity);
-        
-        if (minCapacityIndex >= 0) {
-          filteredData = filteredData.filter(vehicle => {
-            const vehicleCapacityIndex = capacityOrder.indexOf(vehicle.capacity);
-            return vehicleCapacityIndex >= minCapacityIndex;
-          });
-        }
-      }
-
-      return mapVehicleData(filteredData);
+      // Sort by price
+      return vehicles.sort((a, b) => a.base_price - b.base_price);
     } catch (error) {
       console.error('Error searching vehicles:', error);
       return [];
@@ -319,37 +345,64 @@ export const vehicleService = {
     bulky: boolean;
   }): Promise<Vehicle[]> {
     try {
-      // Fetch all active vehicles
-      const { data, error } = await supabase
-        .from('vehicle_types')
-        .select('*')
-        .eq('active', true)
-        .order('base_price', { ascending: true });
+      // Use the API route with active filter
+      const response = await fetch('/api/vehicles/types?active=true', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch vehicles for recommendations');
       }
 
-      // Filter and sort vehicles based on cargo requirements
-      let filteredVehicles = data || [];
-      
+      // Get all active vehicles
+      let vehicles = result.data ? mapVehicleData(result.data) : [];
+
       // Filter by weight requirements
-      filteredVehicles = filteredVehicles.filter(v => v.max_weight >= cargoDetails.weight);
+      vehicles = vehicles.filter(vehicle => {
+        // Parse max_weight string to extract numeric value for comparison
+        const weightMatch = vehicle.max_weight.match(/(\d+)/);
+        const weightValue = weightMatch ? parseInt(weightMatch[0], 10) : 0;
+        return weightValue >= cargoDetails.weight;
+      });
       
       // Apply additional filters based on item count and bulkiness
       if (cargoDetails.bulky || cargoDetails.itemCount > 3) {
-        // Filter out smaller vehicles
-        const smallVehicleCategories = ['Small', 'Medium'];
-        filteredVehicles = filteredVehicles.filter(
-          v => !smallVehicleCategories.includes(v.capacity)
-        );
+        // Filter out smaller vehicles based on name and dimensions
+        vehicles = vehicles.filter(vehicle => {
+          // Check if the name contains words suggesting a larger vehicle
+          const isLarger = /(truck|van|transporter|lorry)/i.test(vehicle.name);
+          
+          // Parse dimensions to get a rough volume estimate
+          const dimensionsMatch = vehicle.dimensions.match(/(\d+)\s*[x×]\s*(\d+)\s*[x×]\s*(\d+)/i);
+          let volume = 0;
+          if (dimensionsMatch) {
+            volume = parseInt(dimensionsMatch[1], 10) * 
+                    parseInt(dimensionsMatch[2], 10) * 
+                    parseInt(dimensionsMatch[3], 10);
+          }
+          
+          // Consider it large enough if it's a larger vehicle type or has sufficient volume
+          return isLarger || volume > 500000; // 50cm x 50cm x 200cm = 500,000 cubic cm
+        });
       }
       
       // Sort by suitability (minimizing excess capacity)
-      filteredVehicles.sort((a, b) => {
-        // Calculate excess capacity for each vehicle
-        const excessA = a.max_weight - cargoDetails.weight;
-        const excessB = b.max_weight - cargoDetails.weight;
+      vehicles.sort((a, b) => {
+        // Calculate weight excess for each vehicle
+        const weightMatchA = a.max_weight.match(/(\d+)/);
+        const weightMatchB = b.max_weight.match(/(\d+)/);
+        
+        const weightA = weightMatchA ? parseInt(weightMatchA[0], 10) : 0;
+        const weightB = weightMatchB ? parseInt(weightMatchB[0], 10) : 0;
+        
+        const excessA = weightA - cargoDetails.weight;
+        const excessB = weightB - cargoDetails.weight;
         
         // First prioritize vehicles that can handle the weight
         if (excessA < 0 && excessB >= 0) return 1;
@@ -360,7 +413,7 @@ export const vehicleService = {
         return excessA - excessB;
       });
 
-      return mapVehicleData(filteredVehicles);
+      return vehicles;
     } catch (error) {
       console.error('Error getting recommended vehicles:', error);
       return [];

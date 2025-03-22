@@ -96,8 +96,11 @@ export async function PUT(
     // Parse request body
     const vehicleData = await request.json();
     
+    // Log received data for debugging
+    console.log('Updating vehicle with data:', vehicleData);
+    
     // Ensure numeric fields are properly formatted
-    const numericFields = ['base_price', 'price_per_km', 'minimum_distance', 'display_order'];
+    const numericFields = ['base_price', 'price_per_km', 'minimum_distance'];
     for (const field of numericFields) {
       if (vehicleData[field] !== undefined) {
         vehicleData[field] = Number(vehicleData[field]);

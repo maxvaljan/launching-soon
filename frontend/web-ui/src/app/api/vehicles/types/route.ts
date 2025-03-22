@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     let query = supabaseClient
       .from('vehicle_types')
       .select('*')
-      .order('display_order', { ascending: true });
+      .order('created_at', { ascending: false }); // No display_order in DB, use created_at
       
     // Apply active filter if specified
     if (activeOnly) {
@@ -66,8 +66,11 @@ export async function POST(request: NextRequest) {
     // Parse request body
     const vehicleData = await request.json();
     
+    // Log the received data for debugging
+    console.log('Creating vehicle with data:', vehicleData);
+    
     // Validate required fields
-    const requiredFields = ['name', 'description', 'dimensions', 'max_weight'];
+    const requiredFields = ['name', 'description', 'max_dimensions', 'max_weight'];
     for (const field of requiredFields) {
       if (!vehicleData[field]) {
         return NextResponse.json(
@@ -78,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Ensure numeric fields are properly formatted
-    const numericFields = ['base_price', 'price_per_km', 'minimum_distance', 'display_order'];
+    const numericFields = ['base_price', 'price_per_km', 'minimum_distance'];
     for (const field of numericFields) {
       if (vehicleData[field] !== undefined) {
         vehicleData[field] = Number(vehicleData[field]);
@@ -87,7 +90,6 @@ export async function POST(request: NextRequest) {
     
     // Set defaults for optional fields
     vehicleData.active = vehicleData.active !== undefined ? vehicleData.active : true;
-    vehicleData.display_order = vehicleData.display_order || 0;
     
     // Insert new vehicle type
     const { data, error } = await supabaseClient

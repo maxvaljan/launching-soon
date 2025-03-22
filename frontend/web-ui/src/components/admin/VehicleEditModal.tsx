@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -73,18 +73,29 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
     try {
       setIsSubmitting(true);
       
-      // Ensure category is never undefined
-      const vehicleData = {
-        ...values,
-        category: values.category || 'default',  // Provide a default value
-        display_order: values.display_order || 0 // Provide a default value
+      // Transform form values to match database field names
+      const dbVehicleData = {
+        name: values.name,
+        description: values.description,
+        max_dimensions: values.dimensions, // Map dimensions to max_dimensions
+        max_weight: values.max_weight,
+        base_price: values.base_price,
+        price_per_km: values.price_per_km,
+        minimum_distance: values.minimum_distance,
+        icon_path: values.svg_icon, // Map svg_icon to icon_path
+        active: values.active
+        // Omit category and display_order as they don't exist in the database
       };
       
+      console.log('Submitting vehicle data:', dbVehicleData);
+      
       if (isNewVehicle) {
-        await vehicleService.createVehicle(vehicleData);
+        // Pass the database-compatible object
+        await vehicleService.createVehicle(dbVehicleData as any);
         toast.success('Vehicle created successfully');
       } else if (vehicle) {
-        await vehicleService.updateVehicle(vehicle.id, vehicleData);
+        // Pass the database-compatible object
+        await vehicleService.updateVehicle(vehicle.id, dbVehicleData as any);
         toast.success('Vehicle updated successfully');
       }
       
@@ -248,29 +259,13 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
                         
                         {selectedSvgPreview && (
                           <div className="p-4 bg-gray-50 border rounded-md">
-                            <div className="text-sm font-medium mb-2">Preview:</div>
-                            <div className="flex gap-4 items-center">
-                              <div 
-                                className="p-3 border rounded-md bg-white w-16 h-16 flex items-center justify-center"
-                                dangerouslySetInnerHTML={{ __html: selectedSvgPreview }}
-                              />
-                              <div 
-                                className="p-3 border rounded-md bg-white w-8 h-8 flex items-center justify-center"
-                                dangerouslySetInnerHTML={{ __html: selectedSvgPreview }}
-                              />
-                            </div>
+                            <div className="text-sm mb-2 text-gray-500">Preview:</div>
+                            <div 
+                              className="h-12 w-12 flex items-center justify-center text-gray-700"
+                              dangerouslySetInnerHTML={{ __html: selectedSvgPreview }}
+                            />
                           </div>
                         )}
-                        
-                        <div className="bg-blue-50 p-4 rounded-md border border-blue-200 mt-2">
-                          <h4 className="text-sm font-medium text-blue-900 mb-1">SVG Guidelines:</h4>
-                          <ul className="text-xs text-blue-800 list-disc pl-5 space-y-1">
-                            <li>Paste the complete SVG code including {"<svg>"} tags</li>
-                            <li>Use simple, single-color SVG files for best results</li>
-                            <li>Make sure it has viewBox attribute for proper scaling</li>
-                            <li>Use "currentColor" for stroke/fill to match theme colors</li>
-                          </ul>
-                        </div>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -283,11 +278,13 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
               control={form.control}
               name="active"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel>Active Status</FormLabel>
+                    <FormLabel className="text-base">
+                      Active
+                    </FormLabel>
                     <FormDescription>
-                      Active vehicles will be displayed to customers
+                      Make this vehicle type available for orders
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -301,22 +298,25 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
+              <Button 
+                type="button" 
+                variant="outline" 
                 onClick={onClose}
                 disabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="submit"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {isNewVehicle ? 'Creating...' : 'Updating...'}
                   </>
                 ) : (
-                  <>{isNewVehicle ? 'Create Vehicle' : 'Update Vehicle'}</>
+                  isNewVehicle ? 'Create Vehicle' : 'Update Vehicle'
                 )}
               </Button>
             </DialogFooter>
