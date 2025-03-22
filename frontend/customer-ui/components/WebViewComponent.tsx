@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, Platform, Linking } from 'react-native';
 import Colors from '../constants/Colors';
 
-// This is a fallback component that will be used when WebView fails to load
-// It provides a placeholder UI instead of crashing the app
+// This component provides WebView functionality or a fallback UI
+// when WebView isn't available
 
 interface WebViewComponentProps {
   source: { uri: string };
@@ -18,11 +18,42 @@ const WebViewComponent: React.FC<WebViewComponentProps> = ({
   startInLoadingState,
   renderLoading 
 }) => {
-  // In a real implementation, you would need to import the actual WebView
-  // This is just a placeholder component
+  // Use a platform check to avoid WebView import errors
+  const WebViewImplementation = React.useMemo(() => {
+    // Only import WebView when actually needed and if we're not in a problematic environment
+    if (Platform.OS !== 'web' && !process.env.NODE_ENV?.includes('test')) {
+      try {
+        // Dynamic import to avoid module not found errors during initial load
+        const WebViewModule = require('react-native-webview');
+        return WebViewModule.WebView;
+      } catch (e) {
+        console.warn('WebView module not available:', e);
+        return null;
+      }
+    }
+    return null;
+  }, []);
 
+  // If WebView is available, use it
+  if (WebViewImplementation) {
+    return (
+      <WebViewImplementation
+        source={source}
+        onNavigationStateChange={onNavigationStateChange}
+        startInLoadingState={startInLoadingState}
+        renderLoading={renderLoading}
+      />
+    );
+  }
+  
+  // Otherwise use our fallback implementation
   React.useEffect(() => {
-    // Simulate loading complete and navigation back to app URL after 2 seconds
+    // Open in browser if WebView isn't available
+    Linking.openURL(source.uri).catch(err => {
+      console.error('Failed to open URL:', err);
+    });
+    
+    // Simulate navigation back to app after a delay
     const timer = setTimeout(() => {
       onNavigationStateChange({ url: 'maxmoveapp://earnings' });
     }, 2000);
@@ -32,9 +63,9 @@ const WebViewComponent: React.FC<WebViewComponentProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Stripe Connect Setup</Text>
+      <Text style={styles.title}>External Content</Text>
       <Text style={styles.message}>
-        Opening Stripe Connect in browser...
+        Opening in your browser...
       </Text>
       <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
       <Text style={styles.url}>{source.uri}</Text>
