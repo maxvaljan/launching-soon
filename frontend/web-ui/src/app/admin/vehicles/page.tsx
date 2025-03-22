@@ -76,7 +76,17 @@ export default function AdminVehiclesPage() {
       fetchVehicles(); // Refresh the list
     } catch (error) {
       console.error('Error deleting vehicle:', error);
-      toast.error('Failed to delete vehicle');
+      let errorMessage = 'Failed to delete vehicle';
+      
+      // Check if the error contains a specific message
+      if (error instanceof Error) {
+        // Display more specific error message if available
+        errorMessage = error.message.includes('used in orders') 
+          ? 'Cannot delete vehicle that is used in orders'
+          : error.message || errorMessage;
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setDeleteDialogOpen(false);
       setVehicleToDelete(null);

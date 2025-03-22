@@ -136,17 +136,23 @@ export const vehicleService = {
   // Create a new vehicle
   async createVehicle(vehicleData: Omit<Vehicle, 'id' | 'created_at'>): Promise<Vehicle | null> {
     try {
-      const { data, error } = await supabase
-        .from('vehicle_types')
-        .insert([vehicleData])
-        .select()
-        .single();
+      // Make API call to the backend instead of direct Supabase access
+      const response = await fetch('/api/vehicles/types', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vehicleData),
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create vehicle');
       }
 
-      return data ? mapVehicleData([data])[0] : null;
+      const result = await response.json();
+      return result.data ? mapVehicleData([result.data])[0] : null;
     } catch (error) {
       console.error('Error creating vehicle:', error);
       throw error;
@@ -156,18 +162,23 @@ export const vehicleService = {
   // Update a vehicle
   async updateVehicle(id: string, vehicleData: Partial<Vehicle>): Promise<Vehicle | null> {
     try {
-      const { data, error } = await supabase
-        .from('vehicle_types')
-        .update(vehicleData)
-        .eq('id', id)
-        .select()
-        .single();
+      // Make API call to the backend instead of direct Supabase access
+      const response = await fetch(`/api/vehicles/types/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vehicleData),
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update vehicle');
       }
 
-      return data ? mapVehicleData([data])[0] : null;
+      const result = await response.json();
+      return result.data ? mapVehicleData([result.data])[0] : null;
     } catch (error) {
       console.error(`Error updating vehicle ${id}:`, error);
       throw error;
@@ -177,25 +188,22 @@ export const vehicleService = {
   // Toggle vehicle active status
   async toggleVehicleActive(id: string): Promise<Vehicle | null> {
     try {
-      // First get the current vehicle to know its active status
-      const vehicle = await this.getVehicleById(id);
-      
-      if (!vehicle) {
-        throw new Error('Vehicle not found');
-      }
-      
-      const { data, error } = await supabase
-        .from('vehicle_types')
-        .update({ active: !vehicle.active })
-        .eq('id', id)
-        .select()
-        .single();
+      // Make API call to the backend instead of direct Supabase access
+      const response = await fetch(`/api/vehicles/types/${id}/toggle-active`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to toggle vehicle status');
       }
 
-      return data ? mapVehicleData([data])[0] : null;
+      const result = await response.json();
+      return result.data ? mapVehicleData([result.data])[0] : null;
     } catch (error) {
       console.error(`Error toggling active status for vehicle ${id}:`, error);
       throw error;
@@ -205,13 +213,18 @@ export const vehicleService = {
   // Delete a vehicle
   async deleteVehicle(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('vehicle_types')
-        .delete()
-        .eq('id', id);
+      // Make API call to the backend instead of direct Supabase access
+      const response = await fetch(`/api/vehicles/types/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-      if (error) {
-        throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete vehicle');
       }
 
       return true;

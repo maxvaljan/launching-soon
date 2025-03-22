@@ -87,7 +87,17 @@ export function VehicleEditModal({ isOpen, onClose, vehicle, onVehicleSaved }: V
       onClose();
     } catch (error) {
       console.error('Error saving vehicle:', error);
-      toast.error(isNewVehicle ? 'Failed to create vehicle' : 'Failed to update vehicle');
+      
+      let errorMessage = isNewVehicle 
+        ? 'Failed to create vehicle' 
+        : 'Failed to update vehicle';
+      
+      // Check if the error contains a specific message
+      if (error instanceof Error) {
+        errorMessage = error.message || errorMessage;
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
