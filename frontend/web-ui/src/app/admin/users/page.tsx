@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { AdminUser, adminService } from '@/lib/services/admin';
+import { AdminUser, adminService, UserRole } from '@/lib/services/admin';
 import { MoreHorizontal, Search, UserPlus, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -51,11 +51,11 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState<Partial<AdminUser>>({
     name: '',
     email: '',
     phone_number: '',
-    role: ''
+    role: UserRole.CUSTOMER
   });
 
   const handleUserAction = async (action: string, userId: string) => {
@@ -169,6 +169,7 @@ export default function AdminUsersPage() {
             className="border border-gray-300 rounded-md p-2 text-sm"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
+            aria-label="Filter users by role"
           >
             <option value="all">All Roles</option>
             <option value="admin">Admin</option>

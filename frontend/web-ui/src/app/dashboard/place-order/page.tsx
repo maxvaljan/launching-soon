@@ -304,7 +304,11 @@ export default function PlaceOrderPage() {
     <div className="flex flex-col lg:flex-row h-screen">
       {/* Left Side - Order Form */}
       <div className="lg:w-1/2 p-6 flex flex-col h-full overflow-hidden">
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <Label className="text-sm text-gray-500 font-medium">
+            ROUTE (MAX. 20 STOPS)
+          </Label>
+          
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="bg-white border-maxmove-gray">
@@ -326,24 +330,20 @@ export default function PlaceOrderPage() {
 
         <div className="flex-1 overflow-auto pr-2 pb-4 custom-scrollbar space-y-6">
           {/* Route Section */}
-          <div className="space-y-4">
-            <Label className="text-sm text-gray-500 font-medium">
-              ROUTE (MAX. 20 STOPS)
-            </Label>
-            
+          <div>            
             <div className="border border-gray-200 rounded-lg p-6 relative">
               {stops.map((stop, index) => (
                 <div key={index} className="relative">
                   {/* Vertical dotted line connecting stops */}
                   {index < stops.length - 1 && (
-                    <div className="absolute left-[20px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
+                    <div className="absolute left-[18.5px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0"></div>
                   )}
                   
                   <div className="flex items-center mb-4 relative z-10">
                     {/* Stop icon based on type - Changed colors from orange to navy blue */}
                     <div className="mr-3">
                       {stop.type === 'pickup' ? (
-                        <div className="w-5 h-5 rounded-full bg-maxmove-navy border-2 border-white"></div>
+                        <div className="w-[17px] h-[17px] rounded-full bg-maxmove-navy border-2 border-white"></div>
                       ) : stop.type === 'dropoff' ? (
                         <div className="w-5 h-5 flex items-center justify-center">
                           <svg className="text-maxmove-navy" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

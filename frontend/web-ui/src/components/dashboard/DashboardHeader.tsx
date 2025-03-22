@@ -56,15 +56,15 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
               <Link
                 key={tab.id}
                 href={`/dashboard/${tab.id}`}
-                className={`py-4 px-2 -mb-px font-medium text-sm transition-colors relative ${
+                className={`py-4 px-2 -mb-px font-medium text-base transition-colors relative ${
                   activeTab === tab.id
-                    ? "text-maxmove-primary font-semibold"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "text-[#1c2d4f] font-semibold"
+                    : "text-[#798390] hover:text-[#1c2d4f]"
                 }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-maxmove-primary" />
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1c2d4f]" />
                 )}
               </Link>
             ))}
@@ -75,6 +75,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
             <button
               className="p-2 rounded-md text-gray-600 hover:text-gray-900 transition-colors"
               onClick={() => router.push("/")}
+              aria-label="Go to Home page"
             >
               <Home className="h-5 w-5" />
             </button>
@@ -83,6 +84,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
               <button
                 className="p-2 rounded-md text-gray-600 hover:text-gray-900 transition-colors"
                 onClick={() => router.push("/admin-dashboard")}
+                aria-label="Go to Admin Dashboard"
               >
                 <UserCog className="h-5 w-5" />
               </button>
@@ -95,6 +97,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
                   : "text-gray-600 hover:text-gray-900"
               }`}
               onClick={handleSettingsClick}
+              aria-label="Open Settings"
             >
               <SettingsIcon className="h-5 w-5" />
               {showSettings && (
