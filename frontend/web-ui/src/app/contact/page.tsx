@@ -6,10 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Building, Mail, PhoneCall, Clock, MapPin } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Building, Mail, PhoneCall, Clock, MapPin, CheckCircle, Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { submitContactForm } from "../actions/contact-form";
-import { useToast } from "@/hooks/use-toast";
 import { useFormState } from "react-dom";
 
 const initialState = {
@@ -18,46 +17,33 @@ const initialState = {
 };
 
 function ContactPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialSubject = searchParams.get('subject') || '';
-  const { toast } = useToast();
   const [formState, formAction] = useFormState(submitContactForm, initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   
   // Handle form submission feedback
   const handleSubmitWithState = async (formData: FormData) => {
     setIsSubmitting(true);
+    setErrorMessage('');
     
     // This calls the server action and updates formState
     await formAction(formData);
     
+    // Check the updated formState
+    if (formState.success) {
+      setIsSuccess(true);
+      // Reset form by clearing all inputs
+      const form = document.getElementById('contactForm') as HTMLFormElement;
+      if (form) form.reset();
+    } else if (formState.message) {
+      setErrorMessage(formState.message || 'Something went wrong. Please try again.');
+    }
+    
     setIsSubmitting(false);
   };
-  
-  // Show toast when formState changes
-  if (formState.message && formState !== initialState) {
-    // Clear the message so we don't show it again on re-renders
-    const message = formState.message;
-    const success = formState.success;
-    
-    // Reset formState.message to prevent showing toast on every render
-    formState.message = '';
-    
-    // Show toast notification
-    toast({
-      title: success ? "Success" : "Error",
-      description: message,
-      variant: success ? "default" : "destructive",
-    });
-    
-    // If submission was successful, redirect to home page after a short delay
-    if (success) {
-      setTimeout(() => {
-        router.push('/');
-      }, 2000);
-    }
-  }
   
   return (
     <div className="min-h-screen pt-32 pb-16">
@@ -180,84 +166,123 @@ function ContactPageContent() {
             
             <div className="lg:col-span-3 order-1 lg:order-2">
               <Card className="p-6 shadow-lg">
-                <h2 className="text-xl font-semibold text-maxmove-900 mb-6">
-                  Send Us a Message
-                </h2>
-                
-                <form action={handleSubmitWithState} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input 
-                          id="name" 
-                          name="name"
-                          placeholder="Your name" 
-                          required 
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input 
-                          id="email" 
-                          name="email"
-                          type="email" 
-                          placeholder="your.email@example.com" 
-                          required 
-                        />
-                      </div>
+                {isSuccess ? (
+                  <div className="py-8 text-center">
+                    <div className="mx-auto w-16 h-16 flex items-center justify-center bg-green-100 rounded-full mb-6">
+                      <CheckCircle className="h-10 w-10 text-green-600" />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="department">Department</Label>
-                        <select 
-                          id="department" 
-                          name="department"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          required
-                          aria-label="Department"
-                        >
-                          <option value="" disabled selected>Select department</option>
-                          <option value="Customer Support">Customer Support</option>
-                          <option value="Business Inquiries">Business Inquiries</option>
-                          <option value="Driver Relations">Driver Relations</option>
-                          <option value="Technical Support">Technical Support</option>
-                          <option value="Press & Media">Press & Media</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="subject">Subject</Label>
-                        <Input 
-                          id="subject" 
-                          name="subject"
-                          defaultValue={initialSubject}
-                          placeholder="Message subject" 
-                          required 
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea 
-                        id="message" 
-                        name="message"
-                        placeholder="How can we help you?" 
-                        className="min-h-[150px]" 
-                        required
-                      />
-                    </div>
-                    
+                    <h2 className="text-2xl font-semibold text-maxmove-900 mb-4">
+                      Message Sent Successfully!
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                      Thank you for reaching out. Our team will review your message and get back to you shortly.
+                    </p>
                     <Button 
-                      type="submit" 
-                      className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
-                      disabled={isSubmitting}
+                      onClick={() => setIsSuccess(false)}
+                      variant="outline"
+                      className="mx-auto"
                     >
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                      Send Another Message
                     </Button>
-                  </form>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-semibold text-maxmove-900 mb-6">
+                      Send Us a Message
+                    </h2>
+                    
+                    {errorMessage && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+                        {errorMessage}
+                      </div>
+                    )}
+                    
+                    <form id="contactForm" action={handleSubmitWithState} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="name">Full Name</Label>
+                          <Input 
+                            id="name" 
+                            name="name"
+                            placeholder="Your name" 
+                            required 
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="email">Email Address</Label>
+                          <Input 
+                            id="email" 
+                            name="email"
+                            type="email" 
+                            placeholder="your.email@example.com" 
+                            required 
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <Label htmlFor="department">Department</Label>
+                          <select 
+                            id="department" 
+                            name="department"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            required
+                            aria-label="Department"
+                            disabled={isSubmitting}
+                          >
+                            <option value="" disabled selected>Select department</option>
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Business Inquiries">Business Inquiries</option>
+                            <option value="Driver Relations">Driver Relations</option>
+                            <option value="Technical Support">Technical Support</option>
+                            <option value="Press & Media">Press & Media</option>
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="subject">Subject</Label>
+                          <Input 
+                            id="subject" 
+                            name="subject"
+                            defaultValue={initialSubject}
+                            placeholder="Message subject" 
+                            required 
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="message">Message</Label>
+                        <Textarea 
+                          id="message" 
+                          name="message"
+                          placeholder="How can we help you?" 
+                          className="min-h-[150px]" 
+                          required
+                          disabled={isSubmitting}
+                        />
+                      </div>
+                      
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : 'Send Message'}
+                      </Button>
+                    </form>
+                  </>
+                )}
               </Card>
             </div>
           </div>

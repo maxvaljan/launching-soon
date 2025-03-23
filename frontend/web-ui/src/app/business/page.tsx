@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Building2, Clock, CreditCard, FileText, Globe2, HeartHandshake, LayoutDashboard, Truck } from "lucide-react";
+import { ArrowRight, Building2, Clock, CreditCard, FileText, Globe2, HeartHandshake, LayoutDashboard, Truck, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -74,6 +74,7 @@ export default function Business() {
   const router = useRouter();
   const [formState, formAction] = useFormState(submitBusinessInquiry, initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(businessInquirySchema),
@@ -92,30 +93,27 @@ export default function Business() {
     // Only run this effect if we have a message in the form state
     if (formState.message && formState !== initialState) {
       if (formState.success) {
-        // Show success toast
-        toast({
-          title: "Success",
-          description: formState.message,
-          variant: "default",
-        });
+        // Set success state
+        setIsSuccess(true);
         
-        // Redirect after success
-        setTimeout(() => {
-          router.push('/');
-        }, 2000);
+        // Reset the message to avoid triggering this effect again
+        formState.message = '';
       } else {
-        // Show error toast
+        // Show error toast for errors
         toast({
           title: "Error",
           description: formState.message,
           variant: "destructive",
         });
+        
+        // Reset the message to avoid triggering this effect again
+        formState.message = '';
       }
       
       // Reset submission state
       setIsSubmitting(false);
     }
-  }, [formState, toast, router]);
+  }, [formState, toast]);
   
   // Handle form submission through server action
   const handleSubmitWithAction = async (data: z.infer<typeof businessInquirySchema>) => {
@@ -317,109 +315,139 @@ const delivery = await maxmove.createDelivery({
             <p className="text-gray-600">Fill out the form below and we'll reach out to discuss how Maxmove can help your business.</p>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmitWithAction)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="companyName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Company name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="contactName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Contact name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input type="email" placeholder="Business email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input placeholder="Phone number (optional)" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          {isSuccess ? (
+            <div className="py-8 text-center bg-white rounded-lg shadow-md border border-gray-100 p-8">
+              <div className="mx-auto w-16 h-16 flex items-center justify-center bg-green-100 rounded-full mb-6">
+                <CheckCircle className="h-10 w-10 text-green-600" />
               </div>
-
-              <FormField
-                control={form.control}
-                name="industry"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your industry" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="retail">Retail</SelectItem>
-                        <SelectItem value="ecommerce">E-commerce</SelectItem>
-                        <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                        <SelectItem value="logistics">Logistics</SelectItem>
-                        <SelectItem value="healthcare">Healthcare</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea placeholder="Tell us about your business needs (optional)" className="min-h-[100px]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              <h2 className="text-2xl font-semibold text-maxmove-900 mb-4">
+                Inquiry Submitted Successfully!
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Thank you for your interest in Maxmove Business. Our team will review your inquiry and get back to you shortly.
+              </p>
               <Button 
-                type="submit" 
-                className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
-                disabled={isSubmitting}
+                onClick={() => setIsSuccess(false)}
+                variant="outline"
+                className="mx-auto"
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
+                Submit Another Inquiry
               </Button>
-            </form>
-          </Form>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmitWithAction)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input 
+                          placeholder="Company name" 
+                          {...field} 
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contactName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input placeholder="Contact name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input type="email" placeholder="Business email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Phone number (optional)" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="industry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your industry" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="retail">Retail</SelectItem>
+                          <SelectItem value="ecommerce">E-commerce</SelectItem>
+                          <SelectItem value="manufacturing">Manufacturing</SelectItem>
+                          <SelectItem value="logistics">Logistics</SelectItem>
+                          <SelectItem value="healthcare">Healthcare</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea placeholder="Tell us about your business needs (optional)" className="min-h-[100px]" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : 'Submit Inquiry'}
+                </Button>
+              </form>
+            </Form>
+          )}
         </div>
       </section>
 

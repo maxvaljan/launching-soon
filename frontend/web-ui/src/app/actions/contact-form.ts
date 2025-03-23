@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { Resend } from 'resend'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // Define validation schemas for both forms
 const contactFormSchema = z.object({
@@ -25,6 +26,16 @@ const businessInquirySchema = z.object({
 
 export async function submitContactForm(prevState: any, formData: FormData) {
   try {
+    // Check rate limit first
+    const rateLimitResult = await checkRateLimit();
+    if (!rateLimitResult.success) {
+      console.log('Rate limit exceeded for contact form submission');
+      return { 
+        success: false, 
+        message: rateLimitResult.message || 'Too many requests. Please try again later.' 
+      };
+    }
+    
     const name = formData.get('name') as string
     const email = formData.get('email') as string
     const subject = formData.get('subject') as string
@@ -122,6 +133,16 @@ export async function submitContactForm(prevState: any, formData: FormData) {
 
 export async function submitBusinessInquiry(prevState: any, formData: FormData) {
   try {
+    // Check rate limit first
+    const rateLimitResult = await checkRateLimit();
+    if (!rateLimitResult.success) {
+      console.log('Rate limit exceeded for business inquiry submission');
+      return { 
+        success: false, 
+        message: rateLimitResult.message || 'Too many requests. Please try again later.' 
+      };
+    }
+    
     // Extract form data
     const companyName = formData.get('companyName') as string
     const contactName = formData.get('contactName') as string
