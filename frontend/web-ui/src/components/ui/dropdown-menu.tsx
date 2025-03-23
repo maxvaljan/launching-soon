@@ -6,38 +6,7 @@ import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const DropdownMenu = ({ children, onOpenChange, ...props }: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>) => {
-  const [open, setOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    if (typeof document !== 'undefined') {
-      if (open) {
-        document.body.classList.add('dropdown-open');
-      } else {
-        document.body.classList.remove('dropdown-open');
-      }
-    }
-    
-    return () => {
-      if (typeof document !== 'undefined') {
-        document.body.classList.remove('dropdown-open');
-      }
-    };
-  }, [open]);
-
-  const handleOpenChange = (open: boolean) => {
-    setOpen(open);
-    if (onOpenChange) {
-      onOpenChange(open);
-    }
-  };
-
-  return (
-    <DropdownMenuPrimitive.Root {...props} onOpenChange={handleOpenChange}>
-      {children}
-    </DropdownMenuPrimitive.Root>
-  );
-};
+const DropdownMenu = DropdownMenuPrimitive.Root
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
@@ -99,6 +68,11 @@ const DropdownMenuContent = React.forwardRef<
         "z-50 min-w-[10rem] overflow-hidden rounded-lg border border-maxmove-navy/10 bg-white p-2 text-maxmove-navy shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
+      style={{ 
+        maxWidth: 'calc(100vw - 16px)', 
+        maxHeight: 'calc(100vh - 16px)',
+        boxSizing: 'border-box'
+      }}
       {...props}
     />
   </DropdownMenuPrimitive.Portal>

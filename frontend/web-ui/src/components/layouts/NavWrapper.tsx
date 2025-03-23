@@ -14,7 +14,7 @@ export default function NavWrapper({ children }: NavWrapperProps) {
   const showNavbar = !pathname?.startsWith('/dashboard') && !pathname?.startsWith('/admin') && pathname !== '/signin' && !pathname?.startsWith('/signup') && pathname !== '/account-type';
   
   return (
-    <div className="relative">
+    <div className="relative no-horizontal-scroll" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
       {showNavbar && <Navbar />}
       {children}
     </div>

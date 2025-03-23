@@ -63,31 +63,27 @@
 @layer base {
   * {
     @apply border-[hsl(var(--border))];
+    box-sizing: border-box;
   }
   
   html {
     @apply antialiased scroll-smooth;
-    /* Always show scrollbar to prevent layout shifts */
-    overflow-y: scroll;
-    /* This prevents the layout from shifting when scrollbars appear/disappear */
-    margin-right: 0 !important;
-    width: 100vw;
-    /* Modern approach to handle scrollbar gutter */
-    scrollbar-gutter: stable;
+    overflow-x: hidden;
   }
   
   body {
     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] min-h-screen;
-    /* Prevent any layout shift from scrollbar */
     overflow-x: hidden;
     width: 100%;
-    /* Prevent layout shifts when modals open */
+    /* Fix for dropdown-induced layout shift */
     padding-right: 0 !important;
+    position: relative;
   }
 
-  /* Prevent layout shifts when dropdown menus open */
-  body.dropdown-open {
-    padding-right: var(--scrollbar-width) !important;
+  #root, #__next {
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -171,6 +167,12 @@
     background-color: rgba(156, 163, 175, 0.5);
     border-radius: 20px;
     border: transparent;
+  }
+
+  /* Prevent horizontal scrollbar */
+  .no-horizontal-scroll {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 }
 

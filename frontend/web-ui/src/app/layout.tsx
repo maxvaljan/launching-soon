@@ -94,13 +94,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased text-foreground bg-background`}>
+    <html lang="en" className="scroll-smooth no-horizontal-scroll">
+      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased text-foreground bg-background no-horizontal-scroll`}>
         <Providers>
           {process.env.NODE_ENV === 'development' && <ResponsiveCheck />}
           <NavWrapper>
             <FooterWrapper>
-              <div className="flex flex-col min-h-screen">
+              <div className="flex flex-col min-h-screen no-horizontal-scroll">
                 <div className="flex-grow">
                   {children}
                 </div>

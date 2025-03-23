@@ -72,6 +72,7 @@ export function PageLayout({
     <div 
       className={cn(
         fullHeight ? 'min-h-screen' : '',
+        'no-horizontal-scroll',
         className
       )}
     >
@@ -84,6 +85,7 @@ export function PageLayout({
           !paddingBottom ? '' : paddingBottomClasses[paddingBottom],
           paddingXClasses[paddingX],
           centered ? 'flex flex-col justify-center items-center' : '',
+          'no-horizontal-scroll',
           containerClassName
         )}
       >
