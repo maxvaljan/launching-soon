@@ -52,7 +52,7 @@ export default function Drivers() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
           {/* Left side - Banner */}
           <section className="relative bg-maxmove-900 text-white p-6 rounded-lg h-min">
             <div>
@@ -69,8 +69,6 @@ export default function Drivers() {
           <Card className="w-full">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl">Start Driving</CardTitle>
-              <CardDescription>
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -135,7 +133,7 @@ export default function Drivers() {
         </div>
 
         {/* Requirements Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 mb-16">
             <Card>
               <CardContent className="pt-6">
                 <Shield className="w-12 h-12 text-maxmove-800 mb-4" />
