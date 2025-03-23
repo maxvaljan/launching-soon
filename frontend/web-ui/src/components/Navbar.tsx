@@ -169,7 +169,7 @@ const Navbar = () => {
           <div className="flex-shrink-0 flex items-center">
             <Link 
               href="/" 
-              className={`text-2xl font-bold transition-colors ${
+              className={`text-2xl font-bold ${
                 isDarkBackground 
                   ? isScrolled ? "text-maxmove-navy" : "text-maxmove-creme"
                   : "text-maxmove-navy"

@@ -82,19 +82,19 @@ export default function Drivers() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select your city" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#294374]">
-                      <SelectItem value="berlin" className="text-white font-bold">Berlin, Germany</SelectItem>
-                      <SelectItem value="cologne" className="text-white font-bold">Cologne, Germany</SelectItem>
-                      <SelectItem value="munich" className="text-white font-bold">Munich, Germany</SelectItem>
-                      <SelectItem value="hamburg" className="text-white font-bold">Hamburg, Germany</SelectItem>
-                      <SelectItem value="frankfurt" className="text-white font-bold">Frankfurt, Germany</SelectItem>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="berlin" className="text-maxmove-navy">Berlin, Germany</SelectItem>
+                      <SelectItem value="cologne" className="text-maxmove-navy">Cologne, Germany</SelectItem>
+                      <SelectItem value="munich" className="text-maxmove-navy">Munich, Germany</SelectItem>
+                      <SelectItem value="hamburg" className="text-maxmove-navy">Hamburg, Germany</SelectItem>
+                      <SelectItem value="frankfurt" className="text-maxmove-navy">Frankfurt, Germany</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button 
                   type="submit" 
                   disabled={isLoading} 
-                  className="w-full bg-maxmove-800 text-white hover:bg-maxmove-700 focus:bg-maxmove-700" 
+                  className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-dark-blue focus:bg-maxmove-dark-blue" 
                 >
                   {isLoading ? "Sending..." : "Get Verification Code"}
                 </Button>
