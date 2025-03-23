@@ -24,17 +24,17 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem>
-            <Link href="/personal-delivery" className="w-full flex items-center">
+            <Link href="/personal-delivery" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Personal Delivery
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/business" className="w-full flex items-center">
+            <Link href="/business" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Business Solutions
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/drivers" className="w-full flex items-center">
+            <Link href="/drivers" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Drivers
             </Link>
           </DropdownMenuItem>
@@ -49,22 +49,22 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem>
-            <Link href="/about" className="w-full flex items-center">
+            <Link href="/about" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               About Us
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/career" className="w-full flex items-center">
+            <Link href="/career" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Careers
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/investment" className="w-full flex items-center">
+            <Link href="/investment" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Investment
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/roadmap" className="w-full flex items-center">
+            <Link href="/roadmap" className="w-full flex items-center text-[#192338] hover:text-[#192338]">
               Roadmap
             </Link>
           </DropdownMenuItem>
