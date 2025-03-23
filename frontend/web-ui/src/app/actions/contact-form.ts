@@ -143,7 +143,7 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
       }
     }
     
-    // First, let's simplify the database insertion logic
+    // Database insertion logic
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -156,14 +156,13 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
     }
 
     // Create a direct client
-    const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: { persistSession: false } // Don't persist auth state
     });
 
     console.log('Supabase client created, attempting database insertion...');
 
-    // Insert into contact_form_submissions
+    // Insert directly into contact_form_submissions
     try {
       console.log('Inserting into contact_form_submissions table...');
       const { error: insertError } = await supabase
@@ -175,6 +174,7 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
           phone,
           message,
           subject: `Business Inquiry: ${industry}`,
+          department: 'Business Inquiries',
           form_source: 'business_page'
         });
       
@@ -195,7 +195,7 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
       };
     }
     
-    // 3. Send email notification via Resend
+    // Send email notification via Resend
     try {
       // Check if Resend API key is available
       if (!process.env.RESEND_API_KEY) {
