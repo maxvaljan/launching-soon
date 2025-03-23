@@ -104,7 +104,7 @@ export default function AboutPage() {
 
 
 
-      {/* Stats Section */}
+{/*       {/* Stats Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -126,7 +126,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-16 bg-maxmove-creme">
