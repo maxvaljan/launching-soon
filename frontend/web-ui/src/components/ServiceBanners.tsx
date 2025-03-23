@@ -24,17 +24,16 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 z-0 bg-[url('/lovable-uploads/18efedbc-fa85-4a03-978b-d62558e7ea5b.png')] bg-cover bg-center md:bg-[center_40%] bg-[15%_center] md:!h-[105vh]" 
+        className="absolute inset-0 z-0 bg-[url('/lovable-uploads/18efedbc-fa85-4a03-978b-d62558e7ea5b.png')] bg-cover bg-center md:bg-[center_40%] bg-[center] h-full"
         style={{
-          height: "85%",
+          backgroundPosition: "center",
           minHeight: "85vh",
-          backgroundPosition: "15% center"
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85vh] md:min-h-[105vh] flex flex-col items-center">
+      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85vh] md:min-h-[105vh] flex flex-col justify-center items-center">
         <div className="flex flex-col items-center mb-8 md:mb-20 w-full scale-85 md:scale-100">
           <div className="flex justify-center mb-4 pl-12 md:pl-0">
             <h1 className="text-4xl md:text-7xl font-bold text-white inline-flex items-center justify-center">
@@ -61,7 +60,7 @@ const ServiceBanners = () => {
           <p className="text-lg md:text-xl text-white/90 mb-12 text-center w-full">Smart Logistics</p>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-6 mt-48 md:mt-24 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-24 w-full">
           {/* Move Banner */}
           <Link href="/book" className="group relative overflow-hidden p-1 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 h-[110px] md:h-[220px] flex flex-col justify-between">
             <div>
