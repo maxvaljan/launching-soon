@@ -82,7 +82,7 @@ export default function DashboardLayout({
         <DashboardHeader session={session} isAdmin={isAdmin} />
 
         {/* Content */}
-        <div className="p-4 flex-grow">
+        <div className="flex-grow overflow-hidden">
           {children}
         </div>
       </div>

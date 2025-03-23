@@ -48,7 +48,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
   };
 
   return (
-    <div className="border-b bg-white shadow-sm">
+    <div className="border-b border-maxmove-navy bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-6">

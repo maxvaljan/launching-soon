@@ -566,7 +566,7 @@ export default function PlaceOrderPage() {
       </div>
       
       {/* Right Side - Map - Full height and width */}
-      <div className="lg:w-1/2 h-[50vh] lg:h-[calc(100vh-65px)] lg:fixed lg:right-0 lg:top-[65px]">
+      <div className="lg:w-1/2 h-[50vh] lg:h-screen lg:fixed lg:right-0 lg:top-0">
         <Map 
           pickupLocation={stops[0].coordinates}
           dropoffLocation={stops[stops.length - 1].coordinates}
