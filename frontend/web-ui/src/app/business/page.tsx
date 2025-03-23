@@ -11,10 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import BusinessServices from "@/components/BusinessServices";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { submitBusinessInquiry } from "../actions/contact-form";
+import { useState } from "react";
+import { useFormState } from "react-dom";
 
 const businessInquirySchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
@@ -60,9 +62,16 @@ const businessFaqs = [
   }
 ];
 
+const initialState = {
+  success: false,
+  message: '',
+};
+
 export default function Business() {
   const { toast } = useToast();
   const router = useRouter();
+  const [formState, formAction] = useFormState(submitBusinessInquiry, initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm({
     resolver: zodResolver(businessInquirySchema),
@@ -79,35 +88,51 @@ export default function Business() {
   const handleContactSales = () => {
     window.location.href = "mailto:sales@maxmove.com";
   };
-
-  const onSubmit = async (data: z.infer<typeof businessInquirySchema>) => {
-    try {
-      const { error: dbError } = await supabase.from('business_inquiries').insert({
-        company_name: data.companyName,
-        contact_name: data.contactName,
-        email: data.email,
-        phone: data.phone,
-        industry: data.industry,
-        message: data.message
-      });
-
-      if (dbError) throw dbError;
-
-      toast({
-        title: "Inquiry Submitted",
-        description: "We'll get back to you soon!"
-      });
-
-      form.reset();
-    } catch (error) {
-      console.error('Error submitting inquiry:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit inquiry. Please try again.",
-        variant: "destructive"
-      });
-    }
+  
+  // Handle form submission through server action
+  const handleSubmitWithAction = async (data: z.infer<typeof businessInquirySchema>) => {
+    setIsSubmitting(true);
+    
+    // Create FormData object from the form values
+    const formData = new FormData();
+    formData.append('companyName', data.companyName);
+    formData.append('contactName', data.contactName);
+    formData.append('email', data.email);
+    if (data.phone) formData.append('phone', data.phone);
+    formData.append('industry', data.industry);
+    if (data.message) formData.append('message', data.message);
+    
+    // Call the server action with the form data
+    await formAction(formData);
+    
+    setIsSubmitting(false);
   };
+  
+  // Show toast when formState changes
+  if (formState.message && formState !== initialState) {
+    // Clear the message so we don't show it again on re-renders
+    const message = formState.message;
+    const success = formState.success;
+    
+    // Reset formState.message to prevent showing toast on every render
+    formState.message = '';
+    
+    // Show toast notification
+    toast({
+      title: success ? "Success" : "Error",
+      description: message,
+      variant: success ? "default" : "destructive",
+    });
+    
+    // Reset form and redirect on success
+    if (success) {
+      form.reset();
+      // Redirect to home page after a short delay
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+    }
+  }
 
   const businessFeatures = [
     {
@@ -273,7 +298,7 @@ const delivery = await maxmove.createDelivery({
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleSubmitWithAction)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="companyName"
@@ -366,8 +391,12 @@ const delivery = await maxmove.createDelivery({
                 )}
               />
 
-              <Button type="submit" className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90">
-                Submit Inquiry
+              <Button 
+                type="submit" 
+                className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
               </Button>
             </form>
           </Form>

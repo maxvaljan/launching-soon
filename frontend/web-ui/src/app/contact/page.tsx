@@ -7,34 +7,57 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Building, Mail, PhoneCall, Clock, MapPin } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { submitContactForm } from "../actions/contact-form";
+import { useToast } from "@/hooks/use-toast";
+import { useFormState } from "react-dom";
+
+const initialState = {
+  success: false,
+  message: '',
+};
 
 function ContactPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialSubject = searchParams.get('subject') || '';
+  const { toast } = useToast();
+  const [formState, formAction] = useFormState(submitContactForm, initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // State for form values
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [subject, setSubject] = useState(initialSubject);
-  const [department, setDepartment] = useState('');
-  const [message, setMessage] = useState('');
-  
-  // Create mailto URL with form data
-  const getMailtoUrl = () => {
-    return `mailto:max@maxmove.com?subject=${encodeURIComponent(`Contact Form: ${subject}`)}&body=${encodeURIComponent(
-      `Name: ${name}\n` +
-      `Email: ${email}\n` +
-      `Department: ${department}\n\n` +
-      `Message:\n${message}`
-    )}`;
+  // Handle form submission feedback
+  const handleSubmitWithState = async (formData: FormData) => {
+    setIsSubmitting(true);
+    
+    // This calls the server action and updates formState
+    await formAction(formData);
+    
+    setIsSubmitting(false);
   };
   
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    window.location.href = getMailtoUrl();
-  };
+  // Show toast when formState changes
+  if (formState.message && formState !== initialState) {
+    // Clear the message so we don't show it again on re-renders
+    const message = formState.message;
+    const success = formState.success;
+    
+    // Reset formState.message to prevent showing toast on every render
+    formState.message = '';
+    
+    // Show toast notification
+    toast({
+      title: success ? "Success" : "Error",
+      description: message,
+      variant: success ? "default" : "destructive",
+    });
+    
+    // If submission was successful, redirect to home page after a short delay
+    if (success) {
+      setTimeout(() => {
+        router.push('/');
+      }, 2000);
+    }
+  }
   
   return (
     <div className="min-h-screen pt-32 pb-16">
@@ -161,14 +184,13 @@ function ContactPageContent() {
                   Send Us a Message
                 </h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form action={handleSubmitWithState} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <Label htmlFor="name">Full Name</Label>
                         <Input 
                           id="name" 
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          name="name"
                           placeholder="Your name" 
                           required 
                         />
@@ -178,9 +200,8 @@ function ContactPageContent() {
                         <Label htmlFor="email">Email Address</Label>
                         <Input 
                           id="email" 
+                          name="email"
                           type="email" 
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
                           placeholder="your.email@example.com" 
                           required 
                         />
@@ -192,13 +213,12 @@ function ContactPageContent() {
                         <Label htmlFor="department">Department</Label>
                         <select 
                           id="department" 
-                          value={department}
-                          onChange={(e) => setDepartment(e.target.value)}
+                          name="department"
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           required
                           aria-label="Department"
                         >
-                          <option value="" disabled>Select department</option>
+                          <option value="" disabled selected>Select department</option>
                           <option value="Customer Support">Customer Support</option>
                           <option value="Business Inquiries">Business Inquiries</option>
                           <option value="Driver Relations">Driver Relations</option>
@@ -211,8 +231,8 @@ function ContactPageContent() {
                         <Label htmlFor="subject">Subject</Label>
                         <Input 
                           id="subject" 
-                          value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
+                          name="subject"
+                          defaultValue={initialSubject}
                           placeholder="Message subject" 
                           required 
                         />
@@ -223,8 +243,7 @@ function ContactPageContent() {
                       <Label htmlFor="message">Message</Label>
                       <Textarea 
                         id="message" 
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        name="message"
                         placeholder="How can we help you?" 
                         className="min-h-[150px]" 
                         required
@@ -234,8 +253,9 @@ function ContactPageContent() {
                     <Button 
                       type="submit" 
                       className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-navy/90"
+                      disabled={isSubmitting}
                     >
-                      Send Message
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>
               </Card>
