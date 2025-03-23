@@ -101,7 +101,7 @@ export default function Career() {
                 href="mailto:careers@maxmove.com" 
                 className="text-maxmove-800 hover:underline"
               >
-                max@maxmove.com
+                careers@maxmove.com
               </a>
             </div>
           </div>
