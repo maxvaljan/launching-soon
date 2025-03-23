@@ -72,13 +72,14 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-maxmove-900 mb-12">Our Story</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1 relative h-80 sm:h-96 rounded-lg overflow-hidden shadow-xl">
+            <div className="order-2 lg:order-1 relative h-[400px] lg:h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
               <Image 
                 src="/images/team-photo-new.jpg" 
                 alt="MaxMove team"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
+                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                className="hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="order-1 lg:order-2">
