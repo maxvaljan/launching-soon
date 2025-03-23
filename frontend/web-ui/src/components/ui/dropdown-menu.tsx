@@ -6,7 +6,38 @@ import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const DropdownMenu = DropdownMenuPrimitive.Root
+const DropdownMenu = ({ children, onOpenChange, ...props }: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>) => {
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (open) {
+        document.body.classList.add('dropdown-open');
+      } else {
+        document.body.classList.remove('dropdown-open');
+      }
+    }
+    
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('dropdown-open');
+      }
+    };
+  }, [open]);
+
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open);
+    if (onOpenChange) {
+      onOpenChange(open);
+    }
+  };
+
+  return (
+    <DropdownMenuPrimitive.Root {...props} onOpenChange={handleOpenChange}>
+      {children}
+    </DropdownMenuPrimitive.Root>
+  );
+};
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 

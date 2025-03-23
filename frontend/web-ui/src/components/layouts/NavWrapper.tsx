@@ -14,9 +14,9 @@ export default function NavWrapper({ children }: NavWrapperProps) {
   const showNavbar = !pathname?.startsWith('/dashboard') && !pathname?.startsWith('/admin') && pathname !== '/signin' && !pathname?.startsWith('/signup') && pathname !== '/account-type';
   
   return (
-    <>
+    <div className="relative">
       {showNavbar && <Navbar />}
       {children}
-    </>
+    </div>
   );
 }

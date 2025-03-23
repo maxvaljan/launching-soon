@@ -32,6 +32,9 @@
     --input: 214 20% 90%;
     --ring: 214 100% 50%;
     --radius: 0.6rem;
+    
+    /* Scrollbar width variable for consistent layout */
+    --scrollbar-width: 17px;
   }
  
   .dark {
@@ -62,12 +65,29 @@
     @apply border-[hsl(var(--border))];
   }
   
-  html, body {
+  html {
     @apply antialiased scroll-smooth;
+    /* Always show scrollbar to prevent layout shifts */
+    overflow-y: scroll;
+    /* This prevents the layout from shifting when scrollbars appear/disappear */
+    margin-right: 0 !important;
+    width: 100vw;
+    /* Modern approach to handle scrollbar gutter */
+    scrollbar-gutter: stable;
   }
   
   body {
     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))] min-h-screen;
+    /* Prevent any layout shift from scrollbar */
+    overflow-x: hidden;
+    width: 100%;
+    /* Prevent layout shifts when modals open */
+    padding-right: 0 !important;
+  }
+
+  /* Prevent layout shifts when dropdown menus open */
+  body.dropdown-open {
+    padding-right: var(--scrollbar-width) !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
