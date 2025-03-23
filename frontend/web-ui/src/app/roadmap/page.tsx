@@ -22,9 +22,9 @@ export default function Roadmap() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20">
+      <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="space-y-24">
+          <div className="space-y-16">
             {/* 2024 */}
             <div className="relative">
               <Card className="transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 border-2 border-blue-500/20 bg-white/5 backdrop-blur-sm">
@@ -119,7 +119,7 @@ export default function Roadmap() {
       </section>
 
       {/* Investment and Career CTA Section */}
-      <section className="py-8 text-center">
+      <section className="py-16 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center gap-6">
             <Button size="lg" className="text-lg px-8 py-6 bg-gray-50 text-slate-800 hover:bg-gray-100" asChild>
