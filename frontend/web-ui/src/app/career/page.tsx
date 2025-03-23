@@ -98,7 +98,7 @@ export default function Career() {
             <div className="mt-8 text-center text-maxmove-600">
               Send your application to{" "}
               <a 
-                href="mailto:max@maxmove.com" 
+                href="mailto:careers@maxmove.com" 
                 className="text-maxmove-800 hover:underline"
               >
                 max@maxmove.com
