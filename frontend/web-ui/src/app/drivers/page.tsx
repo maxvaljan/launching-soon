@@ -91,7 +91,11 @@ export default function Drivers() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" disabled={isLoading} className="w-full bg-maxmove-800 text-slate-50">
+                <Button 
+                  type="submit" 
+                  disabled={isLoading} 
+                  className="w-full bg-maxmove-800 text-white hover:bg-maxmove-800 focus:bg-maxmove-800" 
+                >
                   {isLoading ? "Sending..." : "Get Verification Code"}
                 </Button>
               </form>
