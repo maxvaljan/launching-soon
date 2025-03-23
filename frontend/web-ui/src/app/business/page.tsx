@@ -15,7 +15,7 @@ import BusinessServices from "@/components/BusinessServices";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { submitBusinessInquiry } from "../actions/contact-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormState } from "react-dom";
 
 const businessInquirySchema = z.object({
@@ -92,47 +92,58 @@ export default function Business() {
   // Handle form submission through server action
   const handleSubmitWithAction = async (data: z.infer<typeof businessInquirySchema>) => {
     setIsSubmitting(true);
-    
-    // Create FormData object from the form values
-    const formData = new FormData();
-    formData.append('companyName', data.companyName);
-    formData.append('contactName', data.contactName);
-    formData.append('email', data.email);
-    if (data.phone) formData.append('phone', data.phone);
-    formData.append('industry', data.industry);
-    if (data.message) formData.append('message', data.message);
-    
-    // Call the server action with the form data
-    await formAction(formData);
-    
-    setIsSubmitting(false);
+
+    try {
+      // Log form data before submission for debugging
+      console.log('About to submit form data:', data);
+      
+      // Create FormData object from the form values
+      const formData = new FormData();
+      formData.append('companyName', data.companyName);
+      formData.append('contactName', data.contactName);
+      formData.append('email', data.email);
+      if (data.phone) formData.append('phone', data.phone);
+      formData.append('industry', data.industry);
+      if (data.message) formData.append('message', data.message);
+      
+      // Call the server action with the form data
+      await formAction(formData);
+      
+      // Reset form immediately on submission to prevent multiple submissions
+      form.reset();
+    } catch (error) {
+      console.error('Error in form submission:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
-  // Show toast when formState changes
-  if (formState.message && formState !== initialState) {
-    // Clear the message so we don't show it again on re-renders
-    const message = formState.message;
-    const success = formState.success;
-    
-    // Reset formState.message to prevent showing toast on every render
-    formState.message = '';
-    
-    // Show toast notification
-    toast({
-      title: success ? "Success" : "Error",
-      description: message,
-      variant: success ? "default" : "destructive",
-    });
-    
-    // Reset form and redirect on success
-    if (success) {
-      form.reset();
-      // Redirect to home page after a short delay
-      setTimeout(() => {
-        router.push('/');
-      }, 2000);
+  // Show toast when formState changes and handle response properly
+  useEffect(() => {
+    if (formState.message && formState !== initialState) {
+      const success = formState.success;
+      const message = formState.message;
+      
+      // Show toast notification
+      toast({
+        title: success ? "Success" : "Error",
+        description: message,
+        variant: success ? "default" : "destructive",
+      });
+      
+      // Redirect on success after a short delay
+      if (success) {
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      }
     }
-  }
+  }, [formState, toast, router]);
 
   const businessFeatures = [
     {

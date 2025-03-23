@@ -3,6 +3,7 @@
 import { z } from 'zod'
 import { Resend } from 'resend'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 
 // Define validation schemas for both forms
 const contactFormSchema = z.object({
@@ -128,56 +129,97 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
     const industry = formData.get('industry') as string
     const message = formData.get('message') as string || undefined
     
-    // Validate form data
+    // Validate form data and log each field for debugging
+    console.log('Business inquiry form data:', {
+      companyName,
+      contactName,
+      email,
+      phone,
+      industry,
+      message
+    })
+    
     const result = businessInquirySchema.safeParse({ 
       companyName, contactName, email, phone, industry, message 
     })
     
     if (!result.success) {
+      console.error('Validation error:', result.error.errors)
       return { 
         success: false, 
         message: result.error.errors[0].message 
       }
     }
     
-    // Initialize Supabase client
-    const supabase = await createServerSupabaseClient()
-    
-    // Store in Supabase (both tables for backward compatibility)
-    // First in business_inquiries
-    const { error: dbError1 } = await supabase
-      .from('business_inquiries')
-      .insert({
-        company_name: companyName,
-        contact_name: contactName,
-        email,
-        phone,
-        industry,
-        message
-      })
-    
-    if (dbError1) {
-      console.error('Database error (business_inquiries):', dbError1)
-    }
-    
-    // Then in contact_form_submissions
-    const { error: dbError2 } = await supabase
-      .from('contact_form_submissions')
-      .insert({
-        name: contactName,
-        email,
-        company_name: companyName,
-        phone,
-        message,
-        subject: `Business Inquiry: ${industry}`,
-        form_source: 'business_page'
-      })
-    
-    if (dbError2) {
-      console.error('Database error (contact_form_submissions):', dbError2)
+    try {
+      // Create a direct Supabase client with anon key for insertions
+      // This avoids any authentication issues with the server client
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+      const directClient = createClient(supabaseUrl, supabaseAnonKey)
+      
+      // Try with direct client first (contact_form_submissions)
+      const { error: dbError2 } = await directClient
+        .from('contact_form_submissions')
+        .insert({
+          name: contactName,
+          email,
+          company_name: companyName,
+          phone,
+          message,
+          subject: `Business Inquiry: ${industry}`,
+          form_source: 'business_page'
+        })
+      
+      if (dbError2) {
+        console.error('Database error (contact_form_submissions with direct client):', dbError2)
+        
+        // Try with server client as fallback
+        const supabase = await createServerSupabaseClient()
+        
+        // Attempt to use the server client for contact_form_submissions
+        const { error: serverDbError } = await supabase
+          .from('contact_form_submissions')
+          .insert({
+            name: contactName,
+            email,
+            company_name: companyName,
+            phone,
+            message,
+            subject: `Business Inquiry: ${industry}`,
+            form_source: 'business_page'
+          })
+        
+        if (serverDbError) {
+          console.error('Database error (contact_form_submissions with server client):', serverDbError)
+          return { 
+            success: false, 
+            message: 'Database error: ' + serverDbError.message
+          }
+        }
+      }
+      
+      // Try to insert into business_inquiries as well, but don't fail if it errors
+      const { error: dbError1 } = await directClient
+        .from('business_inquiries')
+        .insert({
+          company_name: companyName,
+          contact_name: contactName,
+          email,
+          phone,
+          industry,
+          message
+        })
+      
+      if (dbError1) {
+        console.error('Database error (business_inquiries):', dbError1)
+        // Don't return error - we'll continue if contact_form_submissions worked
+      }
+    } catch (dbException) {
+      console.error('Exception in database operations:', dbException)
       return { 
         success: false, 
-        message: 'Failed to submit your inquiry. Please try again.' 
+        message: 'A database error occurred. Please try again.' 
       }
     }
     
@@ -228,7 +270,7 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
       message: 'Your business inquiry has been submitted. We will contact you soon!' 
     }
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Unexpected error in business inquiry submission:', error)
     return { 
       success: false, 
       message: 'An unexpected error occurred. Please try again.' 
