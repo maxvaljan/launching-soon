@@ -122,85 +122,76 @@ export async function submitContactForm(prevState: any, formData: FormData) {
 
 export async function submitBusinessInquiry(prevState: any, formData: FormData) {
   try {
+    // Extract form data
     const companyName = formData.get('companyName') as string
     const contactName = formData.get('contactName') as string
     const email = formData.get('email') as string
-    const phone = formData.get('phone') as string || undefined
+    const phone = formData.get('phone') as string || ''
     const industry = formData.get('industry') as string
-    const message = formData.get('message') as string || undefined
+    const message = formData.get('message') as string || ''
     
-    // Validate form data and log each field for debugging
-    console.log('Business inquiry form data:', {
-      companyName,
-      contactName,
-      email,
-      phone,
-      industry,
-      message
-    })
-    
-    const result = businessInquirySchema.safeParse({ 
+    console.log('Business inquiry form data received:', { 
       companyName, contactName, email, phone, industry, message 
     })
     
-    if (!result.success) {
-      console.error('Validation error:', result.error.errors)
+    // Basic validation - return early if any required field is missing
+    if (!companyName || !contactName || !email || !industry) {
+      console.error('Validation failed: Missing required fields')
       return { 
         success: false, 
-        message: result.error.errors[0].message 
+        message: 'Please fill out all required fields' 
       }
     }
     
-    try {
-      // Create a direct Supabase client with anon key for insertions
-      // This avoids any authentication issues with the server client
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-      const directClient = createClient(supabaseUrl, supabaseAnonKey)
-      
-      // Try with direct client first (contact_form_submissions)
-      const { error: dbError2 } = await directClient
-        .from('contact_form_submissions')
-        .insert({
-          name: contactName,
-          email,
-          company_name: companyName,
-          phone,
-          message,
-          subject: `Business Inquiry: ${industry}`,
-          form_source: 'business_page'
-        })
-      
-      if (dbError2) {
-        console.error('Database error (contact_form_submissions with direct client):', dbError2)
-        
-        // Try with server client as fallback
-        const supabase = await createServerSupabaseClient()
-        
-        // Attempt to use the server client for contact_form_submissions
-        const { error: serverDbError } = await supabase
-          .from('contact_form_submissions')
-          .insert({
-            name: contactName,
-            email,
-            company_name: companyName,
-            phone,
-            message,
-            subject: `Business Inquiry: ${industry}`,
-            form_source: 'business_page'
-          })
-        
-        if (serverDbError) {
-          console.error('Database error (contact_form_submissions with server client):', serverDbError)
-          return { 
-            success: false, 
-            message: 'Database error: ' + serverDbError.message
-          }
-        }
+    // Create a direct Supabase client with the anon key
+    // This is the most reliable way to insert data without auth issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Supabase environment variables not configured')
+      return {
+        success: false,
+        message: 'Server configuration error. Please try again later.'
       }
+    }
+    
+    const { createClient } = await import('@supabase/supabase-js')
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    
+    // 1. Insert into contact_form_submissions first (our primary target)
+    console.log('Attempting to insert into contact_form_submissions...')
+    const { data: contactFormData, error: contactFormError } = await supabase
+      .from('contact_form_submissions')
+      .insert({
+        name: contactName,
+        email,
+        company_name: companyName,
+        phone,
+        message,
+        subject: `Business Inquiry: ${industry}`,
+        form_source: 'business_page'
+      })
+      .select()
+    
+    // Log detailed error information for debugging
+    if (contactFormError) {
+      console.error('Failed to insert into contact_form_submissions:', contactFormError)
+      console.error('Error details:', JSON.stringify(contactFormError))
       
-      // Try to insert into business_inquiries as well, but don't fail if it errors
-      const { error: dbError1 } = await directClient
+      return {
+        success: false,
+        message: 'Database error: ' + (contactFormError.message || 'Unknown error')
+      }
+    }
+    
+    console.log('Successfully inserted into contact_form_submissions')
+    
+    // 2. Then try to insert into business_inquiries (for backward compatibility)
+    // But don't fail the whole process if this one fails
+    try {
+      console.log('Attempting to insert into business_inquiries...')
+      const { error: businessInquiryError } = await supabase
         .from('business_inquiries')
         .insert({
           company_name: companyName,
@@ -211,69 +202,62 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
           message
         })
       
-      if (dbError1) {
-        console.error('Database error (business_inquiries):', dbError1)
-        // Don't return error - we'll continue if contact_form_submissions worked
+      if (businessInquiryError) {
+        console.error('Failed to insert into business_inquiries:', businessInquiryError)
+      } else {
+        console.log('Successfully inserted into business_inquiries')
       }
-    } catch (dbException) {
-      console.error('Exception in database operations:', dbException)
-      return { 
-        success: false, 
-        message: 'A database error occurred. Please try again.' 
-      }
+    } catch (err) {
+      console.error('Exception trying to insert into business_inquiries:', err)
+      // Continue execution - this is just a backup table
     }
     
-    // Get Resend API key and send email
+    // 3. Send email notification via Resend
     try {
-      // Check if API key is defined
       if (!process.env.RESEND_API_KEY) {
-        console.error('RESEND_API_KEY is not defined in environment variables')
-        // Still return success since data was saved to Supabase
-        return { 
-          success: true, 
-          message: 'Your business inquiry has been submitted. We will contact you soon!' 
+        console.error('RESEND_API_KEY not found in environment variables')
+      } else {
+        console.log('Attempting to send email via Resend...')
+        const { Resend } = await import('resend')
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        
+        const { data: emailData, error: emailError } = await resend.emails.send({
+          from: 'Maxmove <noreply@maxmove.com>',
+          to: 'max@maxmove.com',
+          subject: `Business Inquiry: ${companyName}`,
+          html: `
+            <h2>New Business Inquiry</h2>
+            <p><strong>Company:</strong> ${companyName}</p>
+            <p><strong>Contact Name:</strong> ${contactName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+            <p><strong>Industry:</strong> ${industry}</p>
+            <p><strong>Message:</strong></p>
+            <p>${message ? message.replace(/\n/g, '<br>') : 'Not provided'}</p>
+          `,
+        })
+        
+        if (emailError) {
+          console.error('Failed to send email:', emailError)
+        } else {
+          console.log('Email sent successfully:', emailData)
         }
       }
-      
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      
-      // Send email notification
-      const { data, error: emailError } = await resend.emails.send({
-        from: 'Maxmove <notifications@maxmove.com>',
-        to: 'max@maxmove.com',
-        subject: `Business Inquiry: ${companyName}`,
-        html: `
-          <h2>New Business Inquiry</h2>
-          <p><strong>Company:</strong> ${companyName}</p>
-          <p><strong>Contact Name:</strong> ${contactName}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-          <p><strong>Industry:</strong> ${industry}</p>
-          <p><strong>Message:</strong></p>
-          <p>${message ? message.replace(/\n/g, '<br>') : 'Not provided'}</p>
-        `,
-      })
-      
-      if (emailError) {
-        console.error('Email sending error:', emailError)
-        // Don't return error to user since the data was saved to the database
-      } else {
-        console.log('Email sent successfully:', data)
-      }
-    } catch (emailError) {
-      console.error('Error in email sending:', emailError)
-      // Still return success since data was saved to Supabase
+    } catch (emailErr) {
+      console.error('Exception sending email:', emailErr)
+      // Continue execution - database storage is primary, email is secondary
     }
     
-    return { 
-      success: true, 
-      message: 'Your business inquiry has been submitted. We will contact you soon!' 
+    // Return success if we got this far (primary database insertion succeeded)
+    return {
+      success: true,
+      message: 'Your business inquiry has been submitted. We will contact you soon!'
     }
   } catch (error) {
-    console.error('Unexpected error in business inquiry submission:', error)
-    return { 
-      success: false, 
-      message: 'An unexpected error occurred. Please try again.' 
+    console.error('Unhandled exception in submitBusinessInquiry:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred. Please try again.'
     }
   }
 } 

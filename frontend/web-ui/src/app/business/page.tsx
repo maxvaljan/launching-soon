@@ -67,6 +67,8 @@ const initialState = {
   message: '',
 };
 
+type FormState = typeof initialState;
+
 export default function Business() {
   const { toast } = useToast();
   const router = useRouter();
@@ -85,65 +87,72 @@ export default function Business() {
     }
   });
 
-  const handleContactSales = () => {
-    window.location.href = "mailto:sales@maxmove.com";
-  };
+  // Monitor formState changes and show appropriate notifications
+  useEffect(() => {
+    // Only run this effect if we have a message in the form state
+    if (formState.message && formState !== initialState) {
+      if (formState.success) {
+        // Show success toast
+        toast({
+          title: "Success",
+          description: formState.message,
+          variant: "default",
+        });
+        
+        // Redirect after success
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      } else {
+        // Show error toast
+        toast({
+          title: "Error",
+          description: formState.message,
+          variant: "destructive",
+        });
+      }
+      
+      // Reset submission state
+      setIsSubmitting(false);
+    }
+  }, [formState, toast, router]);
   
   // Handle form submission through server action
   const handleSubmitWithAction = async (data: z.infer<typeof businessInquirySchema>) => {
     setIsSubmitting(true);
-
+    
     try {
-      // Log form data before submission for debugging
-      console.log('About to submit form data:', data);
-      
       // Create FormData object from the form values
       const formData = new FormData();
       formData.append('companyName', data.companyName);
       formData.append('contactName', data.contactName);
       formData.append('email', data.email);
-      if (data.phone) formData.append('phone', data.phone);
+      formData.append('phone', data.phone || '');
       formData.append('industry', data.industry);
-      if (data.message) formData.append('message', data.message);
+      formData.append('message', data.message || '');
+      
+      // Reset form immediately to prevent double submissions
+      form.reset();
       
       // Call the server action with the form data
+      // This will update formState which will trigger our useEffect
       await formAction(formData);
-      
-      // Reset form immediately on submission to prevent multiple submissions
-      form.reset();
     } catch (error) {
       console.error('Error in form submission:', error);
+      setIsSubmitting(false);
+      
+      // Show error toast for unexpected errors
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
-  
-  // Show toast when formState changes and handle response properly
-  useEffect(() => {
-    if (formState.message && formState !== initialState) {
-      const success = formState.success;
-      const message = formState.message;
-      
-      // Show toast notification
-      toast({
-        title: success ? "Success" : "Error",
-        description: message,
-        variant: success ? "default" : "destructive",
-      });
-      
-      // Redirect on success after a short delay
-      if (success) {
-        setTimeout(() => {
-          router.push('/');
-        }, 2000);
-      }
-    }
-  }, [formState, toast, router]);
+
+  const handleContactSales = () => {
+    window.location.href = "mailto:sales@maxmove.com";
+  };
 
   const businessFeatures = [
     {
