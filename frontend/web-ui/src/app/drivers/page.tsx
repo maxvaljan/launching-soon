@@ -83,11 +83,11 @@ export default function Drivers() {
                       <SelectValue placeholder="Select your city" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#294374]">
-                      <SelectItem value="berlin">Berlin, Germany</SelectItem>
-                      <SelectItem value="cologne">Cologne, Germany</SelectItem>
-                      <SelectItem value="munich">Munich, Germany</SelectItem>
-                      <SelectItem value="hamburg">Hamburg, Germany</SelectItem>
-                      <SelectItem value="frankfurt">Frankfurt, Germany</SelectItem>
+                      <SelectItem value="berlin" className="text-white font-bold">Berlin, Germany</SelectItem>
+                      <SelectItem value="cologne" className="text-white font-bold">Cologne, Germany</SelectItem>
+                      <SelectItem value="munich" className="text-white font-bold">Munich, Germany</SelectItem>
+                      <SelectItem value="hamburg" className="text-white font-bold">Hamburg, Germany</SelectItem>
+                      <SelectItem value="frankfurt" className="text-white font-bold">Frankfurt, Germany</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
