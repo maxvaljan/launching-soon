@@ -143,109 +143,97 @@ export async function submitBusinessInquiry(prevState: any, formData: FormData) 
       }
     }
     
-    // Create a direct Supabase client with the anon key
-    // This is the most reliable way to insert data without auth issues
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    
+    // First, let's simplify the database insertion logic
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Supabase environment variables not configured')
+      console.error('Supabase environment variables not configured');
       return {
         success: false,
         message: 'Server configuration error. Please try again later.'
-      }
+      };
     }
-    
-    const { createClient } = await import('@supabase/supabase-js')
-    const supabase = createClient(supabaseUrl, supabaseAnonKey)
-    
-    // 1. Insert into contact_form_submissions first (our primary target)
-    console.log('Attempting to insert into contact_form_submissions...')
-    const { data: contactFormData, error: contactFormError } = await supabase
-      .from('contact_form_submissions')
-      .insert({
-        name: contactName,
-        email,
-        company_name: companyName,
-        phone,
-        message,
-        subject: `Business Inquiry: ${industry}`,
-        form_source: 'business_page'
-      })
-      .select()
-    
-    // Log detailed error information for debugging
-    if (contactFormError) {
-      console.error('Failed to insert into contact_form_submissions:', contactFormError)
-      console.error('Error details:', JSON.stringify(contactFormError))
-      
-      return {
-        success: false,
-        message: 'Database error: ' + (contactFormError.message || 'Unknown error')
-      }
-    }
-    
-    console.log('Successfully inserted into contact_form_submissions')
-    
-    // 2. Then try to insert into business_inquiries (for backward compatibility)
-    // But don't fail the whole process if this one fails
+
+    // Create a direct client
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false } // Don't persist auth state
+    });
+
+    console.log('Supabase client created, attempting database insertion...');
+
+    // Insert into contact_form_submissions
     try {
-      console.log('Attempting to insert into business_inquiries...')
-      const { error: businessInquiryError } = await supabase
-        .from('business_inquiries')
+      console.log('Inserting into contact_form_submissions table...');
+      const { error: insertError } = await supabase
+        .from('contact_form_submissions')
         .insert({
-          company_name: companyName,
-          contact_name: contactName,
+          name: contactName,
           email,
+          company_name: companyName,
           phone,
-          industry,
-          message
-        })
+          message,
+          subject: `Business Inquiry: ${industry}`,
+          form_source: 'business_page'
+        });
       
-      if (businessInquiryError) {
-        console.error('Failed to insert into business_inquiries:', businessInquiryError)
-      } else {
-        console.log('Successfully inserted into business_inquiries')
+      if (insertError) {
+        console.error('Database error details:', JSON.stringify(insertError));
+        return { 
+          success: false, 
+          message: 'Database error: ' + insertError.message
+        };
       }
-    } catch (err) {
-      console.error('Exception trying to insert into business_inquiries:', err)
-      // Continue execution - this is just a backup table
+      
+      console.log('Successfully inserted into contact_form_submissions');
+    } catch (dbError) {
+      console.error('Exception during database insertion:', dbError);
+      return { 
+        success: false, 
+        message: 'A database error occurred. Please try again.'
+      };
     }
     
     // 3. Send email notification via Resend
     try {
+      // Check if Resend API key is available
       if (!process.env.RESEND_API_KEY) {
-        console.error('RESEND_API_KEY not found in environment variables')
+        console.error('RESEND_API_KEY environment variable is missing');
       } else {
-        console.log('Attempting to send email via Resend...')
-        const { Resend } = await import('resend')
-        const resend = new Resend(process.env.RESEND_API_KEY)
+        console.log('Attempting to send email via Resend...');
         
+        // Use dynamic import to avoid build-time issues
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        
+        // Use a direct approach rather than HTML template
         const { data: emailData, error: emailError } = await resend.emails.send({
-          from: 'Maxmove <noreply@maxmove.com>',
+          from: 'Maxmove <contact@maxmove.com>', // Use a domain you've verified with Resend
           to: 'max@maxmove.com',
-          subject: `Business Inquiry: ${companyName}`,
-          html: `
-            <h2>New Business Inquiry</h2>
-            <p><strong>Company:</strong> ${companyName}</p>
-            <p><strong>Contact Name:</strong> ${contactName}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-            <p><strong>Industry:</strong> ${industry}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message ? message.replace(/\n/g, '<br>') : 'Not provided'}</p>
+          subject: `Business Inquiry from ${companyName}`,
+          text: `
+Business Inquiry Details:
+-------------------------
+Company: ${companyName}
+Contact Name: ${contactName}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Industry: ${industry}
+Message: ${message || 'Not provided'}
           `,
-        })
+        });
         
         if (emailError) {
-          console.error('Failed to send email:', emailError)
+          console.error('Failed to send email:', emailError);
+          // Log detailed error information
+          console.error('Email error details:', JSON.stringify(emailError));
         } else {
-          console.log('Email sent successfully:', emailData)
+          console.log('Email sent successfully. Email ID:', emailData?.id);
         }
       }
     } catch (emailErr) {
-      console.error('Exception sending email:', emailErr)
-      // Continue execution - database storage is primary, email is secondary
+      console.error('Exception sending email:', emailErr);
     }
     
     // Return success if we got this far (primary database insertion succeeded)
