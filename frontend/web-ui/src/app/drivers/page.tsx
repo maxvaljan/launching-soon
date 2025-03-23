@@ -94,7 +94,7 @@ export default function Drivers() {
                 <Button 
                   type="submit" 
                   disabled={isLoading} 
-                  className="w-full bg-maxmove-800 text-white hover:bg-maxmove-800 focus:bg-maxmove-800" 
+                  className="w-full bg-maxmove-800 text-white hover:bg-maxmove-700 focus:bg-maxmove-700" 
                 >
                   {isLoading ? "Sending..." : "Get Verification Code"}
                 </Button>
