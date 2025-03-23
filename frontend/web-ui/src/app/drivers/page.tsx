@@ -135,7 +135,7 @@ export default function Drivers() {
         </div>
 
         {/* Requirements Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 mb-8">
             <Card>
               <CardContent className="pt-6">
                 <Shield className="w-12 h-12 text-maxmove-800 mb-4" />
