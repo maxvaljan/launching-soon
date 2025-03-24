@@ -5,13 +5,14 @@ import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import Map from "@/components/Map";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Info, MapPin, Plus, MapIcon, ChevronDown } from "lucide-react";
+import { ArrowDown, Info, MapPin, Plus, MapIcon, ChevronDown, Truck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { PopoverTrigger, Popover, PopoverContent } from "@/components/ui/popover";
+import Image from "next/image";
 
 // New order management components
 import FileImportActions from "@/components/order/FileImportActions";
@@ -445,8 +446,18 @@ export default function PlaceOrderPage() {
                   onClick={() => setSelectedVehicle(vehicle.id)}
                 >
                   <div className="text-4xl mb-2">
-                    {/* Use a default truck icon if no category information is available */}
-                    🚚
+                    {vehicle.icon_path ? (
+                      <Image 
+                        src={vehicle.icon_path}
+                        alt={vehicle.name}
+                        width={48}
+                        height={48}
+                        className="mx-auto"
+                      />
+                    ) : (
+                      /* Fallback to a default truck icon */
+                      <Truck className="mx-auto" size={48} />
+                    )}
                   </div>
                   <p className="font-medium text-sm">{vehicle.name}</p>
                   <p className="text-xs text-gray-500">{vehicle.max_weight && `Up to ${vehicle.max_weight}`}</p>
