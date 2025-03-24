@@ -58,7 +58,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
                 href={`/dashboard/${tab.id}`}
                 className={`py-4 px-2 -mb-px font-medium text-base transition-colors relative ${
                   activeTab === tab.id
-                    ? "text-[#1c2d4f] font-semibold"
+                    ? "text-[#1c2d4f] font-semibold hover:text-[#1c2d4f]"
                     : "text-[#798390] hover:text-[#1c2d4f]"
                 }`}
               >
@@ -93,7 +93,7 @@ export default function DashboardHeader({ session, isAdmin }: DashboardHeaderPro
             <button
               className={`p-2 rounded-md transition-colors relative ${
                 showSettings
-                  ? "text-maxmove-primary"
+                  ? "text-maxmove-primary hover:text-maxmove-primary"
                   : "text-gray-600 hover:text-gray-900"
               }`}
               onClick={handleSettingsClick}

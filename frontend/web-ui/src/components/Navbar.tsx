@@ -171,8 +171,8 @@ const Navbar = () => {
               href="/" 
               className={`text-2xl font-bold ${
                 isDarkBackground 
-                  ? isScrolled ? "text-maxmove-navy" : "text-maxmove-creme"
-                  : "text-maxmove-navy"
+                  ? isScrolled ? "text-maxmove-navy hover:text-maxmove-dark-blue" : "text-maxmove-creme hover:text-white"
+                  : "text-maxmove-navy hover:text-maxmove-dark-blue"
               }`}
             >
               Maxmove

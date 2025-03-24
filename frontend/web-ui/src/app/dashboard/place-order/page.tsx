@@ -118,8 +118,14 @@ export default function PlaceOrderPage() {
       
       if (response.ok) {
         const data = await response.json();
-        console.log("Vehicle types loaded, checking icon paths:", data.data.map((v: VehicleType) => ({name: v.name, path: v.icon_path})));
-        setVehicleTypes(data.data || []);
+        // Sort vehicle types by ID before setting state
+        const sortedVehicles = [...(data.data || [])].sort((a, b) => {
+          // Convert IDs to numbers if they're strings
+          const idA = typeof a.id === 'string' ? parseInt(a.id) : a.id;
+          const idB = typeof b.id === 'string' ? parseInt(b.id) : b.id;
+          return idA - idB;
+        });
+        setVehicleTypes(sortedVehicles);
         return;
       }
     } catch (error) {
@@ -130,7 +136,8 @@ export default function PlaceOrderPage() {
     try {
       const { data, error } = await supabase
         .from('vehicle_types')
-        .select('*');
+        .select('*')
+        .order('id', { ascending: true }); // Sort by ID in ascending order
 
       if (error) throw error;
       setVehicleTypes(data || []);
@@ -307,19 +314,6 @@ export default function PlaceOrderPage() {
     });
   };
 
-  useEffect(() => {
-    // Debug vehicle icons paths
-    if (vehicleTypes.length > 0) {
-      vehicleTypes.forEach(vehicle => {
-        if (vehicle.icon_path) {
-          console.log(`Loading icon for ${vehicle.name}:`, 
-            vehicle.icon_path, 
-            `Full URL: ${process.env.NEXT_PUBLIC_BASE_URL || ''}${vehicle.icon_path}`);
-        }
-      });
-    }
-  }, [vehicleTypes]);
-
   return (
     <div className="flex flex-col lg:flex-row h-screen">
       {/* Left Side - Order Form */}
@@ -486,21 +480,6 @@ export default function PlaceOrderPage() {
                   <p className="text-xs text-gray-500">{vehicle.max_weight && `Up to ${vehicle.max_weight}`}</p>
                 </div>
               ))}
-            </div>
-          </div>
-          
-          {/* Test image to debug SVG loading */}
-          <div className="mt-4 p-4 bg-gray-100 rounded-md">
-            <h3 className="text-sm font-semibold mb-2">Debug SVG Test</h3>
-            <div className="flex space-x-4">
-              <div>
-                <p className="text-xs mb-1">Direct path:</p>
-                <img src="/vehicles/MAXMOVE-8/auto1.svg" width="48" height="48" alt="Test Car SVG" />
-              </div>
-              <div>
-                <p className="text-xs mb-1">With base path:</p>
-                <img src={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/vehicles/MAXMOVE-8/auto1.svg`} width="48" height="48" alt="Test Car SVG with base" />
-              </div>
             </div>
           </div>
           
