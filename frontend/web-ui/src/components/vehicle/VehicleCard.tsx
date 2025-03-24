@@ -18,6 +18,8 @@ interface VehicleType {
   max_weight: string;
   icon_type?: string;
   custom_icon_url?: string;
+  icon_path?: string;
+  svg_icon?: string;
 }
 
 interface VehicleCardProps {
@@ -49,12 +51,15 @@ const VehicleCard = ({ vehicle, isSelected, onSelect }: VehicleCardProps) => {
 
   // Render the appropriate vehicle icon
   const renderVehicleIcon = () => {
-    // If it has a custom icon URL, use that with fallback
-    if (vehicle.custom_icon_url) {
+    // Check for any available icon path, with priority
+    const iconUrl = vehicle.custom_icon_url || vehicle.icon_path || vehicle.svg_icon;
+    
+    // If there's any icon URL, use it with fallback
+    if (iconUrl) {
       return (
         <div className="w-16 h-16 relative flex items-center justify-center">
           <img 
-            src={vehicle.custom_icon_url} 
+            src={iconUrl} 
             alt={vehicle.name} 
             className="w-full h-full object-contain"
             onError={(e) => {
