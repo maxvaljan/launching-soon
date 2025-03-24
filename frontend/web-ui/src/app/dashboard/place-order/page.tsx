@@ -118,6 +118,7 @@ export default function PlaceOrderPage() {
       
       if (response.ok) {
         const data = await response.json();
+        console.log("Vehicle types loaded, checking icon paths:", data.data.map((v: VehicleType) => ({name: v.name, path: v.icon_path})));
         setVehicleTypes(data.data || []);
         return;
       }
@@ -447,7 +448,7 @@ export default function PlaceOrderPage() {
                 >
                   <div className="text-4xl mb-2">
                     {vehicle.icon_path ? (
-                      <Image 
+                      <img 
                         src={vehicle.icon_path}
                         alt={vehicle.name}
                         width={48}
