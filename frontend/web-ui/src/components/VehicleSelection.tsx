@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/lib/supabase';
 import VehicleCarousel from './vehicle/VehicleCarousel';
 import { Card } from './ui/card';
-import { Info } from 'lucide-react';
+import { Info, Truck } from 'lucide-react';
+import Image from 'next/image';
 
 interface VehicleType {
   id: string;
@@ -113,8 +114,18 @@ export default function VehicleSelection({ onVehicleSelect }: VehicleSelectionPr
             <div className="flex flex-col items-center justify-between h-full">
               <div className="text-center space-y-1">
                 <div className="text-3xl mb-2">
-                  {/* Use a default truck icon */}
-                  🚚
+                  {vehicle.icon_path ? (
+                    <Image 
+                      src={vehicle.icon_path}
+                      alt={vehicle.name}
+                      width={48}
+                      height={48}
+                      className="mx-auto"
+                    />
+                  ) : (
+                    /* Fallback to a default truck icon */
+                    <Truck className="mx-auto" size={48} />
+                  )}
                 </div>
                 <h3 className="font-semibold text-maxmove-800">{vehicle.name}</h3>
                 <p className="text-xs text-gray-500 truncate max-w-full">{vehicle.description}</p>
