@@ -8,7 +8,6 @@ import { Toaster as SonnerToaster } from 'sonner';
 import { Toaster } from '@/components/ui/toaster';
 import { ResponsiveCheck } from '@/components/ui/responsive-check';
 import dynamic from 'next/dynamic';
-import { AnnouncementBanner } from '@/components/announcement-banner';
 
 // Load fonts
 const inter = Inter({ 
@@ -99,7 +98,6 @@ export default function RootLayout({
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased text-foreground bg-background no-horizontal-scroll`}>
         <Providers>
           {process.env.NODE_ENV === 'development' && <ResponsiveCheck />}
-          <AnnouncementBanner month="November" waitlistLink="/waitlist" />
           <NavWrapper>
             <FooterWrapper>
               <div className="flex flex-col min-h-screen no-horizontal-scroll">
