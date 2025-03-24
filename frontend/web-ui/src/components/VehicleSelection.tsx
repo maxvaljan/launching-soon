@@ -93,11 +93,6 @@ export default function VehicleSelection({ onVehicleSelect }: VehicleSelectionPr
     <Card className="p-6 space-y-6 border border-gray-200 shadow-sm">
       <div className="flex justify-between items-center">
         <Label className="text-xl font-semibold text-maxmove-primary">Select Vehicle Type</Label>
-        {selectedVehicleDetails && (
-          <div className="flex items-center text-sm text-maxmove-700 bg-maxmove-50 px-3 py-1 rounded-full">
-            <span>Selected: {selectedVehicleDetails.name}</span>
-          </div>
-        )}
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
