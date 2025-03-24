@@ -23,11 +23,17 @@ const VehicleIcon = ({ category, name }: VehicleIconProps) => {
         .single();
 
       if (vehicleType?.icon_path) {
-        const { data } = supabase.storage
-          .from('vehicles')
-          .getPublicUrl(vehicleType.icon_path);
-        
-        setIconUrl(data.publicUrl);
+        // Check if the path starts with a slash (public directory)
+        if (vehicleType.icon_path.startsWith('/')) {
+          setIconUrl(vehicleType.icon_path);
+        } else {
+          // Otherwise load from Supabase storage
+          const { data } = supabase.storage
+            .from('vehicles')
+            .getPublicUrl(vehicleType.icon_path);
+          
+          setIconUrl(data.publicUrl);
+        }
       }
     };
 
