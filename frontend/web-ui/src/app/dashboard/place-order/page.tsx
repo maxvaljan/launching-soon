@@ -307,6 +307,19 @@ export default function PlaceOrderPage() {
     });
   };
 
+  useEffect(() => {
+    // Debug vehicle icons paths
+    if (vehicleTypes.length > 0) {
+      vehicleTypes.forEach(vehicle => {
+        if (vehicle.icon_path) {
+          console.log(`Loading icon for ${vehicle.name}:`, 
+            vehicle.icon_path, 
+            `Full URL: ${process.env.NEXT_PUBLIC_BASE_URL || ''}${vehicle.icon_path}`);
+        }
+      });
+    }
+  }, [vehicleTypes]);
+
   return (
     <div className="flex flex-col lg:flex-row h-screen">
       {/* Left Side - Order Form */}
@@ -449,11 +462,20 @@ export default function PlaceOrderPage() {
                   <div className="text-4xl mb-2">
                     {vehicle.icon_path ? (
                       <img 
-                        src={vehicle.icon_path}
+                        src={vehicle.icon_path.startsWith('http') 
+                            ? vehicle.icon_path 
+                            : `${process.env.NEXT_PUBLIC_BASE_URL || ''}${vehicle.icon_path}`}
                         alt={vehicle.name}
                         width={48}
                         height={48}
-                        className="mx-auto"
+                        className="mx-auto object-contain"
+                        onError={(e) => {
+                          console.error(`Failed to load image: ${vehicle.icon_path}`);
+                          e.currentTarget.style.display = 'none';
+                          if (e.currentTarget.parentElement) {
+                            e.currentTarget.parentElement.innerHTML = '<div><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.6-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></div>';
+                          }
+                        }}
                       />
                     ) : (
                       /* Fallback to a default truck icon */
@@ -464,6 +486,21 @@ export default function PlaceOrderPage() {
                   <p className="text-xs text-gray-500">{vehicle.max_weight && `Up to ${vehicle.max_weight}`}</p>
                 </div>
               ))}
+            </div>
+          </div>
+          
+          {/* Test image to debug SVG loading */}
+          <div className="mt-4 p-4 bg-gray-100 rounded-md">
+            <h3 className="text-sm font-semibold mb-2">Debug SVG Test</h3>
+            <div className="flex space-x-4">
+              <div>
+                <p className="text-xs mb-1">Direct path:</p>
+                <img src="/vehicles/MAXMOVE-8/auto1.svg" width="48" height="48" alt="Test Car SVG" />
+              </div>
+              <div>
+                <p className="text-xs mb-1">With base path:</p>
+                <img src={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/vehicles/MAXMOVE-8/auto1.svg`} width="48" height="48" alt="Test Car SVG with base" />
+              </div>
             </div>
           </div>
           
