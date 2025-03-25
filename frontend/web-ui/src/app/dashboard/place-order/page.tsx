@@ -47,11 +47,104 @@ interface VehicleType {
   icon_path?: string;
   active: boolean;
   created_at?: string;
+  vehicle_id?: number;
 }
+
+// Helper function to get Supabase storage URL
+const getVehicleImageUrl = (iconPath: string | undefined): string => {
+  if (!iconPath) return '';
+  
+  // Check if it's already a full URL
+  if (iconPath.startsWith('http')) {
+    return iconPath;
+  }
+
+  // If it's a path from the MAXMOVE-19 folder, it's from the public directory
+  if (iconPath.includes('/MAXMOVE-19/')) {
+    // Extract the file name
+    const fileName = iconPath.split('/').pop() || '';
+    // Use Supabase storage URL instead
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/vehicles/${fileName}`;
+  }
+  
+  // If it's a direct filename for vehicles bucket
+  if (!iconPath.includes('/')) {
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/vehicles/${iconPath}`;
+  }
+  
+  // Default fallback to the original path
+  return iconPath;
+};
+
+// VehicleCard component to render each vehicle option
+const VehicleCard = ({ 
+  vehicle, 
+  isSelected, 
+  onSelect 
+}: { 
+  vehicle: VehicleType, 
+  isSelected: boolean, 
+  onSelect: (id: string) => void 
+}) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const imageUrl = getVehicleImageUrl(vehicle.icon_path);
+
+  return (
+    <div 
+      className={`cursor-pointer group rounded-md border p-4 text-center transition-all h-[140px] flex flex-col justify-between ${
+        isSelected 
+          ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme' 
+          : 'border-gray-200 hover:border-maxmove-gray hover:shadow-sm'
+      }`}
+      onClick={() => onSelect(vehicle.id)}
+    >
+      <div className="relative h-14 flex items-center justify-center">
+        {!isImageLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full border-t-2 border-b-2 border-maxmove-navy animate-spin"></div>
+          </div>
+        )}
+        
+        {imageUrl ? (
+          <Image 
+            src={imageUrl}
+            alt={vehicle.name}
+            width={56}
+            height={56}
+            className={`mx-auto object-contain transition-opacity ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setIsImageLoaded(true)}
+            quality={90}
+            priority={true}
+          />
+        ) : (
+          <Truck 
+            className="mx-auto text-maxmove-navy" 
+            size={48} 
+          />
+        )}
+      </div>
+      
+      <div>
+        <p className="font-medium text-sm">{vehicle.name}</p>
+        <p className="text-xs text-gray-500">{vehicle.max_weight}</p>
+      </div>
+    </div>
+  );
+};
+
+// Vehicle skeleton loader component
+const VehicleSkeleton = () => (
+  <div className="rounded-md border border-gray-200 p-4 h-[140px] animate-pulse">
+    <div className="bg-gray-200 h-12 w-12 mx-auto rounded-md mb-2"></div>
+    <div className="bg-gray-200 h-4 w-24 mx-auto rounded-sm mb-2"></div>
+    <div className="bg-gray-200 h-3 w-16 mx-auto rounded-sm"></div>
+  </div>
+);
 
 export default function PlaceOrderPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
+  const [isLoadingVehicles, setIsLoadingVehicles] = useState(true);
   const [stops, setStops] = useState<Stop[]>([
     { address: '', type: 'pickup' },
     { address: '', type: 'dropoff' }
@@ -112,6 +205,7 @@ export default function PlaceOrderPage() {
   }, []);
 
   const fetchVehicleTypes = async () => {
+    setIsLoadingVehicles(true);
     try {
       // Use relative URL for API endpoints in Next.js
       const response = await fetch('/api/vehicles/types');
@@ -128,6 +222,7 @@ export default function PlaceOrderPage() {
           return idA - idB;
         });
         setVehicleTypes(sortedVehicles);
+        setIsLoadingVehicles(false);
         return;
       }
     } catch (error) {
@@ -139,13 +234,16 @@ export default function PlaceOrderPage() {
       const { data, error } = await supabase
         .from('vehicle_types')
         .select('*')
-        .order('id', { ascending: true }); // Sort by ID in ascending order
+        .eq('active', true)
+        .order('vehicle_id', { ascending: true }); // Sort by vehicle_id in ascending order
 
       if (error) throw error;
       console.log('Fetched vehicle types from Supabase directly:', data);
       setVehicleTypes(data || []);
     } catch (error) {
       console.error('Error fetching vehicle types:', error);
+    } finally {
+      setIsLoadingVehicles(false);
     }
   };
 
@@ -445,38 +543,24 @@ export default function PlaceOrderPage() {
               VEHICLE TYPE
             </Label>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {vehicleTypes.map(vehicle => (
-                <div 
-                  key={vehicle.id}
-                  className={`cursor-pointer group rounded-md border p-4 text-center transition-all ${
-                    selectedVehicle === vehicle.id 
-                      ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme' 
-                      : 'border-gray-200 hover:border-maxmove-gray'
-                  }`}
-                  onClick={() => setSelectedVehicle(vehicle.id)}
-                >
-                  <div className="text-4xl mb-2">
-                    {vehicle.icon_path ? (
-                      <Image 
-                        src={vehicle.icon_path}
-                        alt={vehicle.name}
-                        width={48}
-                        height={48}
-                        className="mx-auto object-contain"
-                        unoptimized={true}
-                        priority
-                      />
-                    ) : (
-                      /* Fallback to a default truck icon */
-                      <Truck className="mx-auto" size={48} />
-                    )}
-                  </div>
-                  <p className="font-medium text-sm">{vehicle.name}</p>
-                  <p className="text-xs text-gray-500">{vehicle.max_weight && `Up to ${vehicle.max_weight}`}</p>
-                </div>
-              ))}
-            </div>
+            {isLoadingVehicles ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map(skeleton => (
+                  <VehicleSkeleton key={`skeleton-${skeleton}`} />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {vehicleTypes.map(vehicle => (
+                  <VehicleCard
+                    key={vehicle.id}
+                    vehicle={vehicle}
+                    isSelected={selectedVehicle === vehicle.id}
+                    onSelect={setSelectedVehicle}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           
           <div className="pt-4">
