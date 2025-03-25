@@ -459,12 +459,11 @@ export default function PlaceOrderPage() {
                   <div className="text-4xl mb-2">
                     {vehicle.icon_path ? (
                       <Image 
-                        src={vehicle.icon_path}
+                        src={`/images/vehicles/${vehicle.id}.png`}
                         alt={vehicle.name}
                         width={48}
                         height={48}
                         className="mx-auto object-contain"
-                        unoptimized
                       />
                     ) : (
                       /* Fallback to a default truck icon */
