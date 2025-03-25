@@ -353,7 +353,7 @@ export default function PlaceOrderPage() {
                 <div key={index} className="relative">
                   {/* Vertical dotted line connecting stops */}
                   {index < stops.length - 1 && (
-                    <div className="absolute left-[9px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0" style={{ borderStyle: 'dashed', borderSpacing: '4px' }}></div>
+                    <div className="absolute left-[9px] top-[32px] bottom-0 border-l-2 border-dashed border-gray-300 h-[calc(100%-8px)] z-0 border-spacing-4"></div>
                   )}
                   
                   <div className="flex items-center mb-4 relative z-10">
@@ -464,6 +464,7 @@ export default function PlaceOrderPage() {
                         width={48}
                         height={48}
                         className="mx-auto object-contain"
+                        unoptimized
                       />
                     ) : (
                       /* Fallback to a default truck icon */
