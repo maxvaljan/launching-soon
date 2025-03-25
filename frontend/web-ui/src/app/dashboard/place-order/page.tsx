@@ -464,7 +464,8 @@ export default function PlaceOrderPage() {
                         width={48}
                         height={48}
                         className="mx-auto object-contain"
-                        unoptimized
+                        unoptimized={true}
+                        priority
                       />
                     ) : (
                       /* Fallback to a default truck icon */
