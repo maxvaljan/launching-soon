@@ -5,6 +5,7 @@ interface JobListing {
   title: string;
   type: string;
   location: string;
+  description: string;
 }
 
 const jobListings: JobListing[] = [
@@ -13,48 +14,64 @@ const jobListings: JobListing[] = [
     title: "Full-Stack Developer",
     location: "Cologne, Germany / Remote",
     type: "Full-time",
+    description:
+      "We are looking for a Full-Stack Developer to build and enhance our AI-driven logistics platform. You will work with cutting-edge technologies, developing scalable web applications and APIs for seamless user experiences.",
   },
   {
     id: "mechanical-engineer",
     title: "Mechanical Engineer",
     location: "Cologne, Germany",
     type: "Full-time",
+    description:
+      "As a Mechanical Engineer at Maxmove, you will be involved in the design and development of autonomous delivery solutions. Your expertise in robotics and system integration will drive innovation in urban logistics.",
   },
   {
     id: "operations-manager",
     title: "Operations Manager",
     location: "Cologne, Germany",
     type: "Full-time",
+    description:
+      "We need an Operations Manager to oversee our logistics network and ensure seamless deliveries. You will coordinate with drivers, optimize routes, and manage real-time tracking to enhance efficiency.",
   },
   {
     id: "ai-engineer",
     title: "AI Engineer",
     location: "Cologne, Germany / Remote",
     type: "Full-time",
+    description:
+      "Join our AI team to develop machine learning models for route optimization, demand forecasting, and automated logistics. Your algorithms will power the next generation of delivery solutions.",
   },
   {
     id: "marketing-manager",
     title: "Marketing Manager",
     location: "Cologne, Germany / Remote",
     type: "Full-time",
+    description:
+      "We're hiring a Marketing Manager to drive customer acquisition and brand awareness. You will create campaigns, manage social media, and collaborate with partners to expand our reach.",
   },
   {
     id: "ios-dev",
-    title: "IOS Developer",
+    title: "iOS Developer",
     location: "Cologne, Germany / Remote",
     type: "Full-time",
+    description:
+      "We are looking for an iOS Developer to build and maintain our mobile app. You will create a seamless user experience and implement real-time tracking, booking, and communication features.",
   },
   {
     id: "backend-dev",
     title: "Backend Developer",
     location: "Cologne, Germany / Remote",
     type: "Full-time",
+    description:
+      "As a Backend Developer, you will design and optimize the architecture of our logistics platform. You will work on APIs, databases, and system integrations to ensure high performance and scalability.",
   },
   {
     id: "eng-intern",
     title: "Software Engineering Intern",
     location: "Cologne, Germany / Remote",
     type: "Internship",
+    description:
+      "This internship is a great opportunity to gain hands-on experience in software development. You will assist in building and testing features, contributing to real-world applications in logistics.",
   },
 ];
 
@@ -69,6 +86,12 @@ export default function Career() {
               <h1 className="text-4xl md:text-5xl font-bold text-maxmove-900">
                 Join Our Team
               </h1>
+              <p className="mt-4 text-lg text-maxmove-700 max-w-3xl mx-auto">
+                At Maxmove, we are revolutionizing the last-mile logistics industry with our 
+                on-demand, AI-driven, and sustainable delivery platform. We aim to solve the inefficiencies 
+                in urban logistics through smart routing, real-time tracking, and an intuitive 
+                booking system. Join us in transforming the way goods move—efficiently, affordably, and sustainably.
+              </p>
             </div>
           </div>
         </section>
@@ -76,21 +99,25 @@ export default function Career() {
         {/* Job Listings Section */}
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-4">
+            <h2 className="text-3xl font-bold text-maxmove-900 text-center mb-8">
+              Open Positions
+            </h2>
+            <div className="grid gap-6">
               {jobListings.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg shadow-sm border border-maxmove-100 p-4 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg shadow-sm border border-maxmove-100 p-6 hover:shadow-md transition-shadow"
                 >
-                  <div>
+                  <div className="flex flex-col">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-maxmove-900">
+                      <h3 className="text-xl font-semibold text-maxmove-900">
                         {job.title}
                       </h3>
                       <p className="text-sm text-maxmove-600">
                         {job.location} · {job.type}
                       </p>
                     </div>
+                    <p className="mt-2 text-maxmove-700">{job.description}</p>
                   </div>
                 </div>
               ))}
