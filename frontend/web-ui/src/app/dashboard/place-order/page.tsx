@@ -73,6 +73,44 @@ const getVehicleImageUrl = (vehicle: VehicleType): string => {
   return `${supabaseUrl}/storage/v1/object/public/vehicles/${imageName}`;
 };
 
+// Helper function to get custom image size based on vehicle type
+const getVehicleImageSize = (vehicleName: string): number => {
+  // Default size is 88px
+  const defaultSize = 88;
+  
+  // Custom sizes for specific vehicles
+  switch(vehicleName) {
+    case 'Car':
+      return Math.round(defaultSize * 1.15); // 15% larger
+    case '2,7m Van':
+    case '3,3m Van':
+    case 'Towing':
+      return Math.round(defaultSize * 1.10); // 10% larger
+    default:
+      return defaultSize;
+  }
+};
+
+// Helper function to format descriptions properly
+const formatDescription = (description: string): string => {
+  if (!description) return '';
+  
+  // Trim any extra spaces
+  let formatted = description.trim();
+  
+  // Capitalize first letter if it's not already
+  if (formatted.length > 0) {
+    formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  }
+  
+  // Ensure description ends with a period if it doesn't already
+  if (formatted.length > 0 && !['!', '.', '?'].includes(formatted.charAt(formatted.length - 1))) {
+    formatted += '.';
+  }
+  
+  return formatted;
+};
+
 // Helper function to format dimensions consistently
 const formatDimensions = (dimensions: string): string => {
   if (!dimensions) return '';
@@ -117,10 +155,14 @@ const VehicleCard = ({
   onSelect: (id: string) => void 
 }) => {
   const imageUrl = getVehicleImageUrl(vehicle);
+  const imageSize = getVehicleImageSize(vehicle.name);
 
   // Format dimensions and weight for consistent display
   const formattedDimensions = formatDimensions(vehicle.max_dimensions);
   const formattedWeight = vehicle.max_weight.replace('kg', '').trim() + 'kg';
+  
+  // Format description with proper capitalization and punctuation
+  const formattedDescription = formatDescription(vehicle.description);
 
   return (
     <div 
@@ -135,8 +177,8 @@ const VehicleCard = ({
         <Image 
           src={imageUrl}
           alt={vehicle.name}
-          width={88}
-          height={88}
+          width={imageSize}
+          height={imageSize}
           className="mx-auto object-contain"
           quality={90}
           priority={true}
@@ -169,7 +211,7 @@ const VehicleCard = ({
         </div>
         
         <div className="text-xs text-gray-600 text-center">
-          <p>{vehicle.description}</p>
+          <p>{formattedDescription}</p>
         </div>
       </div>
     </div>
