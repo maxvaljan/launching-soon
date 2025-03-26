@@ -50,30 +50,27 @@ interface VehicleType {
   vehicle_id?: number;
 }
 
-// Helper function to get Supabase storage URL
-const getVehicleImageUrl = (iconPath: string | undefined): string => {
-  if (!iconPath) return '';
+// Helper function to get vehicle image URL based on vehicle type name or ID
+const getVehicleImageUrl = (vehicle: VehicleType): string => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   
-  // Check if it's already a full URL
-  if (iconPath.startsWith('http')) {
-    return iconPath;
-  }
-
-  // If it's a path from the MAXMOVE-19 folder, it's from the public directory
-  if (iconPath.includes('/MAXMOVE-19/')) {
-    // Extract the file name
-    const fileName = iconPath.split('/').pop() || '';
-    // Use Supabase storage URL instead
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/vehicles/${fileName}`;
-  }
+  // Map of vehicle types to their image names
+  const vehicleImageMap: {[key: string]: string} = {
+    'Courier': 'courier1.png',
+    'Car': 'car1.png',
+    'Compact Van': 'kangoo1.png',
+    '2,7m Van': 'minivan1.png',
+    '3,3m Van': 'van1.png',
+    '4,3m Lorry': 'lorry1.png',
+    '7,5m Lorry': 'lorry1.png',
+    'Towing': 'towing1.png'
+  };
   
-  // If it's a direct filename for vehicles bucket
-  if (!iconPath.includes('/')) {
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/vehicles/${iconPath}`;
-  }
+  // Get image name based on vehicle name
+  const imageName = vehicleImageMap[vehicle.name] || 'truck-default.png';
   
-  // Default fallback to the original path
-  return iconPath;
+  // Return the complete Supabase URL
+  return `${supabaseUrl}/storage/v1/object/public/vehicles/${imageName}`;
 };
 
 // VehicleCard component to render each vehicle option
@@ -86,8 +83,7 @@ const VehicleCard = ({
   isSelected: boolean, 
   onSelect: (id: string) => void 
 }) => {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const imageUrl = getVehicleImageUrl(vehicle.icon_path);
+  const imageUrl = getVehicleImageUrl(vehicle);
 
   return (
     <div 
@@ -99,29 +95,28 @@ const VehicleCard = ({
       onClick={() => onSelect(vehicle.id)}
     >
       <div className="relative h-14 flex items-center justify-center">
-        {!isImageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full border-t-2 border-b-2 border-maxmove-navy animate-spin"></div>
-          </div>
-        )}
-        
-        {imageUrl ? (
-          <Image 
-            src={imageUrl}
-            alt={vehicle.name}
-            width={56}
-            height={56}
-            className={`mx-auto object-contain transition-opacity ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setIsImageLoaded(true)}
-            quality={90}
-            priority={true}
-          />
-        ) : (
-          <Truck 
-            className="mx-auto text-maxmove-navy" 
-            size={48} 
-          />
-        )}
+        <Image 
+          src={imageUrl}
+          alt={vehicle.name}
+          width={56}
+          height={56}
+          className="mx-auto object-contain"
+          quality={90}
+          priority={true}
+          // Add onError handler to show fallback icon if image fails to load
+          onError={(e) => {
+            // Show fallback truck icon if image fails to load
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+            // We'll add a truck icon element after this one
+            const parentDiv = target.parentElement;
+            if (parentDiv) {
+              const svgElement = document.createElement('div');
+              svgElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
+              parentDiv.appendChild(svgElement);
+            }
+          }}
+        />
       </div>
       
       <div>
