@@ -81,11 +81,11 @@ const getVehicleImageSize = (vehicleName: string): number => {
   // Custom sizes for specific vehicles
   switch(vehicleName) {
     case 'Car':
-      return Math.round(defaultSize * 1.15); // 15% larger
+      return Math.round(defaultSize * 1.25); // Increased from 15% to 25% larger
     case '2,7m Van':
     case '3,3m Van':
     case 'Towing':
-      return Math.round(defaultSize * 1.10); // 10% larger
+      return Math.round(defaultSize * 1.20); // Increased from 10% to 20% larger
     default:
       return defaultSize;
   }
