@@ -85,9 +85,12 @@ const VehicleCard = ({
 }) => {
   const imageUrl = getVehicleImageUrl(vehicle);
 
+  // Format dimensions for display
+  const dimensions = vehicle.max_dimensions.replace(/,/g, ' x ').replace(/meter/g, 'Meter');
+
   return (
     <div 
-      className={`cursor-pointer group rounded-md border p-4 text-center transition-all h-[160px] flex flex-col justify-between ${
+      className={`cursor-pointer group relative rounded-md border p-4 text-center transition-all h-[160px] flex flex-col justify-between ${
         isSelected 
           ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme' 
           : 'border-gray-200 hover:border-maxmove-gray hover:shadow-sm'
@@ -121,7 +124,19 @@ const VehicleCard = ({
       
       <div>
         <p className="font-medium text-sm">{vehicle.name}</p>
-        <p className="text-xs text-gray-500">{vehicle.max_weight}</p>
+      </div>
+
+      {/* Hover overlay with detailed information */}
+      <div className="absolute inset-0 bg-white bg-opacity-95 rounded-md p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+        <div className="text-center">
+          <p className="font-medium text-sm mb-1">{vehicle.name}</p>
+          <p className="text-xs text-gray-500">{dimensions}</p>
+          <p className="text-xs text-gray-500 mb-2">{vehicle.max_weight}</p>
+        </div>
+        
+        <div className="text-xs text-gray-600 text-center">
+          <p>{vehicle.description}</p>
+        </div>
       </div>
     </div>
   );
