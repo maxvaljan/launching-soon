@@ -21,14 +21,40 @@ export interface Transaction {
   created_at: string;
 }
 
+// Cache management
+const CACHE_DURATION = 30000; // 30 seconds
+interface CacheItem<T> {
+  data: T;
+  timestamp: number;
+}
+
+const cache = {
+  walletData: null as CacheItem<WalletData | null> | null,
+  paymentMethods: null as CacheItem<PaymentMethod[]> | null,
+  transactions: null as CacheItem<Transaction[]> | null,
+};
+
+function isCacheValid<T>(cacheItem: CacheItem<T> | null): boolean {
+  if (!cacheItem) return false;
+  return Date.now() - cacheItem.timestamp < CACHE_DURATION;
+}
+
 // Fetch wallet data for the current user
 export async function getWalletData(): Promise<WalletData | null> {
+  // Return from cache if valid
+  if (isCacheValid(cache.walletData)) {
+    return cache.walletData!.data;
+  }
+
   try {
     // First try to fetch from API
-    const response = await fetch('/api/users/wallet');
+    const response = await fetch('/api/users/wallet', { 
+      headers: { 'Cache-Control': 'no-store' } 
+    });
     
     if (response.ok) {
       const data = await response.json();
+      cache.walletData = { data: data.data, timestamp: Date.now() };
       return data.data;
     }
   } catch (error) {
@@ -50,17 +76,26 @@ export async function getWalletData(): Promise<WalletData | null> {
     return null;
   }
 
+  cache.walletData = { data, timestamp: Date.now() };
   return data;
 }
 
 // Fetch payment methods for the current user
 export async function getPaymentMethods(): Promise<PaymentMethod[]> {
+  // Return from cache if valid
+  if (isCacheValid(cache.paymentMethods)) {
+    return cache.paymentMethods!.data;
+  }
+
   try {
     // First try to fetch from API
-    const response = await fetch('/api/users/payment-methods');
+    const response = await fetch('/api/users/payment-methods', { 
+      headers: { 'Cache-Control': 'no-store' } 
+    });
     
     if (response.ok) {
       const data = await response.json();
+      cache.paymentMethods = { data: data.data, timestamp: Date.now() };
       return data.data;
     }
   } catch (error) {
@@ -81,17 +116,27 @@ export async function getPaymentMethods(): Promise<PaymentMethod[]> {
     return [];
   }
 
-  return data || [];
+  const result = data || [];
+  cache.paymentMethods = { data: result, timestamp: Date.now() };
+  return result;
 }
 
 // Fetch recent transactions for the current user
 export async function getRecentTransactions(limit = 5): Promise<Transaction[]> {
+  // Return from cache if valid
+  if (isCacheValid(cache.transactions)) {
+    return cache.transactions!.data;
+  }
+
   try {
     // First try to fetch from API
-    const response = await fetch(`/api/users/transactions?limit=${limit}`);
+    const response = await fetch(`/api/users/transactions?limit=${limit}`, { 
+      headers: { 'Cache-Control': 'no-store' } 
+    });
     
     if (response.ok) {
       const data = await response.json();
+      cache.transactions = { data: data.data, timestamp: Date.now() };
       return data.data;
     }
   } catch (error) {
@@ -114,5 +159,14 @@ export async function getRecentTransactions(limit = 5): Promise<Transaction[]> {
     return [];
   }
 
-  return data || [];
+  const result = data || [];
+  cache.transactions = { data: result, timestamp: Date.now() };
+  return result;
+}
+
+// Function to clear cache when needed (e.g., after transactions)
+export function invalidateWalletCache(): void {
+  cache.walletData = null;
+  cache.paymentMethods = null;
+  cache.transactions = null;
 }
