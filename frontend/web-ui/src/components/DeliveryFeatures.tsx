@@ -24,14 +24,6 @@ const DeliveryFeatures = () => {
     },
   ];
 
-  const features = [
-    { icon: DollarSign, title: "Affordable", description: "Transparent pricing with no hidden costs." },
-    { icon: Clock, title: "Speedy order matching", description: "Match orders and deliver your goods immediately." },
-    { icon: Truck, title: "Reliable driver network", description: "Different vehicle types and courier services for all kinds of delivery needs." },
-    { icon: Shield, title: "Safe delivery", description: "Professional and trained drivers ensure all your goods safely reach their destination." },
-    { icon: MapPin, title: "Real-time tracking", description: "In-app tracking allows you and the receiver to track your order in real time during the delivery." },
-  ];
-
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
@@ -64,10 +56,10 @@ const DeliveryFeatures = () => {
 
   return (
     <section className="py-24 px-4 sm:px-6 lg:px-8 mx-auto bg-maxmove-navy">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> {/* Ensures text aligns with images */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> {/* Added items-center for alignment */}
         
         {/* Left Column: Image Carousel */}
-        <div className="flex flex-col items-start relative">
+        <div className="flex flex-col items-center relative"> {/* Centered images */}
           <Carousel className="w-full" opts={{ loop: true }}>
             <CarouselContent>
               {images.map((image, index) => (
@@ -88,7 +80,7 @@ const DeliveryFeatures = () => {
         </div>
 
         {/* Right Column: Text Content */}
-        <div className="space-y-8 self-center"> {/* Ensures text block aligns with images */}
+        <div className="space-y-8 flex flex-col justify-center"> {/* Centered text vertically */}
           <motion.div 
             className="space-y-4 text-center lg:text-left" 
             initial={{ opacity: 0, y: 20 }}
@@ -115,31 +107,70 @@ const DeliveryFeatures = () => {
 
           {/* Features List */}
           <div className="space-y-6">
-            {features.map((feature, index) => (
-              <motion.div 
-                key={index} 
-                className="flex items-center gap-4" // Aligns icon & text in center
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
-              >
-                {/* Feature Icon */}
-                <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.2, type: "spring" }}
-                  className="flex items-center justify-center h-10 w-10"
-                >
-                  <feature.icon className="h-6 w-6 text-maxmove-creme" />
-                </motion.div>
+            <motion.div 
+              className="flex gap-4 items-center" // Centered each feature row
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <DollarSign className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-maxmove-creme">Affordable</h3>
+                <p className="text-maxmove-creme">Transparent pricing with no hidden costs.</p>
+              </div>
+            </motion.div>
 
-                {/* Feature Text */}
-                <div>
-                  <h3 className="font-semibold text-maxmove-creme">{feature.title}</h3>
-                  <p className="text-maxmove-creme">{feature.description}</p>
-                </div>
-              </motion.div>
-            ))}
+            <motion.div 
+              className="flex gap-4 items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <Clock className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-maxmove-creme">Speedy order matching</h3>
+                <p className="text-maxmove-creme">Match orders and deliver your goods immediately.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex gap-4 items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <Truck className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-maxmove-creme">Reliable driver network</h3>
+                <p className="text-maxmove-creme">Different vehicle types and courier services for all kinds of delivery needs.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex gap-4 items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.9 }}
+            >
+              <Shield className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-maxmove-creme">Safe delivery</h3>
+                <p className="text-maxmove-creme">Professional and trained drivers ensure all your goods safely reach their destination.</p>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex gap-4 items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 1.1 }}
+            >
+              <MapPin className="h-6 w-6 text-maxmove-creme flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-maxmove-creme">Real-time tracking</h3>
+                <p className="text-maxmove-creme">In-app tracking allows you and the receiver to track your order in real time during the delivery.</p>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
