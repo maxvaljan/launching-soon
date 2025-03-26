@@ -206,6 +206,7 @@ export default function AdminOrdersPage() {
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-gray-400" />
           <select
+            title="Status Filter"
             className="border border-gray-300 rounded-md p-2 text-sm"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}

@@ -2,8 +2,7 @@ import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, Platform, Linking } from 'react-native';
 import Colors from '../constants/Colors';
 
-// This component provides WebView functionality or a fallback UI
-// when WebView isn't available
+// This component provides a fallback UI for WebView functionality
 
 interface WebViewComponentProps {
   source: { uri: string };
@@ -18,37 +17,9 @@ const WebViewComponent: React.FC<WebViewComponentProps> = ({
   startInLoadingState,
   renderLoading 
 }) => {
-  // Use a platform check to avoid WebView import errors
-  const WebViewImplementation = React.useMemo(() => {
-    // Only import WebView when actually needed and if we're not in a problematic environment
-    if (Platform.OS !== 'web' && !process.env.NODE_ENV?.includes('test')) {
-      try {
-        // Dynamic import to avoid module not found errors during initial load
-        const WebViewModule = require('react-native-webview');
-        return WebViewModule.WebView;
-      } catch (e) {
-        console.warn('WebView module not available:', e);
-        return null;
-      }
-    }
-    return null;
-  }, []);
-
-  // If WebView is available, use it
-  if (WebViewImplementation) {
-    return (
-      <WebViewImplementation
-        source={source}
-        onNavigationStateChange={onNavigationStateChange}
-        startInLoadingState={startInLoadingState}
-        renderLoading={renderLoading}
-      />
-    );
-  }
-  
-  // Otherwise use our fallback implementation
+  // Always use the fallback implementation to avoid WebView import errors
   React.useEffect(() => {
-    // Open in browser if WebView isn't available
+    // Open in browser since WebView isn't available
     Linking.openURL(source.uri).catch(err => {
       console.error('Failed to open URL:', err);
     });
@@ -67,7 +38,7 @@ const WebViewComponent: React.FC<WebViewComponentProps> = ({
       <Text style={styles.message}>
         Opening in your browser...
       </Text>
-      <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
+      <ActivityIndicator size="large" color={Colors.light.primary} style={styles.loader} />
       <Text style={styles.url}>{source.uri}</Text>
     </View>
   );
@@ -85,7 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: Colors.primary,
+    color: Colors.light.primary,
   },
   message: {
     fontSize: 16,

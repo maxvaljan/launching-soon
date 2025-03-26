@@ -30,8 +30,8 @@ export function getRateLimiter() {
 }
 
 // Get the client's IP address from headers
-export function getClientIP(): string {
-  const headersList = headers();
+export async function getClientIP(): Promise<string> {
+  const headersList = await headers();
   
   // Get the forwarded IP if behind a proxy
   const forwardedFor = headersList.get('x-forwarded-for');
@@ -62,7 +62,7 @@ export async function checkRateLimit(identifier?: string): Promise<{
     const limiter = getRateLimiter();
     
     // Use provided identifier or fallback to IP
-    const id = identifier || getClientIP();
+    const id = identifier || await getClientIP();
     
     // Check rate limit
     const { success, limit, remaining, reset } = await limiter.limit(id);
