@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from "react";
+
 interface JobListing {
   id: string;
   title: string;
@@ -76,6 +78,12 @@ const jobListings: JobListing[] = [
 ];
 
 export default function Career() {
+  const [expandedJob, setExpandedJob] = useState<string | null>(null);
+
+  const toggleJobDescription = (id: string) => {
+    setExpandedJob(expandedJob === id ? null : id);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow">
@@ -106,18 +114,24 @@ export default function Career() {
               {jobListings.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg shadow-sm border border-maxmove-100 p-6 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg shadow-sm border border-maxmove-100 p-6 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => toggleJobDescription(job.id)}
                 >
-                  <div className="flex flex-col">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-semibold text-maxmove-900">
-                        {job.title}
-                      </h3>
-                      <p className="text-sm text-maxmove-600">
-                        {job.location} · {job.type}
-                      </p>
-                    </div>
-                    <p className="mt-2 text-maxmove-700">{job.description}</p>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold text-maxmove-900">
+                      {job.title}
+                    </h3>
+                    <p className="text-sm text-maxmove-600">
+                      {job.location} · {job.type}
+                    </p>
+                  </div>
+                  {/* Description Section */}
+                  <div
+                    className={`transition-max-height duration-300 ease-in-out overflow-hidden ${
+                      expandedJob === job.id ? "max-h-40 mt-3" : "max-h-0"
+                    }`}
+                  >
+                    <p className="text-maxmove-700">{job.description}</p>
                   </div>
                 </div>
               ))}
