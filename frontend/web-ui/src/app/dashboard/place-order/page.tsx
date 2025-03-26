@@ -115,6 +115,11 @@ const formatDescription = (description: string): string => {
 const formatDimensions = (dimensions: string): string => {
   if (!dimensions) return '';
   
+  // If the dimensions are already in the correct format, return as is
+  if (dimensions.match(/^\d+,\d+\s*x\s*\d+,\d+\s*x\s*\d+,\d+\s*Meter$/)) {
+    return dimensions;
+  }
+  
   // First, normalize the input by removing any 'meter'/'m' suffix and extra spaces
   let normalized = dimensions
     .toLowerCase()
@@ -124,24 +129,27 @@ const formatDimensions = (dimensions: string): string => {
     .replace(/\s+/g, ' ')
     .trim();
   
-  // Split by common separators (x, X, *, comma, space)
-  let parts = normalized.split(/[xX*,\s]+/).filter(Boolean);
+  // Split by common separators (x, X, *, comma with space, space)
+  let parts = normalized.split(/[xX*]|\s*,\s*|\s+/).filter(Boolean);
   
-  // Ensure numbers use consistent decimal notation with comma
+  // Ensure we have exactly 3 parts
+  if (parts.length !== 3) {
+    return dimensions; // Return original if we can't parse it properly
+  }
+  
+  // Format each number with comma as decimal separator
   parts = parts.map(part => {
-    // Convert possible dot notation to comma for decimal
-    return part.replace('.', ',');
+    // Convert dots to commas for decimal notation
+    part = part.replace('.', ',');
+    // Add decimal zero if it's a whole number
+    if (!part.includes(',')) {
+      part += ',0';
+    }
+    return part;
   });
   
   // Build standard format: W x H x D Meter
-  let formatted = parts.join(' x ');
-  
-  // Add 'Meter' suffix if it's not already there
-  if (!formatted.toLowerCase().includes('meter')) {
-    formatted += ' Meter';
-  }
-  
-  return formatted;
+  return `${parts[0]} x ${parts[1]} x ${parts[2]} Meter`;
 };
 
 // VehicleCard component to render each vehicle option
