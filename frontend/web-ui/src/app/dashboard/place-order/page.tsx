@@ -73,6 +73,39 @@ const getVehicleImageUrl = (vehicle: VehicleType): string => {
   return `${supabaseUrl}/storage/v1/object/public/vehicles/${imageName}`;
 };
 
+// Helper function to format dimensions consistently
+const formatDimensions = (dimensions: string): string => {
+  if (!dimensions) return '';
+  
+  // First, normalize the input by removing any 'meter'/'m' suffix and extra spaces
+  let normalized = dimensions
+    .toLowerCase()
+    .replace(/meter/g, '')
+    .replace(/meters/g, '')
+    .replace(/m(?![a-z0-9])/g, '') // Replace 'm' only if not followed by letters/numbers
+    .replace(/\s+/g, ' ')
+    .trim();
+  
+  // Split by common separators (x, X, *, comma, space)
+  let parts = normalized.split(/[xX*,\s]+/).filter(Boolean);
+  
+  // Ensure numbers use consistent decimal notation with comma
+  parts = parts.map(part => {
+    // Convert possible dot notation to comma for decimal
+    return part.replace('.', ',');
+  });
+  
+  // Build standard format: W x H x D Meter
+  let formatted = parts.join(' x ');
+  
+  // Add 'Meter' suffix if it's not already there
+  if (!formatted.toLowerCase().includes('meter')) {
+    formatted += ' Meter';
+  }
+  
+  return formatted;
+};
+
 // VehicleCard component to render each vehicle option
 const VehicleCard = ({ 
   vehicle, 
@@ -85,8 +118,9 @@ const VehicleCard = ({
 }) => {
   const imageUrl = getVehicleImageUrl(vehicle);
 
-  // Format dimensions for display
-  const dimensions = vehicle.max_dimensions.replace(/,/g, ' x ').replace(/meter/g, 'Meter');
+  // Format dimensions and weight for consistent display
+  const formattedDimensions = formatDimensions(vehicle.max_dimensions);
+  const formattedWeight = vehicle.max_weight.replace('kg', '').trim() + 'kg';
 
   return (
     <div 
@@ -130,8 +164,8 @@ const VehicleCard = ({
       <div className="absolute inset-0 bg-white bg-opacity-95 rounded-md p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
         <div className="text-center">
           <p className="font-medium text-sm mb-1">{vehicle.name}</p>
-          <p className="text-xs text-gray-500">{dimensions}</p>
-          <p className="text-xs text-gray-500 mb-2">{vehicle.max_weight}</p>
+          <p className="text-xs text-gray-500">{formattedDimensions}</p>
+          <p className="text-xs text-gray-500 mb-2">{formattedWeight}</p>
         </div>
         
         <div className="text-xs text-gray-600 text-center">
