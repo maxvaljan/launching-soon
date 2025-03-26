@@ -127,8 +127,8 @@ export default function Career() {
                   </div>
                   {/* Description Section */}
                   <div
-                    className={`transition-max-height duration-300 ease-in-out overflow-hidden ${
-                      expandedJob === job.id ? "max-h-40 mt-3" : "max-h-0"
+                    className={`overflow-hidden transition-all ease-in-out duration-300 ${
+                      expandedJob === job.id ? "max-h-screen mt-3" : "max-h-0"
                     }`}
                   >
                     <p className="text-maxmove-700">{job.description}</p>
@@ -138,8 +138,8 @@ export default function Career() {
             </div>
             <div className="mt-8 text-center text-maxmove-600">
               Send your application to{" "}
-              <a 
-                href="mailto:careers@maxmove.com" 
+              <a
+                href="mailto:careers@maxmove.com"
                 className="text-maxmove-800 hover:underline"
               >
                 careers@maxmove.com
