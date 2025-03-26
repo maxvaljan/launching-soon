@@ -87,19 +87,19 @@ const VehicleCard = ({
 
   return (
     <div 
-      className={`cursor-pointer group rounded-md border p-4 text-center transition-all h-[140px] flex flex-col justify-between ${
+      className={`cursor-pointer group rounded-md border p-4 text-center transition-all h-[160px] flex flex-col justify-between ${
         isSelected 
           ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme' 
           : 'border-gray-200 hover:border-maxmove-gray hover:shadow-sm'
       }`}
       onClick={() => onSelect(vehicle.id)}
     >
-      <div className="relative h-14 flex items-center justify-center">
+      <div className="relative h-[85px] flex items-center justify-center">
         <Image 
           src={imageUrl}
           alt={vehicle.name}
-          width={56}
-          height={56}
+          width={73}
+          height={73}
           className="mx-auto object-contain"
           quality={90}
           priority={true}
@@ -112,7 +112,7 @@ const VehicleCard = ({
             const parentDiv = target.parentElement;
             if (parentDiv) {
               const svgElement = document.createElement('div');
-              svgElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
+              svgElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
               parentDiv.appendChild(svgElement);
             }
           }}
@@ -129,8 +129,8 @@ const VehicleCard = ({
 
 // Vehicle skeleton loader component
 const VehicleSkeleton = () => (
-  <div className="rounded-md border border-gray-200 p-4 h-[140px] animate-pulse">
-    <div className="bg-gray-200 h-12 w-12 mx-auto rounded-md mb-2"></div>
+  <div className="rounded-md border border-gray-200 p-4 h-[160px] animate-pulse">
+    <div className="bg-gray-200 h-[73px] w-[73px] mx-auto rounded-md mb-2"></div>
     <div className="bg-gray-200 h-4 w-24 mx-auto rounded-sm mb-2"></div>
     <div className="bg-gray-200 h-3 w-16 mx-auto rounded-sm"></div>
   </div>
@@ -209,14 +209,9 @@ export default function PlaceOrderPage() {
         const data = await response.json();
         console.log('Fetched vehicle types from API:', data.data);
         
-        // Sort vehicle types by ID before setting state
-        const sortedVehicles = [...(data.data || [])].sort((a, b) => {
-          // Convert IDs to numbers if they're strings
-          const idA = typeof a.id === 'string' ? parseInt(a.id) : a.id;
-          const idB = typeof b.id === 'string' ? parseInt(b.id) : b.id;
-          return idA - idB;
-        });
-        setVehicleTypes(sortedVehicles);
+        // Apply custom sort order instead of just sorting by ID
+        const customSortedVehicles = sortVehiclesByCustomOrder(data.data || []);
+        setVehicleTypes(customSortedVehicles);
         setIsLoadingVehicles(false);
         return;
       }
@@ -229,17 +224,41 @@ export default function PlaceOrderPage() {
       const { data, error } = await supabase
         .from('vehicle_types')
         .select('*')
-        .eq('active', true)
-        .order('vehicle_id', { ascending: true }); // Sort by vehicle_id in ascending order
+        .eq('active', true);
 
       if (error) throw error;
       console.log('Fetched vehicle types from Supabase directly:', data);
-      setVehicleTypes(data || []);
+      
+      // Apply custom sort order
+      const customSortedVehicles = sortVehiclesByCustomOrder(data || []);
+      setVehicleTypes(customSortedVehicles);
     } catch (error) {
       console.error('Error fetching vehicle types:', error);
     } finally {
       setIsLoadingVehicles(false);
     }
+  };
+
+  // Custom sort function to arrange vehicles in specific order
+  const sortVehiclesByCustomOrder = (vehicles: VehicleType[]): VehicleType[] => {
+    // Define custom order priority
+    const customOrder: { [key: string]: number } = {
+      'Courier': 1,
+      'Car': 2,
+      'Compact Van': 3,
+      '2,7m Van': 4,
+      '3,3m Van': 5,
+      '4,3m Lorry': 6,
+      '7,5m Lorry': 7,
+      'Towing': 8
+    };
+    
+    // Sort based on custom order
+    return [...vehicles].sort((a, b) => {
+      const orderA = customOrder[a.name] || 100; // Default high number for unknown types
+      const orderB = customOrder[b.name] || 100;
+      return orderA - orderB;
+    });
   };
 
   const handleAddressChange = async (value: string, index: number) => {
