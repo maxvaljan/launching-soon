@@ -97,12 +97,12 @@ const VehicleCard = ({
       }`}
       onClick={() => onSelect(vehicle.id)}
     >
-      <div className="relative h-[85px] flex items-center justify-center">
+      <div className="relative h-[95px] flex items-center justify-center">
         <Image 
           src={imageUrl}
           alt={vehicle.name}
-          width={73}
-          height={73}
+          width={88}
+          height={88}
           className="mx-auto object-contain"
           quality={90}
           priority={true}
@@ -115,7 +115,7 @@ const VehicleCard = ({
             const parentDiv = target.parentElement;
             if (parentDiv) {
               const svgElement = document.createElement('div');
-              svgElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
+              svgElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
               parentDiv.appendChild(svgElement);
             }
           }}
