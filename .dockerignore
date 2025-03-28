@@ -1,5 +1,28 @@
-# Ignore everything
-*
+# Exclude node_modules
+node_modules
+*/node_modules
+**/node_modules
+
+# Exclude build artifacts
+**/dist
+**/.next
+**/.turbo
+
+# Don't exclude shared or backend
+!shared
+!backend
+
+# Exclude git files
+.git
+.gitignore
+
+# Exclude local development files
+.env.local
+.env.development.local
+.DS_Store
+
+# Exclude frontend specific files
+frontend/
 
 # Allow only specific files/directories
 !backend/package.json

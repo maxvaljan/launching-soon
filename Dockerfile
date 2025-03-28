@@ -1,22 +1,24 @@
 FROM node:20-alpine AS base
 
 # Install pnpm
-RUN npm install -g pnpm@8.14.0
+RUN npm install -g pnpm@10.7.0
 
 WORKDIR /app
 
-# Copy pnpm files
-COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+# First copy package configs to install dependencies
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
 
-# Copy packages
+# Copy package.json files for workspaces
 COPY backend/package.json ./backend/
 COPY shared/package.json ./shared/
 
-# Install dependencies
+# Install dependencies - this creates node_modules
 RUN pnpm install --frozen-lockfile
 
-# Copy all source files
+# Now copy the actual source code
 COPY backend ./backend
 COPY shared ./shared
 
