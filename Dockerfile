@@ -7,7 +7,6 @@ WORKDIR /app
 
 # First copy package configs to install dependencies
 COPY package.json ./
-COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
 
@@ -15,8 +14,8 @@ COPY turbo.json ./
 COPY backend/package.json ./backend/
 COPY shared/package.json ./shared/
 
-# Install dependencies - this creates node_modules
-RUN pnpm install --frozen-lockfile
+# Install dependencies without requiring a lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Now copy the actual source code
 COPY backend ./backend
