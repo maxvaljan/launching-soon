@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
   "buildCommand": "cd ../.. && pnpm build --filter=web-ui",
-  "installCommand": "cd ../.. && pnpm install",
+  "installCommand": "pnpm i -g pnpm@8.14.0 && cd ../.. && pnpm install",
   "outputDirectory": "frontend/web-ui/.next"
 }
