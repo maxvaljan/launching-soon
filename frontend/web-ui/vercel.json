@@ -2,7 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "cd ../.. && pnpm build --filter=web-ui",
   "installCommand": "cd ../.. && pnpm install",
-  "outputDirectory": "frontend/web-ui/.next",
-  "nodeVersion": "20.x",
-  "packageManager": "pnpm@8.14.0"
+  "outputDirectory": "frontend/web-ui/.next"
 }
