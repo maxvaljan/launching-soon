@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cd /vercel/path0 && pnpm build --filter=web-ui",
-  "installCommand": "cd /vercel/path0 && pnpm install",
-  "outputDirectory": "frontend/web-ui/.next"
+  "installCommand": "npm install -g pnpm@8.14.0 && pnpm install --no-frozen-lockfile",
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next"
 }
