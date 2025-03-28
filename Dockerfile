@@ -1,27 +1,37 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
+
+# Install pnpm
+RUN npm install -g pnpm@8.14.0
 
 WORKDIR /app
 
-# First copy only backend package.json and install dependencies
+# Copy pnpm files
+COPY pnpm-lock.yaml package.json pnpm-workspace.yaml ./
+COPY turbo.json ./
+
+# Copy packages
 COPY backend/package.json ./backend/
-WORKDIR /app/backend
-RUN npm install
+COPY shared/package.json ./shared/
 
-# Copy backend source files
-COPY backend/src ./src
-COPY backend/setup-*.js ./
-COPY backend/setup-*.sql ./
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-# Set environment variables
+# Copy all source files
+COPY backend ./backend
+COPY shared ./shared
+
+# Build shared package
+RUN pnpm build --filter=shared
+
+# Set environment for production
 ENV NODE_ENV=production
-# Railway will provide the PORT environment variable
 
-# Expose the port the app runs on
+# Expose the API port
 EXPOSE 3000
 
-# Create a simple healthcheck script
+# Create a healthcheck script
 RUN echo '#!/bin/sh\nwget -q -O- http://localhost:$PORT/health || exit 1' > /healthcheck.sh && \
     chmod +x /healthcheck.sh
 
-# Start the backend with a simple command to echo logs
-CMD ["sh", "-c", "npm start"]
+# Start the backend
+CMD ["sh", "-c", "cd backend && pnpm start"]

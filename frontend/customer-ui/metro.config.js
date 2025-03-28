@@ -1,21 +1,29 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
+const path = require('path');
+
+// Find the project and workspace directories
+const projectRoot = __dirname;
+const monorepoRoot = path.resolve(projectRoot, '../..');
 
 /** @type {import('expo/metro-config').MetroConfig} */
-const config = getDefaultConfig(__dirname);
+const config = getDefaultConfig(projectRoot);
 
-// Add monorepo support
-const projectRoot = __dirname;
-const workspaceRoot = `${projectRoot}/../..`;
+// 1. Watch all files within the monorepo
+config.watchFolders = [monorepoRoot];
 
-// 1. Watch all files in the project and the monorepo workspace
-config.watchFolders = [projectRoot, workspaceRoot];
-
-// 2. Ensure modules resolve to the same instance in the monorepo
-config.resolver.disableHierarchicalLookup = true;
+// 2. Let Metro know where to resolve packages and exclude the workspace node_modules
 config.resolver.nodeModulesPaths = [
-  `${projectRoot}/node_modules`,
-  `${workspaceRoot}/node_modules`
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(monorepoRoot, 'node_modules'),
 ];
 
-module.exports = config; 
+// 3. Force Metro to resolve (sub)dependencies only from the monorepo's node_modules
+config.resolver.disableHierarchicalLookup = true;
+
+// 4. Support shared packages
+config.resolver.extraNodeModules = {
+  shared: path.resolve(monorepoRoot, 'shared'),
+};
+
+module.exports = config;

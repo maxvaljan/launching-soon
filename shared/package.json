@@ -1,0 +1,19 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./utils/index.ts",
+  "types": "./utils/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "clean": "rm -rf node_modules .turbo dist"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0"
+  }
+}
