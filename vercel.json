@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "installCommand": "npm install -g pnpm@8.14.0 && pnpm install --no-frozen-lockfile",
+  "installCommand": "npm install -g pnpm@10.7.0 && pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm build",
   "outputDirectory": "frontend/web-ui/.next"
 } 
