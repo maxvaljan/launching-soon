@@ -26,6 +26,9 @@
     },
     "install": {
       "exclude": ["react-native-webview", "@stripe/stripe-react-native"]
+    },
+    "extra": {
+      "apiUrl": "https://maxmove-backend.example.com/api"
     }
   }
 }

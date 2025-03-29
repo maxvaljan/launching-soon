@@ -197,7 +197,60 @@ export const getVehicleTypes = async () => {
 };
 
 export const getActiveVehicles = async () => {
-  return api.get('/vehicles/active');
+  try {
+    return await api.get('/vehicles/active');
+  } catch (error) {
+    console.log('Error fetching vehicles, using fallback data:', error);
+    // Return fallback data if API call fails
+    return {
+      data: {
+        vehicles: [
+          {
+            id: 'courier',
+            name: 'Courier',
+            description: 'Small items, documents',
+            icon_type: 'motorcycle'
+          },
+          {
+            id: 'car',
+            name: 'Car',
+            description: 'Small and medium parcels',
+            icon_type: 'car'
+          },
+          {
+            id: 'mpv',
+            name: 'MPV (Weight<25KG x 2)',
+            description: 'Multiple medium parcels',
+            icon_type: 'car'
+          },
+          {
+            id: 'van1.7',
+            name: '1.7M Van',
+            description: 'Furniture, home appliances',
+            icon_type: 'van'
+          },
+          {
+            id: 'van2.4',
+            name: '2.4M Van',
+            description: 'Larger furniture, multiple items',
+            icon_type: 'van'
+          },
+          {
+            id: 'lorry10',
+            name: 'Lorry 10ft',
+            description: 'Commercial goods, bulk items',
+            icon_type: 'truck'
+          },
+          {
+            id: 'lorry14',
+            name: 'Lorry 14ft',
+            description: 'Moving, large quantity goods',
+            icon_type: 'truck'
+          }
+        ]
+      }
+    };
+  }
 };
 
 // Payment API methods
