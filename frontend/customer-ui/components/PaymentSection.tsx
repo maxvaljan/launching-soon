@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { CardField, useStripe, CardFieldInput } from '@stripe/stripe-react-native';
 import api from '../services/api';
-import Button from './ui/Button';
+import { Button } from './ui/Button';
 import Colors from '../constants/Colors';
+import { useColorScheme } from 'react-native';
 
 interface PaymentSectionProps {
   order: {
@@ -17,9 +18,16 @@ interface PaymentSectionProps {
   }) => void;
 }
 
+// Define type for the payment method
+interface PaymentMethod {
+  id: string;
+  stripe_payment_method_id: string;
+  last_four: string;
+}
+
 const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplete }) => {
   const { confirmPayment, createPaymentMethod } = useStripe();
-  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [isCashPayment, setIsCashPayment] = useState(false);
@@ -29,6 +37,214 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
   const [isLoading, setIsLoading] = useState(true);
   
   const tipOptions = [0, 100, 200, 500]; // in cents (0, €1, €2, €5)
+
+  const colorScheme = useColorScheme() || 'light';
+  const colors = Colors[colorScheme];
+
+  // Define styles inside the component to access colors
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+    },
+    loadingContainer: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      padding: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 16,
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: '#666',
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      color: '#333',
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 8,
+      color: '#333',
+    },
+    // Payment options
+    paymentOptions: {
+      flexDirection: 'row',
+      marginBottom: 16,
+      borderRadius: 8,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    paymentOption: {
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+    },
+    paymentOptionText: {
+      color: '#495057',
+      fontWeight: '500',
+    },
+    selectedPaymentOption: {
+      backgroundColor: colors.primary,
+    },
+    selectedPaymentOptionText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    // Saved cards
+    savedCards: {
+      marginBottom: 16,
+    },
+    savedCard: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    selectedCard: {
+      borderColor: colors.primary,
+      backgroundColor: '#e6f7ff',
+    },
+    cardText: {
+      fontSize: 16,
+      color: '#212529',
+    },
+    selectedText: {
+      color: colors.primary,
+      fontWeight: 'bold',
+    },
+    // Add card
+    addCardButton: {
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      padding: 12,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+      marginBottom: 16,
+    },
+    addCardButtonText: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    // Card field
+    addCardForm: {
+      marginBottom: 16,
+    },
+    cardField: {
+      width: '100%',
+      height: 50,
+      marginVertical: 8,
+    },
+    cardFieldStyle: {
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+      borderRadius: 8,
+      backgroundColor: '#f8f9fa',
+    },
+    cardButtonsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+    },
+    cancelButton: {
+      flex: 1,
+      padding: 12,
+      alignItems: 'center',
+      borderRadius: 8,
+      backgroundColor: '#f8f9fa',
+      marginRight: 8,
+    },
+    cancelButtonText: {
+      color: '#495057',
+      fontWeight: '600',
+    },
+    // Tip section
+    tipSection: {
+      marginBottom: 16,
+    },
+    tipOptions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    tipOption: {
+      flex: 1,
+      padding: 12,
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      marginHorizontal: 4,
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    tipText: {
+      color: '#495057',
+    },
+    selectedTipOption: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    selectedTipText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    // Summary section
+    summary: {
+      marginBottom: 16,
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: '#e9ecef',
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+    },
+    summaryLabel: {
+      fontSize: 15,
+      color: '#495057',
+    },
+    summaryValue: {
+      fontSize: 15,
+      color: '#212529',
+      fontWeight: '500',
+    },
+    totalRow: {
+      marginTop: 8,
+      paddingTop: 8,
+      borderTopWidth: 1,
+      borderTopColor: '#e9ecef',
+    },
+    totalText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#212529',
+    },
+    totalAmount: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.primary,
+    },
+    // Pay button
+    payButton: {
+      height: 50,
+    },
+  });
 
   useEffect(() => {
     fetchPaymentMethods();
@@ -61,7 +277,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
       
       // Create payment method with Stripe
       const { paymentMethod, error } = await createPaymentMethod({
-        type: 'Card',
+        paymentMethodType: 'Card',
       });
 
       if (error) {
@@ -117,7 +333,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
       // If user is adding a new card while paying
       if (!paymentMethodId && cardDetails?.complete) {
         const { paymentMethod, error: pmError } = await createPaymentMethod({
-          type: 'Card',
+          paymentMethodType: 'Card',
         });
         
         if (pmError) {
@@ -143,10 +359,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
 
       // Confirm payment intent
       const { error, paymentIntent: confirmedIntent } = await confirmPayment(
-        paymentIntent.client_secret, 
-        {
-          paymentMethodId,
-        }
+        paymentIntent.client_secret
       );
 
       if (error) {
@@ -180,7 +393,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Loading payment options...</Text>
       </View>
     );
@@ -246,7 +459,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
               
               <CardField
                 postalCodeEnabled={false}
-                placeholder={{
+                placeholders={{
                   number: '4242 4242 4242 4242',
                 }}
                 cardStyle={styles.cardFieldStyle}
@@ -264,12 +477,11 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
                 </TouchableOpacity>
                 
                 <Button
+                  title={isProcessing ? 'Adding...' : 'Add Card'}
                   onPress={handleAddPaymentMethod}
                   disabled={!cardDetails?.complete || isProcessing}
                   style={styles.addCardButton}
-                >
-                  {isProcessing ? 'Adding...' : 'Add Card'}
-                </Button>
+                />
               </View>
             </View>
           ) : (
@@ -332,222 +544,228 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ order, onPaymentComplet
       </View>
       
       <Button
-        onPress={handlePayment}
-        disabled={isProcessing || (!isCashPayment && !selectedPaymentMethod && !cardDetails?.complete)}
-        style={styles.payButton}
-      >
-        {isProcessing
+        title={isProcessing
           ? 'Processing...'
           : isCashPayment
             ? 'Confirm Cash Payment'
             : `Pay €${(getTotal() / 100).toFixed(2)}`}
-      </Button>
+        onPress={handlePayment}
+        disabled={isProcessing || (!isCashPayment && !selectedPaymentMethod && !cardDetails?.complete)}
+        style={styles.payButton}
+      />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  loadingContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#666',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#333',
-  },
-  // Payment options
-  paymentOptions: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  paymentOption: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-  },
-  paymentOptionText: {
-    color: '#495057',
-    fontWeight: '500',
-  },
-  selectedPaymentOption: {
-    backgroundColor: Colors.primary,
-  },
-  selectedPaymentOptionText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  // Saved cards
-  savedCards: {
-    marginBottom: 16,
-  },
-  savedCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  selectedCard: {
-    borderColor: Colors.primary,
-    backgroundColor: '#e6f7ff',
-  },
-  cardText: {
-    fontSize: 16,
-    color: '#212529',
-  },
-  selectedText: {
-    color: Colors.primary,
-    fontWeight: 'bold',
-  },
-  // Add card
-  addCardButton: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-    marginBottom: 16,
-  },
-  addCardButtonText: {
-    color: Colors.primary,
-    fontWeight: '600',
-  },
-  // Card field
-  addCardForm: {
-    marginBottom: 16,
-  },
-  cardField: {
-    width: '100%',
-    height: 50,
-    marginVertical: 8,
-  },
-  cardFieldStyle: {
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
-  },
-  cardButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 12,
-    alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
-    marginRight: 8,
-  },
-  cancelButtonText: {
-    color: '#495057',
-    fontWeight: '600',
-  },
-  // Tip section
-  tipSection: {
-    marginBottom: 16,
-  },
-  tipOptions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  tipOption: {
-    flex: 1,
-    padding: 12,
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    marginHorizontal: 4,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  tipText: {
-    color: '#495057',
-  },
-  selectedTipOption: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
-  selectedTipText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  // Summary section
-  summary: {
-    marginBottom: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  summaryLabel: {
-    fontSize: 15,
-    color: '#495057',
-  },
-  summaryValue: {
-    fontSize: 15,
-    color: '#212529',
-    fontWeight: '500',
-  },
-  totalRow: {
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
-  },
-  totalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212529',
-  },
-  totalAmount: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
-  // Pay button
-  payButton: {
-    height: 50,
-  },
-});
+// Use the component's colors for styles
+const PaymentSectionWithStyles = (props: PaymentSectionProps) => {
+  const colorScheme = useColorScheme() || 'light';
+  const colors = Colors[colorScheme];
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+    },
+    loadingContainer: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      padding: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 16,
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 16,
+      color: '#666',
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      color: '#333',
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 8,
+      color: '#333',
+    },
+    // Payment options
+    paymentOptions: {
+      flexDirection: 'row',
+      marginBottom: 16,
+      borderRadius: 8,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    paymentOption: {
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+    },
+    paymentOptionText: {
+      color: '#495057',
+      fontWeight: '500',
+    },
+    selectedPaymentOption: {
+      backgroundColor: colors.primary,
+    },
+    selectedPaymentOptionText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    // Saved cards
+    savedCards: {
+      marginBottom: 16,
+    },
+    savedCard: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    selectedCard: {
+      borderColor: colors.primary,
+      backgroundColor: '#e6f7ff',
+    },
+    cardText: {
+      fontSize: 16,
+      color: '#212529',
+    },
+    selectedText: {
+      color: colors.primary,
+      fontWeight: 'bold',
+    },
+    // Add card
+    addCardButton: {
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      padding: 12,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+      marginBottom: 16,
+    },
+    addCardButtonText: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    // Card field
+    addCardForm: {
+      marginBottom: 16,
+    },
+    cardField: {
+      width: '100%',
+      height: 50,
+      marginVertical: 8,
+    },
+    cardFieldStyle: {
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+      borderRadius: 8,
+      backgroundColor: '#f8f9fa',
+    },
+    cardButtonsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+    },
+    cancelButton: {
+      flex: 1,
+      padding: 12,
+      alignItems: 'center',
+      borderRadius: 8,
+      backgroundColor: '#f8f9fa',
+      marginRight: 8,
+    },
+    cancelButtonText: {
+      color: '#495057',
+      fontWeight: '600',
+    },
+    // Tip section
+    tipSection: {
+      marginBottom: 16,
+    },
+    tipOptions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    tipOption: {
+      flex: 1,
+      padding: 12,
+      alignItems: 'center',
+      backgroundColor: '#f8f9fa',
+      borderRadius: 8,
+      marginHorizontal: 4,
+      borderWidth: 1,
+      borderColor: '#e9ecef',
+    },
+    tipText: {
+      color: '#495057',
+    },
+    selectedTipOption: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    selectedTipText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    // Summary section
+    summary: {
+      marginBottom: 16,
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: '#e9ecef',
+    },
+    summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+    },
+    summaryLabel: {
+      fontSize: 15,
+      color: '#495057',
+    },
+    summaryValue: {
+      fontSize: 15,
+      color: '#212529',
+      fontWeight: '500',
+    },
+    totalRow: {
+      marginTop: 8,
+      paddingTop: 8,
+      borderTopWidth: 1,
+      borderTopColor: '#e9ecef',
+    },
+    totalText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#212529',
+    },
+    totalAmount: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.primary,
+    },
+    // Pay button
+    payButton: {
+      height: 50,
+    },
+  });
+  
+  return <PaymentSection {...props} />;
+};
 
-export default PaymentSection;
+export default PaymentSectionWithStyles;

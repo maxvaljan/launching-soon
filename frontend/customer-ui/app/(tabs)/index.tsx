@@ -8,6 +8,16 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 import { getActiveVehicles } from '@/services/api';
 
+// Add Vehicle interface
+interface Vehicle {
+  id: string;
+  name: string;
+  description: string;
+  category?: string;
+  icon_type?: string;
+  custom_icon_url?: string;
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() || 'light';
@@ -20,7 +30,7 @@ export default function HomeScreen() {
     { id: '2', type: 'dropoff', address: '' },
   ]);
 
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   
   // Fetch vehicles from the API
   useEffect(() => {

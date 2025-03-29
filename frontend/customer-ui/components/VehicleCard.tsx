@@ -24,13 +24,16 @@ export function VehicleCard({
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
 
+  // Merge the styles instead of using an array
+  const cardStyle: ViewStyle = {
+    ...styles.card,
+    borderColor: selected ? colors.accent : colors.border,
+    ...(style || {})
+  };
+
   return (
     <Card
-      style={[
-        styles.card,
-        { borderColor: selected ? colors.accent : colors.border },
-        style
-      ]}
+      style={cardStyle}
       variant={selected ? 'outline' : 'default'}
       onPress={onPress}
     >

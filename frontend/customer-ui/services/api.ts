@@ -34,9 +34,9 @@ api.interceptors.request.use(
 
 // Add response interceptor for token refresh
 let isRefreshing = false;
-let failedQueue = [];
+let failedQueue: any[] = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error: any, token = null) => {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);

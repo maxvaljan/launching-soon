@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "MaxMove Customer",
+    "slug": "maxmove-customer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "maxmoveapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "y"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "react-native-webview"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "https://launching-soon-production.up.railway.app/api",
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "211ed2f4-3294-484b-a963-b09eb16135db"
+      }
+    },
+    "android": {
+      "package": "com.maxva.maxmovecustomer",
+      "permissions": [
+        "android.permission.INTERNET"
+      ]
+    }
+  }
+}
