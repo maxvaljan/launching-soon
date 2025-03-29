@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
@@ -9,13 +9,39 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 
 export default function RootLayout() {
-  const { fontsReady } = useFonts();
+  const { fontsReady, fontError } = useFonts();
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
+  const [error, setError] = useState<Error | null>(null);
   
-  useFrameworkReady();
+  // Debug initialization
+  useEffect(() => {
+    console.log('App initializing...');
+    console.log('Fonts ready:', fontsReady);
+    console.log('Font error:', fontError);
+    console.log('Color scheme:', colorScheme);
+  }, [fontsReady, fontError, colorScheme]);
+  
+  try {
+    useFrameworkReady();
+  } catch (e) {
+    console.error('Framework ready error:', e);
+    setError(e instanceof Error ? e : new Error(String(e)));
+  }
 
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ff5252' }}>
+        <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Error</Text>
+        <Text style={{ color: '#fff', textAlign: 'center', paddingHorizontal: 20 }}>{error.message}</Text>
+      </View>
+    );
+  }
+
+  // Loading state
   if (!fontsReady) {
+    console.log('Fonts not yet ready, showing loading screen');
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary }}>
         <Text style={{ color: '#fff' }}>Loading...</Text>
@@ -23,6 +49,7 @@ export default function RootLayout() {
     );
   }
 
+  console.log('Rendering main app layout');
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <>
