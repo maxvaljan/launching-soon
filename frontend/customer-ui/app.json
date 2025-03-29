@@ -16,11 +16,7 @@
       "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-secure-store",
-      "react-native-webview"
-    ],
+    "plugins": ["expo-router", "expo-secure-store", "react-native-webview"],
     "experiments": {
       "typedRoutes": true
     },
@@ -28,7 +24,7 @@
       "exclude": ["react-native-webview", "@stripe/stripe-react-native"]
     },
     "extra": {
-      "apiUrl": "https://maxmove-backend.example.com/api"
+      "apiUrl": "https://launching-soon-production.up.railway.app/api"
     }
   }
 }
