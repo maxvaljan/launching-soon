@@ -1,0 +1,15 @@
+# Expo and React Native
+node_modules/
+.expo/
+dist/
+build/
+web-build/
+
+# Project directories
+.turbo/
+coverage/
+.bolt/
+
+# Generated files
+*.generated.*
+*.d.ts 
