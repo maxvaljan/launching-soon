@@ -1,0 +1,10 @@
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, id:D48357D4-7DEE-4FC7-994F-6D90235FFB2D, OS:18.2, name:iPhone 16 Pro }
+{ platform:iOS Simulator, id:D48357D4-7DEE-4FC7-994F-6D90235FFB2D, OS:18.2, name:iPhone 16 Pro }
+** BUILD FAILED **
+
+
+The following build commands failed:
+	CpResource /Users/maxvaljan/Library/Developer/Xcode/DerivedData/maxmovemonorepo-aqvakpmsglyjllccbvglnzolydbc/Build/Products/Debug-iphonesimulator/expo-dev-launcher/EXDevLauncher.bundle/main.jsbundle /Users/maxvaljan/maxmove-monorepo-main/node_modules/expo-dev-launcher/ios/main.jsbundle (in target 'expo-dev-launcher-EXDevLauncher' from project 'Pods')
+	Building workspace maxmovemonorepo with scheme maxmovemonorepo and configuration Debug
+(2 failures)
