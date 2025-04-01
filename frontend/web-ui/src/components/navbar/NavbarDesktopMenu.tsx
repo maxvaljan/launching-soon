@@ -82,14 +82,6 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
               Investment
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link
-              href="/roadmap"
-              className="w-full flex items-center text-[#192338] hover:text-[#192338]"
-            >
-              Roadmap
-            </Link>
-          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
