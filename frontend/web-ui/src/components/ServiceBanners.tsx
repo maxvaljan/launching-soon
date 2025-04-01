@@ -37,7 +37,7 @@ const ServiceBanners = () => {
         <div className="flex flex-col items-center mb-8 md:mb-20 w-full scale-85 md:scale-100">
           <div className="flex justify-center mb-4 text-center">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-wrap items-center justify-center">
-              <span className="mr-2">Move</span>
+              <span className="mr-4">Move</span>
               <div className="relative h-[1.2em] w-[280px] md:w-[330px] overflow-hidden">
                 {titles.map((title, index) => (
                   <motion.span 
@@ -60,7 +60,7 @@ const ServiceBanners = () => {
           <p className="text-lg md:text-xl text-white/90 mb-12 text-center w-full">Smart Logistics</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-16 md:mt-32 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-24 md:mt-40 w-full">
           {/* Move Banner */}
           <Link href="/book" className="group relative overflow-hidden p-1 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 h-[110px] md:h-[220px] flex flex-col justify-between">
             <div>
