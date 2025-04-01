@@ -55,13 +55,13 @@ export default function PersonalDelivery() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="bg-[#294374] p-6 rounded-xl shadow-sm hover:shadow-md transition-all"
+                className="bg-maxmove-creme p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-300"
               >
-                <feature.icon className="h-10 w-10 text-maxmove-creme mb-4" />
-                <h3 className="text-xl font-semibold text-maxmove-creme mb-2">
+                <feature.icon className="h-10 w-10 text-maxmove-navy mb-4" />
+                <h3 className="text-xl font-semibold text-maxmove-navy mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-maxmove-creme">{feature.description}</p>
+                <p className="text-maxmove-navy">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -72,8 +72,8 @@ export default function PersonalDelivery() {
           <h2 className="text-3xl font-bold text-maxmove-900 text-center mb-12">
             How It Works
           </h2>
-          <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto gap-8">
-            <div className="md:w-1/2 space-y-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="space-y-8">
               {[
                 {
                   step: "1",
@@ -108,17 +108,6 @@ export default function PersonalDelivery() {
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-[375px] h-[700px] md:w-[450px] md:h-[800px]">
-                <Image
-                  src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Iphone.png"
-                  alt="MaxMove App Interface"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
             </div>
           </div>
         </section>

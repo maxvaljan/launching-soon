@@ -74,12 +74,20 @@ export default function Drivers() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="phone" className="text-sm font-medium"></label>
-                  <Input id="phone" type="tel" placeholder="+49" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} required />
+                  <Input 
+                    id="phone" 
+                    type="tel" 
+                    placeholder="+49" 
+                    value={phoneNumber} 
+                    onChange={e => setPhoneNumber(e.target.value)} 
+                    required 
+                    className="border-gray-300 focus-visible:ring-[var(--maxmove-navy)]" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="city" className="text-sm font-medium"></label>
                   <Select value={city} onValueChange={setCity} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-gray-300 focus:ring-[var(--maxmove-navy)]">
                       <SelectValue placeholder="Select your city" />
                     </SelectTrigger>
                     <SelectContent className="bg-white">
