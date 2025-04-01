@@ -44,7 +44,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
 
   return (
     <form action={handleSubmit} className="w-full space-y-4 mb-8">
-      <div className="flex overflow-hidden rounded-xl bg-white/5 p-1">
+      <div className="flex overflow-hidden rounded-xl bg-white/10 border border-white/20 p-1.5">
         <Input
           id="email"
           name="email"
@@ -54,12 +54,12 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           aria-describedby="email-error"
-          className="w-full border-0 bg-transparent text-white placeholder:text-gray-400 focus:ring-0 focus:border-transparent focus-visible:border-transparent focus:outline-none active:ring-0 active:outline-none focus-visible:ring-0 focus-visible:outline-none active:border-transparent focus-visible:ring-offset-0"
+          className="w-full border-0 bg-transparent text-white placeholder:text-gray-300 focus:ring-0 focus:border-transparent focus-visible:border-transparent focus:outline-none active:ring-0 active:outline-none focus-visible:ring-0 focus-visible:outline-none active:border-transparent focus-visible:ring-offset-0"
         />
         <Button 
           type="submit" 
           disabled={isPending} 
-          className="bg-maxmove-light-blue hover:bg-maxmove-dark-blue text-maxmove-creme font-semibold px-4 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
+          className="bg-maxmove-light-blue hover:bg-maxmove-dark-blue text-maxmove-creme font-semibold px-6 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
         >
           {isPending ? (
             <Loader2 className="h-5 w-5 animate-spin" />
