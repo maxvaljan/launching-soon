@@ -112,7 +112,7 @@ export default function PersonalDelivery() {
             <div className="md:w-1/2 flex justify-center">
               <div className="relative w-[300px] h-[600px] md:w-[350px] md:h-[700px]">
                 <Image
-                  src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Iphone%20App.png"
+                  src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Iphone.png"
                   alt="MaxMove App Interface"
                   fill
                   className="object-contain"
