@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { CheckCircle2, MapPin, Package, Truck, Users, Clock } from "lucide-react";
 
 // SEO Metadata
 export const metadata = {
@@ -31,32 +29,6 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="min-h-screen pt-24 pb-12">
-      {/* Hero Section */}
-      <section className="py-16 bg-maxmove-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-maxmove-900 mb-6">
-                Delivering Excellence, <span className="text-maxmove-600">Every Time</span>
-              </h1>
-              <p className="text-lg text-maxmove-700 mb-8">
-                MaxMove is a modern logistics platform that connects customers with reliable drivers 
-                to provide fast, efficient delivery services across Germany. Our mission is to make 
-                logistics simple, transparent, and affordable for everyone.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button asChild className="bg-maxmove-800 hover:bg-maxmove-900 text-white">
-                  <Link href="/book">Book a Delivery</Link>
-                </Button>
-                <Button asChild className="bg-maxmove-navy hover:bg-maxmove-dark-blue text-maxmove-creme">
-                  <Link href="/contact">Join our Partner Network</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Our Story Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,30 +64,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Stats Section */}
-      {/* <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-4xl font-bold text-maxmove-800 mb-2">500K+</p>
-              <p className="text-maxmove-700">Deliveries Completed</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-maxmove-800 mb-2">10+</p>
-              <p className="text-maxmove-700">Cities Served</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-maxmove-800 mb-2">1000+</p>
-              <p className="text-maxmove-700">Driver Partners</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-maxmove-800 mb-2">98%</p>
-              <p className="text-maxmove-700">On-Time Delivery</p>
-            </div>
-          </div>
-        </div>
-      </section> */}
 
       {/* CTA Section */}
       <section className="py-16 bg-maxmove-creme">
