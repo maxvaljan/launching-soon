@@ -1,8 +1,21 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+import { getCalApi } from '@calcom/embed-react';
+import { useEffect } from 'react';
 
 const Hero = () => {
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({ namespace: 'invest-in-maxmove' });
+      cal('ui', {
+        theme: 'dark',
+        hideEventTypeDetails: false,
+        layout: 'month_view',
+      });
+    })();
+  }, []);
+
   return (
     <section className="relative py-24 overflow-hidden bg-[#0d0f1a]">
       <div className="absolute inset-0">
@@ -14,15 +27,17 @@ const Hero = () => {
             Invest in the Future of Logistics
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto animate-slide-up">
-            Join Maxmove in becoming Europe's largest last mile delivery platform
+            Join Maxmove in becoming Europe&apos;s largest last mile delivery platform
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-blue-600 hover:bg-blue-700 text-white animate-slide-up backdrop-blur-sm"
-              onClick={() => window.location.href = "mailto:max@maxmove.com"}
+            <Button
+              size="lg"
+              className="bg-[#eeeeee] hover:bg-[#e0e0e0] text-[#0d0f1a] animate-slide-up backdrop-blur-sm"
+              data-cal-namespace="invest-in-maxmove"
+              data-cal-link="maxvaljan/invest-in-maxmove"
+              data-cal-config='{"layout":"month_view","theme":"dark"}'
             >
-              Contact Founders
+              Book a Call
             </Button>
           </div>
         </div>
