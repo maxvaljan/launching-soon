@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Package, Clock, Shield, Truck, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function PersonalDelivery() {
   return (
@@ -71,28 +72,28 @@ export default function PersonalDelivery() {
           <h2 className="text-3xl font-bold text-maxmove-900 text-center mb-12">
             How It Works
           </h2>
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-8">
+          <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto gap-8">
+            <div className="md:w-1/2 space-y-8">
               {[
                 {
                   step: "1",
-                  title: "Book Your Delivery",
-                  description: "Choose your pickup and delivery locations, and select a convenient time slot",
+                  title: "Enter Pickup/Dropoff & Preferences",
+                  description: "Via App/Dashboard - bulk input, favourite drivers, and special instructions or notes",
                 },
                 {
                   step: "2",
-                  title: "Prepare Your Items",
-                  description: "Pack your items securely - we'll handle the rest with care",
+                  title: "Choose Vehicle & Services",
+                  description: "From couriers to lorries. Add Extras like door-to-door, loading help, pay-for-me, tailboard, categorised, etc.",
                 },
                 {
                   step: "3",
-                  title: "Track in Real-Time",
-                  description: "Follow your delivery's progress with our real-time tracking system",
+                  title: "Get Instant Pricing & Book",
+                  description: "Smart instant pricing via real-time data, clear pooling & matching. Confirm in seconds.",
                 },
                 {
                   step: "4",
-                  title: "Delivery Confirmation",
-                  description: "Receive confirmation once your items have been safely delivered",
+                  title: "Track Live & Stay Connected",
+                  description: "Monitor progress, chat with driver, get proof of delivery",
                 },
               ].map((step, index) => (
                 <div key={index} className="flex items-start gap-4">
@@ -107,6 +108,17 @@ export default function PersonalDelivery() {
                   </div>
                 </div>
               ))}
+            </div>
+            <div className="md:w-1/2 flex justify-center">
+              <div className="relative w-[300px] h-[600px] md:w-[350px] md:h-[700px]">
+                <Image
+                  src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Iphone%20App.png"
+                  alt="MaxMove App Interface"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </section>
