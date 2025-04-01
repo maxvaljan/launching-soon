@@ -23,8 +23,18 @@ export default function WaitlistSignup() {
   }
 
   return (
-    <section className="w-full py-0 mt-0 bg-maxmove-navy">
-      <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between">
+    <section className="w-full py-12 md:py-24 mt-0 relative">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Riviera_Maxmove.png')] bg-cover bg-center"
+        style={{
+          backgroundPosition: "center 40%",
+        }}
+      >
+        <div className="absolute inset-0 bg-maxmove-navy/80" />
+      </div>
+
+      <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between relative z-10">
         <div className="flex-1 flex flex-col justify-center items-center text-center">
           <div>
             <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-maxmove-creme">
