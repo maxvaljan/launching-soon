@@ -347,6 +347,7 @@ const delivery = await maxmove.createDelivery({
                           placeholder="Company name" 
                           {...field} 
                           disabled={isSubmitting}
+                          className="border-gray-300"
                         />
                       </FormControl>
                       <FormMessage />
@@ -360,7 +361,7 @@ const delivery = await maxmove.createDelivery({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Contact name" {...field} />
+                        <Input placeholder="Contact name" {...field} className="border-gray-300" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -374,7 +375,7 @@ const delivery = await maxmove.createDelivery({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input type="email" placeholder="Business email" {...field} />
+                          <Input type="email" placeholder="Business email" {...field} className="border-gray-300" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -387,7 +388,7 @@ const delivery = await maxmove.createDelivery({
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="Phone number (optional)" {...field} />
+                          <Input placeholder="Phone number (optional)" {...field} className="border-gray-300" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

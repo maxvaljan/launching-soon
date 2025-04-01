@@ -127,7 +127,7 @@ const NavbarUserMenu = ({ session, handleSignOut, getTextColor, isHomePage, isSc
       ) : (
         <Button
           variant="default"
-          className={`transition-all duration-300 font-medium px-6 py-2 rounded-full ${
+          className={`transition-all duration-300 font-medium px-6 py-2 rounded-md ${
             isHomePage 
               ? isScrolled 
                 ? "bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md" 

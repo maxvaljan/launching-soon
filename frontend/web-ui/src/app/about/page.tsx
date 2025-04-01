@@ -34,7 +34,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="py-16 bg-maxmove-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-12 items-center">
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold text-maxmove-900 mb-6">
                 Delivering Excellence, <span className="text-maxmove-600">Every Time</span>
@@ -53,16 +53,6 @@ export default function AboutPage() {
                 </Button>
               </div>
             </div>
-            <div className="relative h-80 sm:h-96 lg:h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
-              <Image 
-                src="https://whadz2ols6ge6eli.public.blob.vercel-storage.com/MAXMOVE-9.png" 
-                alt="MaxMove delivery"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "contain", width: "100%" }}
-                priority
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -74,7 +64,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1 relative h-[400px] lg:h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
               <Image 
-                src="/images/team-photo-new.jpg" 
+                src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Cologne.png" 
                 alt="MaxMove team"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"

@@ -55,7 +55,7 @@ export default function PersonalDelivery() {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="bg-maxmove-creme p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-300"
+                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-300"
               >
                 <feature.icon className="h-10 w-10 text-maxmove-navy mb-4" />
                 <h3 className="text-xl font-semibold text-maxmove-navy mb-2">
