@@ -24,9 +24,9 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-center md:bg-[center_40%] bg-[center] h-full"
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-center md:bg-[center_25%] bg-[center_30%] h-full"
         style={{
-          backgroundPosition: "center",
+          backgroundPosition: "center 25%",
           minHeight: "85vh",
         }}
       >
