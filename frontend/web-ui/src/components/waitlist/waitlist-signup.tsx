@@ -34,8 +34,8 @@ export default function WaitlistSignup() {
         <div className="absolute inset-0 bg-maxmove-navy/80" />
       </div>
 
-      <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between relative z-10">
-        <div className="flex-1 flex flex-col justify-center items-center text-center">
+      <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between relative z-10 h-full">
+        <div className="pt-16 md:pt-24 flex-1 flex flex-col justify-center items-center text-center">
           <div>
             <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-maxmove-creme">
               We are launching soon!
