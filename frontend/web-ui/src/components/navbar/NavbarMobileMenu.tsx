@@ -1,43 +1,50 @@
 'use client';
 
-import Link from "next/link";
-import { 
-  Truck, 
-  Briefcase, 
-  User, 
-  Building2, 
-  GraduationCap, 
-  DollarSign, 
-  LayoutDashboard, 
+import Link from 'next/link';
+import {
+  Truck,
+  Briefcase,
+  User,
+  Building2,
+  LayoutDashboard,
   LogOut,
   Settings,
-  Map,
   ChevronRight,
   Home,
-  UserCircle
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+  UserCircle,
+  Info,
+  Mail,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
-interface NavbarMobileMenuProps {
-  session: any;
-  handleSignOut: () => Promise<void>;
-  navigate: any;
+interface CustomSession {
+  email?: string;
+  user?: {
+    email?: string;
+    role?: string;
+  };
+  role?: string;
 }
 
-const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenuProps) => {
+interface NavbarMobileMenuProps {
+  session: CustomSession | null;
+  handleSignOut: () => Promise<void>;
+}
+
+const NavbarMobileMenu = ({ session, handleSignOut }: NavbarMobileMenuProps) => {
   const router = useRouter();
-  
-  const MenuItem = ({ 
-    href, 
-    icon: Icon, 
-    label, 
-    onClick 
-  }: { 
-    href?: string; 
-    icon: any; 
-    label: string; 
-    onClick?: () => void 
+
+  const MenuItem = ({
+    href,
+    icon: Icon,
+    label,
+    onClick,
+  }: {
+    href?: string;
+    icon: React.ElementType;
+    label: string;
+    onClick?: () => void;
   }) => {
     const content = (
       <>
@@ -72,9 +79,7 @@ const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenu
 
   const CategoryLabel = ({ label }: { label: string }) => (
     <div className="px-4 py-2 mt-6 mb-2">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-maxmove-grey">
-        {label}
-      </h3>
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-maxmove-grey">{label}</h3>
     </div>
   );
 
@@ -88,7 +93,10 @@ const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenu
             <div className="flex items-center px-4 py-4 bg-maxmove-navy/5 mb-2">
               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-maxmove-navy via-maxmove-dark-blue to-maxmove-light-blue flex items-center justify-center">
                 <span className="text-lg font-semibold text-maxmove-creme">
-                  {(typeof session.email === 'string' ? session.email.charAt(0) : (session.user?.email?.charAt(0) || 'U')).toUpperCase()}
+                  {(typeof session.email === 'string'
+                    ? session.email.charAt(0)
+                    : session.user?.email?.charAt(0) || 'U'
+                  ).toUpperCase()}
                 </span>
               </div>
               <div className="ml-3">
@@ -115,10 +123,9 @@ const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenu
         <MenuItem href="/drivers" icon={User} label="Drivers" />
 
         <CategoryLabel label="Company" />
-        <MenuItem href="/about" icon={Building2} label="About Us" />
-        <MenuItem href="/career" icon={GraduationCap} label="Careers" />
-        <MenuItem href="/investment" icon={DollarSign} label="Investment" />
-        <MenuItem href="/roadmap" icon={Map} label="Roadmap" />
+        <MenuItem href="/about" icon={Info} label="About" />
+        <MenuItem href="/contact" icon={Mail} label="Contact" />
+        <MenuItem href="/business" icon={Building2} label="Business" />
 
         <Divider />
         <div className="px-4 py-3">
@@ -133,7 +140,7 @@ const NavbarMobileMenu = ({ session, handleSignOut, navigate }: NavbarMobileMenu
           ) : (
             <Button
               className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-white font-medium py-2.5"
-              onClick={() => router.push("/signin")}
+              onClick={() => router.push('/signin')}
             >
               Sign In
             </Button>
