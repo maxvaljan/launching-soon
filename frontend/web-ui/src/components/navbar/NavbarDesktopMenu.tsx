@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDown, DollarSign } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,7 +78,6 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
               href="/investment"
               className="w-full flex items-center text-[#192338] hover:text-[#192338]"
             >
-              <DollarSign className="h-4 w-4 mr-2" />
               Investment
             </Link>
           </DropdownMenuItem>
