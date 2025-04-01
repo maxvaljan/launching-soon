@@ -218,7 +218,13 @@ const Navbar = () => {
           </div>
         </div>
 
-        {isMobileMenuOpen && <NavbarMobileMenu session={session} handleSignOut={handleSignOut} />}
+        {isMobileMenuOpen && (
+          <NavbarMobileMenu
+            session={session}
+            handleSignOut={handleSignOut}
+            setIsMobileMenuOpen={setIsMobileMenuOpen}
+          />
+        )}
       </div>
     </nav>
   );

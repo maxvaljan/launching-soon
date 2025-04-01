@@ -30,9 +30,14 @@ interface CustomSession {
 interface NavbarMobileMenuProps {
   session: CustomSession | null;
   handleSignOut: () => Promise<void>;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
 
-const NavbarMobileMenu = ({ session, handleSignOut }: NavbarMobileMenuProps) => {
+const NavbarMobileMenu = ({
+  session,
+  handleSignOut,
+  setIsMobileMenuOpen,
+}: NavbarMobileMenuProps) => {
   const router = useRouter();
 
   const MenuItem = ({
@@ -61,6 +66,7 @@ const NavbarMobileMenu = ({ session, handleSignOut }: NavbarMobileMenuProps) => 
         <Link
           href={href}
           className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-maxmove-navy/5 transition-colors"
+          onClick={() => setIsMobileMenuOpen(false)}
         >
           {content}
         </Link>
@@ -69,7 +75,10 @@ const NavbarMobileMenu = ({ session, handleSignOut }: NavbarMobileMenuProps) => 
 
     return (
       <button
-        onClick={onClick}
+        onClick={() => {
+          if (onClick) onClick();
+          setIsMobileMenuOpen(false);
+        }}
         className="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-maxmove-navy/5 transition-colors"
       >
         {content}
@@ -125,7 +134,7 @@ const NavbarMobileMenu = ({ session, handleSignOut }: NavbarMobileMenuProps) => 
         <CategoryLabel label="Company" />
         <MenuItem href="/about" icon={Info} label="About" />
         <MenuItem href="/contact" icon={Mail} label="Contact" />
-        <MenuItem href="/business" icon={Building2} label="Business" />
+        <MenuItem href="/investment" icon={Building2} label="Investment" />
 
         <Divider />
         <div className="px-4 py-3">
