@@ -62,7 +62,7 @@ const ServiceBanners = () => {
 
         <div className="grid grid-cols-3 gap-2 md:gap-6 mt-12 md:mt-40 w-full">
           {/* Move Banner */}
-          <Link href="/book" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:h-[220px] flex flex-col justify-between">
+          <Link href="/book" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:aspect-auto md:h-[220px] flex flex-col justify-between">
             <div>
               <Truck className="h-6 w-6 md:h-12 md:w-12 text-white group-hover:text-white transition-colors mb-1 md:mb-4" />
               <h3 className="text-base md:text-2xl font-bold text-white group-hover:text-white transition-colors mb-1 md:mb-2">Move Now!</h3>
@@ -72,7 +72,7 @@ const ServiceBanners = () => {
           </Link>
 
           {/* Business Banner */}
-          <Link href="/business" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:h-[220px] flex flex-col justify-between">
+          <Link href="/business" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:aspect-auto md:h-[220px] flex flex-col justify-between">
             <div>
               <Building2 className="h-6 w-6 md:h-12 md:w-12 text-white group-hover:text-white transition-colors mb-1 md:mb-4" />
               <h3 className="text-base md:text-2xl font-bold text-white group-hover:text-white transition-colors mb-1 md:mb-2">Business</h3>
@@ -84,7 +84,7 @@ const ServiceBanners = () => {
           </Link>
 
           {/* Driver Banner */}
-          <Link href="/drivers" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:h-[220px] flex flex-col justify-between">
+          <Link href="/drivers" className="group relative overflow-hidden p-2 md:p-6 transition-all cursor-pointer bg-white/20 backdrop-blur-md hover:bg-white/30 aspect-square md:aspect-auto md:h-[220px] flex flex-col justify-between">
             <div>
               <Users className="h-6 w-6 md:h-12 md:w-12 text-white group-hover:text-white transition-colors mb-1 md:mb-4" />
               <h3 className="text-base md:text-2xl font-bold text-white group-hover:text-white transition-colors mb-1 md:mb-2">Driver</h3>
