@@ -95,10 +95,7 @@ export default function Career() {
                 Join Our Team
               </h1>
               <p className="mt-4 text-lg text-maxmove-700 max-w-3xl mx-auto">
-                At Maxmove, we are revolutionizing the last-mile logistics industry with our 
-                on-demand, AI-driven, and sustainable delivery platform. We aim to solve the inefficiencies 
-                in urban logistics through smart routing, real-time tracking, and an intuitive 
-                booking system. Join us in transforming the way goods move—efficiently, affordably, and sustainably.
+                Explore exciting career opportunities at Maxmove and be part of shaping the future of logistics.
               </p>
             </div>
           </div>
