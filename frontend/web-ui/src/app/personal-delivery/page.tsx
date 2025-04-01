@@ -97,7 +97,7 @@ export default function PersonalDelivery() {
                 },
               ].map((step, index) => (
                 <div key={index} className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-maxmove-800 text-white rounded-full flex items-center justify-center font-bold">
+                  <div className="flex-shrink-0 w-10 h-10 bg-maxmove-navy text-white rounded-full flex items-center justify-center font-bold">
                     {step.step}
                   </div>
                   <div>
@@ -110,7 +110,7 @@ export default function PersonalDelivery() {
               ))}
             </div>
             <div className="md:w-1/2 flex justify-center">
-              <div className="relative w-[300px] h-[600px] md:w-[350px] md:h-[700px]">
+              <div className="relative w-[375px] h-[700px] md:w-[450px] md:h-[800px]">
                 <Image
                   src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Iphone.png"
                   alt="MaxMove App Interface"
