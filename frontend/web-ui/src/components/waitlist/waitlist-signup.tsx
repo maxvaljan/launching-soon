@@ -23,19 +23,19 @@ export default function WaitlistSignup() {
   }
 
   return (
-    <section className="w-full py-12 md:py-24 mt-0 relative">
+    <section className="w-full py-8 md:py-16 mt-0 relative">
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Riviera_Maxmove.png')] bg-cover bg-center"
         style={{
-          backgroundPosition: "center 40%",
+          backgroundPosition: "center 30%",
         }}
       >
-        <div className="absolute inset-0 bg-maxmove-navy/80" />
+        <div className="absolute inset-0 bg-maxmove-navy/90" />
       </div>
 
       <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between relative z-10 h-full">
-        <div className="pt-16 md:pt-24 flex-1 flex flex-col justify-center items-center text-center">
+        <div className="pt-20 md:pt-28 flex-1 flex flex-col justify-center items-center text-center">
           <div>
             <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-maxmove-creme">
               We are launching soon!
@@ -50,7 +50,7 @@ export default function WaitlistSignup() {
             <WaitlistForm onSuccess={handleSuccess} />
           </div>
           <div>
-            <div className="flex items-center justify-center mt-8">
+            <div className="flex items-center justify-center mt-6">
               <div className="flex -space-x-2 mr-4">
                 <Avatar initials="JD" index={0} />
                 <Avatar initials="AS" index={1} />
@@ -60,7 +60,7 @@ export default function WaitlistSignup() {
             </div>
           </div>
         </div>
-        <div className="pt-8 flex justify-center space-x-6">
+        <div className="pt-6 flex justify-center space-x-6">
           <SocialIcon
             href="https://x.com/maxmoveapp"
             target="_blank"
