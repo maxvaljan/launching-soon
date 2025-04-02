@@ -27,7 +27,7 @@ export default function WaitlistSignup() {
           backgroundPosition: 'center 30%',
         }}
       >
-        <div className="absolute inset-0 bg-maxmove-navy/90" />
+        <div className="absolute inset-0 bg-maxmove-navy/60" />
       </div>
 
       <div className="w-full max-w-xl mx-auto p-8 flex flex-col justify-between relative z-10 h-full">
