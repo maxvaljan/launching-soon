@@ -69,7 +69,7 @@ const DeliveryFeatures = () => {
                       alt={image.alt}
                       fill
                       priority
-                      className="rounded-2xl object-contain shadow-lg"
+                      className="rounded-2xl object-cover shadow-lg"
                     />
                   </div>
                 </CarouselItem>
