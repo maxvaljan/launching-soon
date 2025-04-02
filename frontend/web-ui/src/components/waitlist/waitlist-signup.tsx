@@ -21,12 +21,7 @@ export default function WaitlistSignup() {
   return (
     <section className="w-full py-8 md:py-16 mt-0 relative">
       {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//waitlist%20background.png')] bg-cover bg-center"
-        style={{
-          backgroundPosition: 'center 30%',
-        }}
-      >
+      <div className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//waitlist%20background.png')] bg-cover bg-[85%_30%] md:bg-[center_30%]">
         <div className="absolute inset-0 bg-maxmove-navy/60" />
       </div>
 
