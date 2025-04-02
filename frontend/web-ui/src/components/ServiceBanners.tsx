@@ -32,8 +32,8 @@ const ServiceBanners = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-center items-center">
-        <div className="flex flex-col items-center mb-8 md:mb-20 w-full md:scale-100">
+      <div className="relative z-10 pt-16 md:pt-32 pb-4 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-between items-center">
+        <div className="flex flex-col items-center mb-4 md:mb-10 w-full md:scale-100 mt-auto">
           <div className="flex justify-center mb-4 text-center">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
               <span className="mr-2 md:mr-4">Move</span>
@@ -56,12 +56,12 @@ const ServiceBanners = () => {
               </div>
             </h1>
           </div>
-          <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-12 text-center w-full">
+          <p className="text-lg md:text-xl text-white/90 mb-4 md:mb-6 text-center w-full">
             Smart Logistics
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-6 mt-32 md:mt-40 w-full">
+        <div className="grid grid-cols-3 gap-2 md:gap-6 w-full mt-auto mb-4 md:mb-8">
           {/* Move Banner */}
           <Link
             href="/book"
