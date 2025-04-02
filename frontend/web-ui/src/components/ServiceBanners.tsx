@@ -32,7 +32,7 @@ const ServiceBanners = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-8 md:pt-16 pb-40 md:pb-64 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col">
+      <div className="relative z-10 pt-8 md:pt-16 pb-56 md:pb-80 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col">
         <div className="flex flex-col items-center w-full pt-8 md:pt-12">
           <div className="flex justify-center text-center w-full">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
