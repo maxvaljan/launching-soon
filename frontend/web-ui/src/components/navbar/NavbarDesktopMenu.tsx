@@ -18,7 +18,7 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
     <div className="hidden md:flex items-center space-x-8">
       <DropdownMenu>
         <DropdownMenuTrigger
-          className={`transition-colors inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full hover:bg-white/10 ${getTextColor()}`}
+          className={`transition-colors inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl hover:bg-white/10 ${getTextColor()}`}
         >
           How it Works <ChevronDown className="ml-1.5 h-4 w-4 opacity-70" />
         </DropdownMenuTrigger>
@@ -52,7 +52,7 @@ const NavbarDesktopMenu = ({ getTextColor }: NavbarDesktopMenuProps) => {
 
       <DropdownMenu>
         <DropdownMenuTrigger
-          className={`transition-colors inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-full hover:bg-white/10 ${getTextColor()}`}
+          className={`transition-colors inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-xl hover:bg-white/10 ${getTextColor()}`}
         >
           Company <ChevronDown className="ml-1.5 h-4 w-4 opacity-70" />
         </DropdownMenuTrigger>

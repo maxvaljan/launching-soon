@@ -140,7 +140,7 @@ const NavbarMobileMenu = ({
         <div className="px-4 py-3">
           {session ? (
             <Button
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 flex items-center justify-center gap-2"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2.5 flex items-center justify-center gap-2 rounded-xl"
               onClick={handleSignOut}
             >
               <LogOut className="h-4 w-4" />
@@ -148,7 +148,7 @@ const NavbarMobileMenu = ({
             </Button>
           ) : (
             <Button
-              className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-white font-medium py-2.5"
+              className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-white font-medium py-2.5 rounded-xl"
               onClick={() => router.push('/signin')}
             >
               Sign In
