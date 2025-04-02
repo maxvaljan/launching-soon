@@ -7,18 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 const ServiceBanners = () => {
   const [titleNumber, setTitleNumber] = useState(0);
-  const [bgPosition, setBgPosition] = useState('center 5%');
   const titles = useMemo(() => ['anything', 'anytime', 'anywhere'], []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setBgPosition(window.innerWidth < 768 ? '85% center' : 'center 5%');
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -35,16 +24,15 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[right_center] md:bg-[center_5%] h-full"
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_5%] h-full"
         style={{
-          backgroundPosition: bgPosition,
           minHeight: '85vh',
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85vh] md:min-h-[105vh] flex flex-col justify-center items-center">
+      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85vh] md:min-h-screen flex flex-col justify-center items-center">
         <div className="flex flex-col items-center mb-8 md:mb-20 w-full md:scale-100">
           <div className="flex justify-center mb-4 text-center">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
