@@ -26,13 +26,13 @@ const ServiceBanners = () => {
       <div
         className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_5%] h-full"
         style={{
-          minHeight: '85vh',
+          minHeight: '85svh',
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85vh] md:min-h-screen flex flex-col justify-center items-center">
+      <div className="relative z-10 pt-16 md:pt-48 pb-4 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-center items-center">
         <div className="flex flex-col items-center mb-8 md:mb-20 w-full md:scale-100">
           <div className="flex justify-center mb-4 text-center">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
