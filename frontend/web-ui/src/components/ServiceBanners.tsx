@@ -24,7 +24,7 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_5%] h-full"
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_25%] h-full"
         style={{
           minHeight: '85svh',
         }}
@@ -32,9 +32,9 @@ const ServiceBanners = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-16 md:pt-32 pb-4 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-between items-center">
-        <div className="flex flex-col items-center mb-4 md:mb-10 w-full md:scale-100 mt-auto">
-          <div className="flex justify-center mb-4 text-center">
+      <div className="relative z-10 pt-12 md:pt-20 pb-8 md:pb-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-between items-center">
+        <div className="flex flex-col items-center mb-0 md:mb-0 w-full md:scale-100 pt-8 md:pt-16">
+          <div className="flex justify-center mb-2 md:mb-3 text-center">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
               <span className="mr-2 md:mr-4">Move</span>
               <div className="relative h-[1.2em] w-[160px] md:w-[330px] overflow-hidden">
@@ -56,12 +56,12 @@ const ServiceBanners = () => {
               </div>
             </h1>
           </div>
-          <p className="text-lg md:text-xl text-white/90 mb-4 md:mb-6 text-center w-full">
+          <p className="text-lg md:text-xl text-white/90 mb-2 md:mb-4 text-center w-full">
             Smart Logistics
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-6 w-full mt-auto mb-4 md:mb-8">
+        <div className="grid grid-cols-3 gap-2 md:gap-6 w-full mt-auto pb-4 md:pb-6">
           {/* Move Banner */}
           <Link
             href="/book"
