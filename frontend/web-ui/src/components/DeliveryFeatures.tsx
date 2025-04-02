@@ -63,13 +63,13 @@ const DeliveryFeatures = () => {
             <CarouselContent>
               {images.map((image, index) => (
                 <CarouselItem key={index}>
-                  <div className="relative w-full h-[500px]">
+                  <div className="relative w-full h-[600px]">
                     <Image
                       src={image.src}
                       alt={image.alt}
                       fill
                       priority
-                      className="rounded-2xl object-cover shadow-lg"
+                      className="rounded-2xl object-contain shadow-lg"
                     />
                   </div>
                 </CarouselItem>
