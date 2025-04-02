@@ -73,7 +73,7 @@ const ServiceBanners = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-6 mt-20 md:mt-40 w-full">
+        <div className="grid grid-cols-3 gap-2 md:gap-6 mt-32 md:mt-40 w-full">
           {/* Move Banner */}
           <Link
             href="/book"
