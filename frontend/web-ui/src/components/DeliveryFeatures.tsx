@@ -69,7 +69,8 @@ const DeliveryFeatures = () => {
                       alt={image.alt}
                       fill
                       priority
-                      className="rounded-2xl object-cover shadow-lg"
+                      className="rounded-2xl object-contain scale-[0.95] lg:scale-[0.95] md:scale-[0.95] sm:scale-[0.85]"
+                      quality={90}
                     />
                   </div>
                 </CarouselItem>
