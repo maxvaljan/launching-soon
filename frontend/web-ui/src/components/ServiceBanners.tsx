@@ -24,7 +24,7 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_45%] h-full"
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[85%_center] md:bg-[center_60%] h-full"
         style={{
           minHeight: '85svh',
         }}
@@ -32,8 +32,8 @@ const ServiceBanners = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60" />
       </div>
 
-      <div className="relative z-10 pt-8 md:pt-16 pb-12 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col justify-between items-center">
-        <div className="flex flex-col items-center w-full md:scale-100 pt-4 md:pt-8">
+      <div className="relative z-10 pt-8 md:pt-16 pb-24 md:pb-40 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto min-h-[85svh] md:min-h-[100svh] flex flex-col">
+        <div className="flex flex-col items-center w-full mb-auto mt-auto pt-16 md:pt-20">
           <div className="flex justify-center text-center w-full">
             <h1 className="text-4xl md:text-7xl font-bold text-white flex flex-row items-center justify-center">
               <span className="mr-2 md:mr-4">Move</span>
