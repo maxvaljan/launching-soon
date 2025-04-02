@@ -7,12 +7,12 @@ import { useEffect, useMemo, useState } from 'react';
 
 const ServiceBanners = () => {
   const [titleNumber, setTitleNumber] = useState(0);
-  const [bgPosition, setBgPosition] = useState('center 25%');
+  const [bgPosition, setBgPosition] = useState('center 15%');
   const titles = useMemo(() => ['anything', 'anytime', 'anywhere'], []);
 
   useEffect(() => {
     const handleResize = () => {
-      setBgPosition(window.innerWidth < 768 ? '85% center' : 'center 25%');
+      setBgPosition(window.innerWidth < 768 ? '85% center' : 'center 15%');
     };
 
     handleResize(); // Initial check
@@ -35,7 +35,7 @@ const ServiceBanners = () => {
     <section className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[right_center] md:bg-[center_25%] h-full"
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Urban.png')] bg-cover bg-[right_center] md:bg-[center_15%] h-full"
         style={{
           backgroundPosition: bgPosition,
           minHeight: '85vh',
