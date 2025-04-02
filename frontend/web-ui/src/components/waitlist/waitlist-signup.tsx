@@ -1,34 +1,30 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { getWaitlistCount } from "@/app/actions/waitlist"
-import { 
-  XIcon, 
-  InstagramIcon, 
-  LinkedInIcon 
-} from "./icons"
-import { Avatar } from "./avatar"
-import { SocialIcon } from "./social-icon"
-import { WaitlistForm } from "./waitlist-form"
+import { useState, useEffect } from 'react';
+import { getWaitlistCount } from '@/app/actions/waitlist';
+import { XIcon, InstagramIcon, LinkedInIcon } from './icons';
+import { Avatar } from './avatar';
+import { SocialIcon } from './social-icon';
+import { WaitlistForm } from './waitlist-form';
 
 export default function WaitlistSignup() {
-  const [waitlistCount, setWaitlistCount] = useState(0)
+  const [waitlistCount, setWaitlistCount] = useState(0);
 
   useEffect(() => {
-    getWaitlistCount().then((count) => setWaitlistCount(count + 100))
-  }, [])
+    getWaitlistCount().then(count => setWaitlistCount(count + 100));
+  }, []);
 
   const handleSuccess = (count: number) => {
-    setWaitlistCount(count + 100)
-  }
+    setWaitlistCount(count + 100);
+  };
 
   return (
     <section className="w-full py-8 md:py-16 mt-0 relative">
       {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Riviera_Maxmove.png')] bg-cover bg-center"
+      <div
+        className="absolute inset-0 z-0 bg-[url('https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//waitlist%20background.png')] bg-cover bg-center"
         style={{
-          backgroundPosition: "center 30%",
+          backgroundPosition: 'center 30%',
         }}
       >
         <div className="absolute inset-0 bg-maxmove-navy/90" />
@@ -85,5 +81,5 @@ export default function WaitlistSignup() {
         </div>
       </div>
     </section>
-  )
+  );
 }
