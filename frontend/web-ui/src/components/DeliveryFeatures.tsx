@@ -63,7 +63,7 @@ const DeliveryFeatures = () => {
             <CarouselContent>
               {images.map((image, index) => (
                 <CarouselItem key={index}>
-                  <div className="relative w-full h-[600px]">
+                  <div className="relative w-full h-[480px] lg:h-[540px]">
                     <Image
                       src={image.src}
                       alt={image.alt}
