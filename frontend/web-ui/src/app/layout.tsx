@@ -24,7 +24,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'MaxMove | Your Logistics Partner',
+    default: 'MaxMove | Smart Logistics',
     template: '%s | MaxMove',
   },
   description:
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     locale: 'en_DE',
     url: 'https://maxmove.com',
     siteName: 'MaxMove',
-    title: 'MaxMove | Your Logistics Partner',
+    title: 'MaxMove | Smart Logistics',
     description:
       'MaxMove is a modern logistics platform connecting customers with reliable drivers for efficient delivery services across Germany.',
     images: [
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MaxMove | Your Logistics Partner',
+    title: 'MaxMove | Smart Logistics',
     description:
       'MaxMove is a modern logistics platform connecting customers with reliable drivers for efficient delivery services across Germany.',
     images: ['/images/twitter-image.jpg'],
