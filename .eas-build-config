@@ -1,0 +1,21 @@
+{
+  "cli": {
+    "packageManager": "pnpm",
+    "workingDirectory": "frontend/customer-ui",
+    "pnpmVersion": "10.7.0"
+  },
+  "build": {
+    "env": {
+      "MONOREPO_ROOT": "../../"
+    },
+    "workingDirectory": "frontend/customer-ui",
+    "monorepo": {
+      "root": "/",
+      "packages": [
+        "frontend/customer-ui",
+        "shared",
+        "backend"
+      ]
+    }
+  }
+}
