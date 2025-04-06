@@ -139,6 +139,7 @@ export default function Career() {
               <a
                 href="mailto:careers@maxmove.com"
                 className="text-maxmove-navy !hover:text-maxmove-navy hover:no-underline"
+                style={{ color: 'rgb(var(--maxmove-navy)) !important' }}
               >
                 careers@maxmove.com
               </a>
