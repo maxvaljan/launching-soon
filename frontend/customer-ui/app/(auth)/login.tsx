@@ -63,9 +63,9 @@ export default function LoginScreen() {
       contentContainerStyle={styles.contentContainer}
     >
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => router.replace('/(tabs)/')}
         >
           <ChevronLeft size={24} color="#fff" />
         </TouchableOpacity>
