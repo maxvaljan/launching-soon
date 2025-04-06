@@ -98,7 +98,7 @@ export default function Career() {
               </p>
               <a
                 href="/about"
-                className="mt-6 inline-block px-6 py-3 bg-maxmove-navy text-white rounded-lg hover:bg-maxmove-navy-dark transition-colors duration-200"
+                className="mt-6 inline-block px-4 py-2 bg-maxmove-navy text-white rounded-md hover:bg-maxmove-navy/90 transition-colors duration-200"
               >
                 Learn more
               </a>
