@@ -14,8 +14,7 @@ interface Vehicle {
   name: string;
   description: string;
   category?: string;
-  icon_type?: string;
-  custom_icon_url?: string;
+  icon_path: string | null;
 }
 
 export default function HomeScreen() {
@@ -39,11 +38,15 @@ export default function HomeScreen() {
         setLoading(true);
         const response = await getActiveVehicles();
         
-        if (response.data && response.data.vehicles) {
-          setVehicles(response.data.vehicles);
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          setVehicles(response.data.data);
+        } else {
+          console.error('Unexpected API response structure:', response.data);
+          setVehicles([]);
         }
       } catch (error) {
         console.error('Error fetching vehicles:', error);
+        setVehicles([]);
       } finally {
         setLoading(false);
       }
@@ -111,25 +114,31 @@ export default function HomeScreen() {
               <Text style={{ color: colors.text, marginTop: 8 }}>Loading vehicles...</Text>
             </View>
           ) : vehicles && vehicles.length > 0 ? (
-            // If we have vehicles from the API, use those
             vehicles.map(vehicle => {
-              // Handle custom icon or use built-in icons
-              let icon;
+              let icon: React.ReactNode;
+              const supabaseUrl = "https://xuehdmslktlsgpoexilo.supabase.co"; // <-- Use actual Supabase URL
+              const storageBucket = "pics"; // Assuming the bucket is named 'pics'
+              let iconUrl = null;
+              if (vehicle.icon_path && supabaseUrl) {
+                const path = vehicle.icon_path.startsWith('/') 
+                             ? vehicle.icon_path.substring(1) 
+                             : vehicle.icon_path;
+                iconUrl = `${supabaseUrl}/storage/v1/object/public/${storageBucket}/${path}`;
+              }
               
-              // If there's a custom icon URL, create an image component
-              if (vehicle.custom_icon_url) {
-                // Use Image component for custom URLs (assuming PNG/JPG)
+              if (iconUrl) {
                 icon = <Image 
-                         source={{ uri: vehicle.custom_icon_url }} 
-                         style={styles.vehicleIcon} // Add a style for sizing
-                         resizeMode="contain" // Ensure the image fits
+                         source={{ uri: iconUrl }} 
+                         style={styles.vehicleIcon} 
+                         resizeMode="contain"
                        />;
               } else {
-                // Use built-in icons based on category or icon_type
-                const category = (vehicle.icon_type || vehicle.category || '').toLowerCase();
-                if (category === 'bike' || category.includes('motorcycle') || category.includes('courier')) {
+                const typeName = (vehicle.category || vehicle.name || '').toLowerCase();
+                if (typeName.includes('motorcycle') || typeName.includes('courier')) {
                   icon = <MotorcycleSvg style={styles.vehicleIcon} />;
-                } else if (category === 'truck' || category.includes('van') || category.includes('lorry')) {
+                } else if (typeName.includes('van')) {
+                  icon = <VanSvg style={styles.vehicleIcon} />;
+                } else if (typeName.includes('truck') || typeName.includes('lorry')) {
                   icon = <TruckSvg style={styles.vehicleIcon} />;
                 } else {
                   icon = <CarSvg style={styles.vehicleIcon} />;
@@ -148,64 +157,9 @@ export default function HomeScreen() {
               );
             })
           ) : (
-            // Fallback to hardcoded vehicles if API returns no data
-            <>
-              <VehicleCard
-                icon={<MotorcycleSvg />}
-                title="Courier"
-                description="Small items, documents"
-                selected={selectedVehicle === 'courier'}
-                onPress={() => setSelectedVehicle('courier')}
-              />
-              
-              <VehicleCard
-                icon={<CarSvg />}
-                title="Car"
-                description="Small and medium parcels"
-                selected={selectedVehicle === 'car'}
-                onPress={() => setSelectedVehicle('car')}
-              />
-              
-              <VehicleCard
-                icon={<CarSvg />}
-                title="MPV (Weight<25KG x 2)"
-                description="Multiple medium parcels"
-                selected={selectedVehicle === 'mpv'}
-                onPress={() => setSelectedVehicle('mpv')}
-              />
-              
-              <VehicleCard
-                icon={<VanSvg />}
-                title="1.7M Van"
-                description="Furniture, home appliances"
-                selected={selectedVehicle === 'van1.7'}
-                onPress={() => setSelectedVehicle('van1.7')}
-              />
-              
-              <VehicleCard
-                icon={<VanSvg />}
-                title="2.4M Van"
-                description="Larger furniture, multiple items"
-                selected={selectedVehicle === 'van2.4'}
-                onPress={() => setSelectedVehicle('van2.4')}
-              />
-              
-              <VehicleCard
-                icon={<TruckSvg />}
-                title="Lorry 10ft"
-                description="Commercial goods, bulk items"
-                selected={selectedVehicle === 'lorry10'}
-                onPress={() => setSelectedVehicle('lorry10')}
-              />
-              
-              <VehicleCard
-                icon={<TruckSvg />}
-                title="Lorry 14ft"
-                description="Moving, large quantity goods"
-                selected={selectedVehicle === 'lorry14'}
-                onPress={() => setSelectedVehicle('lorry14')}
-              />
-            </>
+            <View style={styles.loadingContainer}> 
+              <Text style={{ color: colors.grayText }}>No vehicles available at the moment.</Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -249,8 +203,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   loadingContainer: {
-    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: 20,
   },
   vehicleIcon: {

@@ -32,11 +32,11 @@ router.post('/logout', authController.logout);
 router.get('/profile', authMiddleware, authController.getProfile);
 
 /**
- * @route   POST /api/auth/refresh
+ * @route   POST /api/auth/refresh-token
  * @desc    Refresh authentication token
  * @access  Public
  */
-router.post('/refresh', authController.refreshToken);
+router.post('/refresh-token', authController.refreshToken);
 
 /**
  * @route   GET /api/auth/verify
