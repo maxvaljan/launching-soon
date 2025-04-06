@@ -29,7 +29,10 @@ const vehicleController = {
    */
   getActiveVehicleTypes: async (req, res, next) => {
     try {
-      const { data, error } = await supabaseService.getClient()
+      // Use admin client if available, otherwise fallback (safer for backend calls)
+      const clientToUse = supabaseService.getAdminClient() || supabaseService.getClient();
+      
+      const { data, error } = await clientToUse
         .from('vehicle_types')
         .select('*')
         .eq('active', true)
