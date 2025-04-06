@@ -16,9 +16,9 @@ const jobListings: JobListing[] = [
     title: 'Full-Stack Developer',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description: `We're looking for a Full-Stack Developer to build Maxmove with us – the future of logistics in Europe. We are changing the way people access goods: within 15 minutes, 100% sustainable.
+    description: `We're looking for a Full-Stack Developer to build Maxmove with us.
 
-You're a great fit if you're fast, flexible, and ready to work long hours in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
+You're a great fit if you're fast, flexible, and thrive in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
 
 Ideally, you have experience with technologies like Next.js/React, Node.js, PostgreSQL, Golang, or React Native (or any other mobile stack). You'll play a key role in shaping our platform and will have a real impact from day one.
 
@@ -31,8 +31,11 @@ Reach out at careers@maxmove.com.`,
     title: 'Marketing Intern',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description:
-      "We're hiring a Marketing Manager to drive customer acquisition and brand awareness. You will create campaigns, manage social media, and collaborate with partners to expand our reach.",
+    description: `As Marketing Intern you will have great impact in building Maxmove's brand and digital presence.
+
+You're a great fit if you're creative, have an eye for design, and thrive in a high-speed startup environment. You know how to create engaging content and leverage AI tools to accelerate your workflow.  A strong sense of design and visual storytelling is essential.
+
+Reach out at careers@maxmove.com.`,
   },
   {
     id: 'ios-dev',
