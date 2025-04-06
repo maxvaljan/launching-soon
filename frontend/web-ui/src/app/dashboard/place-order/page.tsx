@@ -703,6 +703,10 @@ export default function PlaceOrderPage() {
           pastOrders={pastOrders}
         />
       )}
+    
+      {/* Add spacing at the bottom of the container */}
+      <div className="pb-8 lg:pb-12"></div>
+
     </div>
   );
 }
