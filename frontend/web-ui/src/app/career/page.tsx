@@ -130,7 +130,10 @@ export default function Career() {
             </div>
             <div className="mt-8 text-center text-maxmove-600">
               Send your application to{' '}
-              <a href="mailto:careers@maxmove.com" className="text-maxmove-navy">
+              <a
+                href="mailto:careers@maxmove.com"
+                className="text-maxmove-navy hover:text-maxmove-navy-dark"
+              >
                 careers@maxmove.com
               </a>
             </div>
