@@ -24,7 +24,7 @@ Ideally, you have experience with technologies like Next.js/React, Node.js, Post
 
 We're a small, driven team working out of Cologne – but you're welcome to join us remotely. You'll get equity, competitive pay, and a front-row seat in building a generational company.
 
-Reach out at careers@maxmove.com.`,
+Reach out at <a href="mailto:careers@maxmove.com" className="text-maxmove-navy">careers@maxmove.com</a>.`,
   },
   {
     id: 'Marketing-intern',
@@ -35,7 +35,7 @@ Reach out at careers@maxmove.com.`,
 
 You're a great fit if you're creative, have an eye for design, and thrive in a high-speed startup environment. You know how to create engaging content and leverage AI tools to accelerate your workflow.  A strong sense of design and visual storytelling is essential.
 
-Reach out at careers@maxmove.com.`,
+Reach out at <a href="mailto:careers@maxmove.com" className="text-maxmove-navy">careers@maxmove.com</a>.`,
   },
   {
     id: 'ios-dev',
@@ -72,7 +72,7 @@ You'll be the driving force behind our backend infrastructure, building scalable
 
 You're a great fit if you're fast, flexible and thrive in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
 
-Reach out at careers@maxmove.com.`,
+Reach out at <a href="mailto:careers@maxmove.com" className="text-maxmove-navy">careers@maxmove.com</a>.`,
   },
 ];
 
