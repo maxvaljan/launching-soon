@@ -11,10 +11,7 @@
       "pnpmVersion": "10.7.0",
       "env": {
         "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
-      },
-      "preInstall": [
-        "corepack enable"
-      ]
+      }
     },
     "preview": {
       "distribution": "internal",
