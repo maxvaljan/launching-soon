@@ -16,36 +16,19 @@ const jobListings: JobListing[] = [
     title: 'Full-Stack Developer',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description:
-      'We are looking for a Full-Stack Developer to build and enhance our AI-driven logistics platform. You will work with cutting-edge technologies, developing scalable web applications and APIs for seamless user experiences.',
+    description: `We're looking for a Full-Stack Developer to build Maxmove with us – the future of logistics in Europe. We want to change the way people access goods: delivered within 15 minutes, 100% sustainably.
+
+You're a great fit if you're fast, flexible, and comfortable working long hours in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
+
+Ideally, you have experience with technologies like Next.js/React, Node.js, PostgreSQL, Golang, or React Native (or any other mobile stack). You'll play a key role in shaping our platform and will have a real impact from day one.
+
+We're a small, driven team working out of Cologne – but you're welcome to join us remotely. You'll get equity, competitive pay, and a front-row seat in building the next big thing in logistics.
+
+Interested in building the future with us? Reach out at careers@maxmove.com.`,
   },
   {
-    id: 'mechanical-engineer',
-    title: 'Mechanical Engineer',
-    location: 'Cologne, Germany',
-    type: 'Full-time',
-    description:
-      'As a Mechanical Engineer at Maxmove, you will be involved in the design and development of autonomous delivery solutions. Your expertise in robotics and system integration will drive innovation in urban logistics.',
-  },
-  {
-    id: 'operations-manager',
-    title: 'Operations Manager',
-    location: 'Cologne, Germany',
-    type: 'Full-time',
-    description:
-      'We need an Operations Manager to oversee our logistics network and ensure seamless deliveries. You will coordinate with drivers, optimize routes, and manage real-time tracking to enhance efficiency.',
-  },
-  {
-    id: 'ai-engineer',
-    title: 'AI Engineer',
-    location: 'Cologne, Germany / Remote',
-    type: 'Full-time',
-    description:
-      'Join our AI team to develop machine learning models for route optimization, demand forecasting, and automated logistics. Your algorithms will power the next generation of delivery solutions.',
-  },
-  {
-    id: 'marketing-manager',
-    title: 'Marketing Manager',
+    id: 'Marketing-intern',
+    title: 'Marketing Intern',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
     description:
