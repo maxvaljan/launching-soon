@@ -14,7 +14,7 @@ module.exports = {
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false
       },
-      bundleIdentifier: "y",
+      bundleIdentifier: "com.maxva.maxmovecustomer",
       jsEngine: "hermes"
     },
     web: {
@@ -25,7 +25,7 @@ module.exports = {
     plugins: [
       "expo-router",
       "expo-secure-store",
-      "react-native-webview"
+      // "react-native-webview" // Temporarily remove plugin causing config issues
     ],
     experiments: {
       typedRoutes: true
