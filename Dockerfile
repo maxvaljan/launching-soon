@@ -21,14 +21,14 @@ RUN pnpm install --no-frozen-lockfile
 COPY backend ./backend
 COPY shared ./shared
 
-# Build shared package - adding error handling
+# Build shared package - ensuring build failure stops deployment
 RUN cd shared && \
     if [ ! -f utils/index.ts ]; then \
       echo "Creating utils/index.ts file..." && \
       mkdir -p utils && \
       echo "export * from './apiService';" > utils/index.ts; \
     fi && \
-    pnpm build || echo "Shared build failed, but continuing..."
+    pnpm build
 
 # Set environment for production
 ENV NODE_ENV=production
