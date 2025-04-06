@@ -92,9 +92,17 @@ export default function Career() {
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-maxmove-900">Join Our Team</h1>
               <p className="mt-4 text-lg text-maxmove-700 max-w-3xl mx-auto">
-                Explore exciting career opportunities at Maxmove and be part of shaping the future
-                of logistics.
+                We&apos;re solving one of today&apos;s most essential challenges by building the
+                future of logistics in Germany. Our AI-powered platform and autonomous robots are
+                revolutionizing how people access goods – 100% sustainable delivery within 15
+                minutes.
               </p>
+              <a
+                href="/about"
+                className="mt-6 inline-block px-6 py-3 bg-maxmove-navy-dark text-white rounded-lg hover:bg-maxmove-navy transition-colors duration-200"
+              >
+                Learn more about our mission
+              </a>
             </div>
           </div>
         </section>
