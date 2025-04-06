@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const { errorHandler } = require('./middleware/errorHandler');
+const cookieParser = require('cookie-parser');
+const { errorHandler, logger } = require('./middleware/errorHandler');
 const { notFoundHandler } = require('./middleware/notFoundHandler');
 const config = require('./config');
 
@@ -21,6 +22,14 @@ if (!config.jwt.secret) {
   console.error('ERROR: JWT_SECRET environment variable is required');
   process.exit(1);
 }
+
+// --- Add explicit check for service key ---
+if (!config.supabase.serviceRoleKey) {
+  logger.error('FATAL ERROR: SUPABASE_SERVICE_ROLE_KEY environment variable is not set.');
+  // Optionally exit, though Railway might restart it. Logging the error is key.
+  // process.exit(1);
+}
+// --- End check ---
 
 const app = express();
 

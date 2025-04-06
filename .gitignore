@@ -25,3 +25,8 @@ yarn-error.log*
 .vscode/
 *.swp
 *.swo
+
+# Lockfiles (handle per-platform)
+# package-lock.json 
+# yarn.lock
+pnpm-lock.yaml
