@@ -11,7 +11,8 @@
       "pnpm": "10.5.0",
       "env": {
         "EXPO_USE_METRO_WORKSPACE_ROOT": "1"
-      }
+      },
+      "pnpmVersion": "10.7.0"
     },
     "preview": {
       "distribution": "internal",
