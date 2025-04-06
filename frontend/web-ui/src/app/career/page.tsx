@@ -92,15 +92,15 @@ export default function Career() {
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-maxmove-900">Join Our Team</h1>
               <p className="mt-4 text-lg text-maxmove-700 max-w-3xl mx-auto">
-                We&apos;re fixing one of the most essential problems today by building the future of
-                logistics in Europe. Our platform and autonomous robots are changing the way people
-                access goods – 100% sustainable delivery within 15 minutes.
+                We&apos;re reinventing logistics in Europe to solve one of the biggest challenges of
+                our time. With our AI-powered platform and autonomous robots, we&apos;re changing
+                the way people access goods - within 15 minutes and 100% sustainable.
               </p>
               <a
                 href="/about"
                 className="mt-6 inline-block px-6 py-3 bg-maxmove-navy text-white rounded-lg hover:bg-maxmove-navy-dark transition-colors duration-200"
               >
-                Learn more about our mission
+                Learn more
               </a>
             </div>
           </div>
