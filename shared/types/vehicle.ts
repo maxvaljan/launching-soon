@@ -32,7 +32,7 @@ export interface VehicleType {
 /**
  * Vehicle category interface
  */
-export interface VehicleCategory {
+export interface VehicleCategoryInfo {
   id: string;
   name: string;
   description?: string;
