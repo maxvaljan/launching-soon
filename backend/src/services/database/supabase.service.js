@@ -132,8 +132,9 @@ class SupabaseService {
         identifierType: credentials.email ? 'email' : 'phone'
       });
       
-      // Attempt sign in
-      const result = await this.client.auth.signInWithPassword(credentials);
+      // Attempt sign in using the admin client if available, otherwise fallback to regular client
+      const clientToUse = this.adminClient || this.client;
+      const result = await clientToUse.auth.signInWithPassword(credentials);
       
       // Log result (success or failure)
       if (result.error) {
