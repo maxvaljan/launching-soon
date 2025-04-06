@@ -16,15 +16,15 @@ const jobListings: JobListing[] = [
     title: 'Full-Stack Developer',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description: `We're looking for a Full-Stack Developer to build Maxmove with us – the future of logistics in Europe. We want to change the way people access goods: delivered within 15 minutes, 100% sustainably.
+    description: `We're looking for a Full-Stack Developer to build Maxmove with us – the future of logistics in Europe. We are changing the way people access goods: within 15 minutes, 100% sustainable.
 
-You're a great fit if you're fast, flexible, and comfortable working long hours in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
+You're a great fit if you're fast, flexible, and ready to work long hours in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
 
 Ideally, you have experience with technologies like Next.js/React, Node.js, PostgreSQL, Golang, or React Native (or any other mobile stack). You'll play a key role in shaping our platform and will have a real impact from day one.
 
-We're a small, driven team working out of Cologne – but you're welcome to join us remotely. You'll get equity, competitive pay, and a front-row seat in building the next big thing in logistics.
+We're a small, driven team working out of Cologne – but you're welcome to join us remotely. You'll get equity, competitive pay, and a front-row seat in building a generational company.
 
-Interested in building the future with us? Reach out at careers@maxmove.com.`,
+Reach out at careers@maxmove.com.`,
   },
   {
     id: 'Marketing-intern',
@@ -39,24 +39,37 @@ Interested in building the future with us? Reach out at careers@maxmove.com.`,
     title: 'iOS Developer',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description:
-      'We are looking for an iOS Developer to build and maintain our mobile app. You will create a seamless user experience and implement real-time tracking, booking, and communication features.',
+    description: `We're looking for an iOS Developer to build Maxmove with us – the future of logistics in Europe.
+
+You're a great fit if you're fast, flexible, and ready to work long hours in a high-speed startup environment. You are able to ship high-quality apps quickly and use AI tools to accelerate your workflow.
+
+Ideally, you have experience with SwiftUI, and a strong understanding of building simple and fast mobile apps.
+
+You'll be the driving force behind our iOS experience – shaping how customers, drivers, and businesses interact with Maxmove on the go.`,
   },
   {
     id: 'backend-dev',
-    title: 'Backend Developer',
+    title: 'Backend Engineer',
     location: 'Cologne, Germany / Remote',
     type: 'Full-time',
-    description:
-      'As a Backend Developer, you will design and optimize the architecture of our logistics platform. You will work on APIs, databases, and system integrations to ensure high performance and scalability.',
+    description: `We're looking for a Backend Engineer to build Maxmove with us – the future of logistics in Europe.
+
+You're fast, flexible, and thrive in a high-speed startup environment. You know how to build and scale real-time systems, and you leverage AI tools to move even faster.
+
+Experience with Node.js, PostgreSQL, Golang, WebSockets, and event-driven architecture is ideal.
+
+You'll be the driving force behind our backend infrastructure, building scalable systems that power the future of urban logistics.`,
   },
   {
     id: 'eng-intern',
     title: 'Software Engineering Intern',
     location: 'Cologne, Germany / Remote',
     type: 'Internship',
-    description:
-      'This internship is a great opportunity to gain hands-on experience in software development. You will assist in building and testing features, contributing to real-world applications in logistics.',
+    description: `As Software Engineering Intern you will have great impact to build Maxmove with us.
+
+You're a great fit if you're fast, flexible and thrive in a high-speed startup environment. You know how to get things done and how to leverage AI tools to move even faster.
+
+Reach out at careers@maxmove.com.`,
   },
 ];
 
