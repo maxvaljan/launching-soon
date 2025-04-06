@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
     name: "MaxMove Customer",
-    slug: "maxmove-customer-app",
+    slug: "maxmove-customer",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
