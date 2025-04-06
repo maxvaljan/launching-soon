@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, SafeAreaView, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { OrderStops, Stop } from '@/components/OrderStops';
 import { VehicleCard } from '@/components/VehicleCard';
@@ -53,10 +53,11 @@ export default function HomeScreen() {
   }, []);
 
   const handleAddStop = () => {
-    if (stops.length < 5) {
-      // Place new dropoff before the last dropoff
+    if (stops.length < 22) {
+      // Place new stop before the last dropoff
       const newId = `${Date.now()}`;
       const newStops = [...stops];
+      // Add as 'dropoff' type, the component will handle the placeholder text
       newStops.splice(newStops.length - 1, 0, { id: newId, type: 'dropoff', address: '' });
       setStops(newStops);
     }
@@ -117,26 +118,21 @@ export default function HomeScreen() {
               
               // If there's a custom icon URL, create an image component
               if (vehicle.custom_icon_url) {
-                // Custom SVG component would be rendered here
-                // For React Native, you'd need to use Image or SvgUri from react-native-svg
-                // For now we'll fall back to standard icons
-                const category = (vehicle.icon_type || vehicle.category || '').toLowerCase();
-                if (category === 'bike' || category.includes('motorcycle') || category.includes('courier')) {
-                  icon = <MotorcycleSvg />;
-                } else if (category === 'truck' || category.includes('van') || category.includes('lorry')) {
-                  icon = <TruckSvg />;
-                } else {
-                  icon = <CarSvg />;
-                }
+                // Use Image component for custom URLs (assuming PNG/JPG)
+                icon = <Image 
+                         source={{ uri: vehicle.custom_icon_url }} 
+                         style={styles.vehicleIcon} // Add a style for sizing
+                         resizeMode="contain" // Ensure the image fits
+                       />;
               } else {
                 // Use built-in icons based on category or icon_type
                 const category = (vehicle.icon_type || vehicle.category || '').toLowerCase();
                 if (category === 'bike' || category.includes('motorcycle') || category.includes('courier')) {
-                  icon = <MotorcycleSvg />;
+                  icon = <MotorcycleSvg style={styles.vehicleIcon} />;
                 } else if (category === 'truck' || category.includes('van') || category.includes('lorry')) {
-                  icon = <TruckSvg />;
+                  icon = <TruckSvg style={styles.vehicleIcon} />;
                 } else {
-                  icon = <CarSvg />;
+                  icon = <CarSvg style={styles.vehicleIcon} />;
                 }
               }
               
@@ -226,10 +222,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 10,
   },
   logoText: {
-    fontSize: 20,
+    fontSize: 16,
     fontFamily: 'Poppins-Bold',
     color: '#f1ebdb',
   },
@@ -256,5 +252,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+  },
+  vehicleIcon: {
+    width: 40,
+    height: 40,
   }
 });

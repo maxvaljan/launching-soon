@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Platform } from 'react-native';
 import { MapPin, Circle, Clock, Plus, X, ChevronDown, CircleCheck as CheckCircle, Calendar } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 export interface Stop {
   id: string;
@@ -30,7 +31,19 @@ export function OrderStops({
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState('Now');
   const [timeMode, setTimeMode] = useState<'now' | 'later'>('now');
-  const [showDateSelector, setShowDateSelector] = useState(false);
+  const [scheduledDateTime, setScheduledDateTime] = useState(new Date());
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+
+  const formatDateTime = (date: Date): string => {
+    const today = new Date();
+    const isToday = date.getDate() === today.getDate() &&
+                    date.getMonth() === today.getMonth() &&
+                    date.getFullYear() === today.getFullYear();
+
+    const prefix = isToday ? 'Today, ' : date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) + ', ';
+    
+    return prefix + date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
 
   const handleDeleteStop = (id: string) => {
     if (onDeleteStop) {
@@ -39,23 +52,34 @@ export function OrderStops({
   };
 
   const toggleTimeModal = () => {
+    if (timeModalVisible) {
+        setShowDateTimePicker(false);
+    }
+    if (!timeModalVisible && timeMode === 'now') {
+        setScheduledDateTime(new Date());
+    }
     setTimeModalVisible(!timeModalVisible);
-    setShowDateSelector(false);
   };
 
-  const selectTime = (time: 'now' | 'later') => {
-    setTimeMode(time);
-    if (time === 'now') {
-      setSelectedTime('Now');
-      setTimeModalVisible(false);
+  const selectTimeMode = (mode: 'now' | 'later') => {
+    setTimeMode(mode);
+    if (mode === 'now') {
+        setShowDateTimePicker(false);
     } else {
-      setShowDateSelector(true);
+        setShowDateTimePicker(true);
     }
   };
 
-  const confirmTimeSelection = () => {
-    if (timeMode === 'later') {
-      setSelectedTime('Today, 6:29 AM');
+  const handleDateTimeChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    const currentDate = selectedDate || scheduledDateTime;
+    setScheduledDateTime(currentDate);
+  };
+
+  const confirmSchedule = () => {
+    if (timeMode === 'now') {
+      setSelectedTime('Now');
+    } else {
+      setSelectedTime(formatDateTime(scheduledDateTime));
     }
     setTimeModalVisible(false);
   };
@@ -85,7 +109,13 @@ export function OrderStops({
           <View style={styles.inputContainer}>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colorScheme === 'dark' ? colors.secondary : colors.gray }]}
-              placeholder={stop.type === 'pickup' ? 'Pick-up location' : 'Drop-off location'}
+              placeholder={
+                index === 0
+                  ? 'Pick-up location'
+                  : index === stops.length - 1
+                  ? 'Drop-off location'
+                  : `Mid-stop location ${index}`
+              }
               placeholderTextColor={colors.grayText}
               value={stop.address}
               onChangeText={(text) => onUpdateStop(stop.id, text)}
@@ -113,7 +143,7 @@ export function OrderStops({
         </View>
       ))}
       
-      {stops.length < 5 && (
+      {stops.length < 22 && (
         <TouchableOpacity 
           style={styles.addStopButton} 
           onPress={onAddStop}
@@ -130,97 +160,96 @@ export function OrderStops({
         visible={timeModalVisible}
         onRequestClose={toggleTimeModal}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colorScheme === 'dark' ? colors.card : '#fff' }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Pick-up time</Text>
-            
-            {!showDateSelector ? (
-              <>
-                <TouchableOpacity 
-                  style={styles.timeOption} 
-                  onPress={() => selectTime('now')}
-                >
-                  <View style={styles.timeOptionContent}>
-                    <Clock size={20} color={colors.text} />
-                    <Text style={[styles.timeOptionText, { color: colors.text }]}>Now</Text>
-                  </View>
-                  {timeMode === 'now' && (
-                    <CheckCircle size={20} color="#f1ebdb" />
-                  )}
-                </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={toggleTimeModal}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback>
+              <View style={[styles.modalContent, { backgroundColor: colorScheme === 'dark' ? colors.card : '#fff' }]}>
+                <Text style={[styles.modalTitle, { color: colors.text }]}>Pick-up time</Text>
                 
-                <TouchableOpacity 
-                  style={styles.timeOption} 
-                  onPress={() => selectTime('later')}
-                >
-                  <View style={styles.timeOptionContent}>
-                    <Calendar size={20} color={colors.text} />
-                    <Text style={[styles.timeOptionText, { color: colors.text }]}>Later</Text>
-                  </View>
-                  {timeMode === 'later' && (
-                    <CheckCircle size={20} color="#f1ebdb" />
-                  )}
-                </TouchableOpacity>
-              </>
-            ) : (
-              <ScrollView>
-                <View style={styles.dateTimeContainer}>
-                  <View style={styles.locationInfo}>
-                    <Text style={[styles.locationLabel, { color: colors.grayText }]}>Singapore (GMT+8)</Text>
-                  </View>
-                  
-                  <View style={styles.daySelector}>
-                    {['Thu Mar 6', 'Fri Mar 7', 'Sat Mar 8'].map((day, index) => (
-                      <View key={index} style={[
-                        styles.dayOption,
-                        index === 2 ? styles.selectedDayOption : {}
-                      ]}>
-                        <Text style={[
-                          styles.dayText,
-                          index === 2 ? styles.selectedDayText : { color: '#aaa' }
-                        ]}>
-                          {day.split(' ')[0]}
-                        </Text>
-                        <Text style={[
-                          styles.dayNumberText,
-                          index === 2 ? styles.selectedDayText : { color: colors.text }
-                        ]}>
-                          {day.split(' ')[1]} {parseInt(day.split(' ')[2]) + 26}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                  
-                  <View style={styles.timeRowContainer}>
-                    <View style={[styles.timeRow, styles.selectedTimeRow]}>
-                      <Text style={styles.timeRowText}>Today</Text>
-                      <Text style={styles.timeRowNumber}>6</Text>
-                      <Text style={styles.timeRowNumber}>29</Text>
-                      <Text style={styles.timeRowAmPm}>AM</Text>
+                {!showDateTimePicker ? (
+                    <>
+                        <TouchableOpacity 
+                            style={styles.timeOptionRow} 
+                            onPress={() => selectTimeMode('now')}
+                        >
+                            <View style={styles.timeOptionIconText}>
+                                <Clock size={24} color={colors.text} style={styles.timeOptionIcon} />
+                                <Text style={[styles.timeOptionLabel, { color: colors.text }]}>Now</Text>
+                            </View>
+                            {timeMode === 'now' && (
+                                <CheckCircle size={20} color={colors.primary} />
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                            style={styles.timeOptionRow} 
+                            onPress={() => selectTimeMode('later')}
+                        >
+                            <View style={styles.timeOptionIconText}>
+                                <Calendar size={24} color={colors.text} style={styles.timeOptionIcon} />
+                                <View>
+                                    <Text style={[styles.timeOptionLabel, { color: colors.text }]}>
+                                        {timeMode === 'later' && showDateTimePicker ? formatDateTime(scheduledDateTime) : 'Later'}
+                                    </Text>
+                                </View>
+                            </View>
+                            {timeMode === 'later' && (
+                                <CheckCircle size={20} color={colors.primary} />
+                            )}
+                        </TouchableOpacity>
+                    </>
+                ) : (
+                    <View style={styles.dateTimePickerContainer}>
+                        <TouchableOpacity 
+                            style={styles.timeOptionRow} 
+                            onPress={() => selectTimeMode('now')}
+                        >
+                            <View style={styles.timeOptionIconText}>
+                                <Clock size={24} color={colors.text} style={styles.timeOptionIcon} />
+                                <Text style={[styles.timeOptionLabel, { color: colors.text }]}>Now</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            style={styles.timeOptionRow} 
+                            onPress={() => selectTimeMode('later')}
+                        >
+                            <View style={styles.timeOptionIconText}>
+                                <Calendar size={24} color={colors.text} style={styles.timeOptionIcon} />
+                                <View>
+                                    <Text style={[styles.timeOptionLabel, { color: colors.text }]}>
+                                        {formatDateTime(scheduledDateTime)}
+                                    </Text>
+                                </View>
+                            </View>
+                            <CheckCircle size={20} color={colors.primary} />
+                        </TouchableOpacity>
+
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={scheduledDateTime}
+                            mode="datetime"
+                            is24Hour={false}
+                            display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                            onChange={handleDateTimeChange}
+                            style={styles.dateTimePicker}
+                            minimumDate={new Date()}
+                            minuteInterval={1}
+                        />
                     </View>
-                    {['Mon Mar 10', 'Tue Mar 11', 'Wed Mar 12'].map((day, index) => (
-                      <View key={index} style={styles.timeRow}>
-                        <Text style={[styles.timeRowText, { color: '#aaa' }]}>{day.split(' ')[0]}</Text>
-                        <Text style={[styles.timeRowNumber, { color: '#aaa' }]}>{7 + index}</Text>
-                        <Text style={[styles.timeRowNumber, { color: '#aaa' }]}>{30 + index}</Text>
-                        <Text style={[styles.timeRowAmPm, { color: '#aaa' }]}>PM</Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              </ScrollView>
-            )}
-            
-            <TouchableOpacity 
-              style={[styles.closeButton, { backgroundColor: colors.accent }]}
-              onPress={confirmTimeSelection}
-            >
-              <Text style={[styles.closeButtonText, { color: '#0e1424' }]}>
-                {showDateSelector ? 'Schedule' : 'Done'}
-              </Text>
-            </TouchableOpacity>
+                )}
+
+                <TouchableOpacity 
+                    style={[styles.scheduleButton, { backgroundColor: colors.primary }]}
+                    onPress={confirmSchedule}
+                >
+                    <Text style={[styles.scheduleButtonText, { color: colors.accent }]}>
+                        Schedule
+                    </Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -301,114 +330,61 @@ const styles = StyleSheet.create({
   modalContent: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 24,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 30,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    maxHeight: '80%',
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Poppins-SemiBold',
     marginBottom: 24,
+    textAlign: 'center',
   },
-  timeOption: {
+  timeOptionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+    borderBottomColor: 'rgba(128, 128, 128, 0.2)',
   },
-  timeOptionContent: {
+  timeOptionIconText: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  timeOptionText: {
-    fontSize: 18,
-    fontFamily: 'Inter-Medium',
-    marginLeft: 12,
+  timeOptionIcon: {
+    marginRight: 16,
   },
-  closeButton: {
-    marginTop: 24,
+  timeOptionLabel: {
+    fontSize: 16,
+    fontFamily: 'Inter-Medium',
+  },
+  timeOptionSubLabel: {
+      fontSize: 12,
+      fontFamily: 'Inter-Regular',
+      color: 'grey',
+      marginTop: 2,
+  },
+  dateTimePickerContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  dateTimePicker: {
+    height: 180,
+  },
+  scheduleButton: {
+    marginTop: 20,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
   },
-  closeButtonText: {
+  scheduleButtonText: {
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
-  },
-  dateTimeContainer: {
-    marginTop: 16,
-  },
-  locationInfo: {
-    marginBottom: 20,
-  },
-  locationLabel: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-  },
-  daySelector: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  dayOption: {
-    alignItems: 'center',
-    padding: 8,
-  },
-  selectedDayOption: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
-  },
-  dayText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-  },
-  dayNumberText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    marginTop: 4,
-  },
-  selectedDayText: {
-    color: '#222',
-    fontFamily: 'Inter-SemiBold',
-  },
-  timeRowContainer: {
-    marginTop: 10,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-  },
-  selectedTimeRow: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
-  },
-  timeRowText: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#222',
-    flex: 2,
-  },
-  timeRowNumber: {
-    fontSize: 18,
-    fontFamily: 'Inter-Medium',
-    color: '#222',
-    flex: 1,
-    textAlign: 'center',
-  },
-  timeRowAmPm: {
-    fontSize: 16,
-    fontFamily: 'Inter-Medium',
-    color: '#222',
-    flex: 1,
-    textAlign: 'center',
   },
 });

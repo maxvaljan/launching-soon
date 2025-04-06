@@ -198,7 +198,7 @@ export const getVehicleTypes = async () => {
 
 export const getActiveVehicles = async () => {
   try {
-    return await api.get('/vehicles/active');
+    return await api.get('/vehicles/types/active');
   } catch (error) {
     console.log('Error fetching vehicles, using fallback data:', error);
     // Return fallback data if API call fails
