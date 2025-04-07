@@ -42,16 +42,16 @@ export const SignInCard = () => {
 
           <GoogleSignInButton />
 
-          {/* Create account section - updated style */}
+          {/* Create account section - updated colors and weight */}
           <div className="text-sm text-center mt-4">
-            <span className="text-gray-600">New to MaxMove? </span>
+            <span className="text-[#294374]">New to MaxMove? </span>
             <a
               href="/account-type"
               onClick={e => {
                 e.preventDefault();
                 router.push('/account-type');
               }}
-              className="font-medium text-maxmove-navy hover:text-maxmove-navy/80 hover:underline"
+              className="font-bold text-[#294374] hover:text-[#294374]/80"
             >
               Create a free account
             </a>
