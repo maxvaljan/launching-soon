@@ -44,7 +44,7 @@ export const SignInCard = () => {
 
           {/* Create account section - updated colors and weight */}
           <div className="text-sm text-center mt-4">
-            <span className="text-[#294374]">New to MaxMove? </span>
+            <span className="text-maxmove-navy">New to MaxMove? </span>
             <a
               href="/account-type"
               onClick={e => {

@@ -55,10 +55,7 @@ const FloatingLabelInput = ({
         onFocus={() => setFocused(true)}
         onBlur={() => {
           setFocused(false);
-          // Reset floating label to default state if no value when unfocused
-          if (!value) {
-            setHasValue(false);
-          }
+          setHasValue(!!value);
         }}
         className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
         {...props}
@@ -67,8 +64,8 @@ const FloatingLabelInput = ({
         htmlFor={id}
         className={`absolute text-gray-500 duration-300 transform transition-all ${
           hasValue || focused
-            ? 'text-[13px] scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0' // Made text slightly bigger when floating
-            : 'text-sm left-3 top-1/2 -translate-y-1/2'
+            ? 'text-[13px] scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
+            : 'text-base left-3 top-1/2 -translate-y-1/2'
         }`}
       >
         {label}
