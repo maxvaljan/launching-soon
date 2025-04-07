@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { CountryCodeSelect } from '@/components/CountryCodeSelect';
 import { apiClient } from '@/lib/api';
+import { Eye, EyeOff } from 'lucide-react';
 
 const signInSchema = z.object({
   identifier: z.string().min(1, 'Email or phone number is required'),
@@ -19,6 +20,7 @@ const signInSchema = z.object({
 export const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [countryCode, setCountryCode] = useState('+49');
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -95,21 +97,21 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2 border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-1 focus-within:ring-maxmove-navy">
                   <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
-                    className="bg-transparent border border-maxmove-grey focus:border-maxmove-creme focus:ring-maxmove-creme text-maxmove-navy"
+                    className="bg-transparent border-none focus:ring-0 pl-3 pr-1"
                   />
                   <Input
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 bg-transparent border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-transparent focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
+                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-10"
                   />
                 </div>
               </FormControl>
-              <FormMessage className="text-red-300" />
+              <FormMessage className="text-red-500 text-xs" />
             </FormItem>
           )}
         />
@@ -119,32 +121,42 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <Input
-                  id="password"
-                  placeholder="Password"
-                  type="password"
-                  {...field}
-                  className="bg-transparent border border-maxmove-grey placeholder:text-maxmove-grey focus:bg-transparent focus:border-maxmove-creme focus:ring-maxmove-creme focus:ring-offset-maxmove-creme"
-                />
+                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-1 focus-within:ring-maxmove-navy">
+                  <Input
+                    id="password"
+                    placeholder="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    {...field}
+                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-10 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </FormControl>
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-1">
                 <a
                   href="/reset-password"
-                  className="text-sm text-maxmove-navy/70 hover:text-maxmove-navy underline-offset-2 hover:underline transition-colors"
+                  className="text-sm text-maxmove-navy hover:text-maxmove-navy/80 underline-offset-2 hover:underline transition-colors"
                 >
-                  Forgot your password?
+                  Forgot password?
                 </a>
               </div>
-              <FormMessage className="text-red-300" />
+              <FormMessage className="text-red-500 text-xs" />
             </FormItem>
           )}
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-creme hover:bg-maxmove-creme/90 text-maxmove-navy mt-2 py-6 font-semibold"
+          className="w-full bg-maxmove-navy hover:bg-maxmove-navy/90 text-white mt-4 py-3 font-semibold rounded-md h-11"
           disabled={isLoading}
+          size="lg"
         >
-          {isLoading ? 'Signing in...' : 'Login'}
+          {isLoading ? 'Signing in...' : 'Log In'}
         </Button>
       </form>
     </Form>

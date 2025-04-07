@@ -1,56 +1,73 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { SignInForm } from './SignInForm';
 import { GoogleSignInButton } from './GoogleSignInButton';
+import Image from 'next/image';
 
 export const SignInCard = () => {
   const router = useRouter();
 
   return (
-    <div className="relative w-screen h-screen flex items-center justify-center bg-maxmove-creme overflow-hidden">
-      {/* Centered login card */}
-      <div className="z-10 bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <div className="flex flex-col gap-6 text-center">
-          <div>
-            <h1 className="text-2xl font-bold text-maxmove-navy">Welcome back</h1>
-          </div>
+    <div className="relative w-screen h-screen flex items-center justify-center bg-gray-100 overflow-hidden">
+      {/* Add MaxMove illustration if available, similar to Lalamove */}
+      {/* <div className="absolute left-0 bottom-0 w-1/3"> */}
+      {/*   <Image src="/path/to/maxmove-illustration.svg" alt="MaxMove Illustration" width={500} height={500} /> */}
+      {/* </div> */}
 
+      {/* Centered login card */}
+      <div className="z-10 bg-white shadow-lg rounded-lg p-8 sm:p-10 w-full max-w-md">
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/logos/logo-no-background.svg"
+            alt="MaxMove Logo"
+            width={150}
+            height={40}
+            priority
+          />
+        </div>
+
+        <div className="flex flex-col gap-5">
           <SignInForm />
 
           {/* Divider */}
-          <div className="relative text-center text-sm">
-            <div className="absolute inset-0 top-1/2 border-t border-gray-300 z-0"></div>
-            <span className="relative z-10 bg-white px-2 text-gray-500">Or</span>
+          <div className="relative text-center my-4">
+            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or</span>
+            </div>
           </div>
 
           <GoogleSignInButton />
 
-          {/* Create account section */}
-          <div className="text-sm mt-4">
-            <p className="mb-2 text-maxmove-navy/70">Don&apos;t have an account?</p>
-            <Button
-              onClick={() => router.push('/account-type')}
-              className="w-full bg-maxmove-navy hover:bg-maxmove-navy/90 text-white font-semibold"
+          {/* Create account section - updated style */}
+          <div className="text-sm text-center mt-4">
+            <span className="text-gray-600">New to MaxMove? </span>
+            <a
+              href="/account-type"
+              onClick={e => {
+                e.preventDefault();
+                router.push('/account-type');
+              }}
+              className="font-medium text-maxmove-navy hover:text-maxmove-navy/80 hover:underline"
             >
-              Create an Account
-            </Button>
+              Create a free account
+            </a>
           </div>
         </div>
 
-        {/* Terms and privacy */}
-        <p className="text-xs text-center text-gray-400 mt-6">
-          By clicking continue, you agree to our{' '}
-          <a href="/terms" className="underline hover:text-gray-600">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="/privacy-policy" className="underline hover:text-gray-600">
+        {/* Terms and privacy - updated style */}
+        <div className="text-xs text-center text-gray-500 mt-8">
+          <a href="/terms" className="hover:underline hover:text-gray-700">
+            Terms & Conditions
+          </a>
+          <span className="mx-1">•</span>
+          <a href="/privacy-policy" className="hover:underline hover:text-gray-700">
             Privacy Policy
           </a>
-          .
-        </p>
+        </div>
       </div>
     </div>
   );
