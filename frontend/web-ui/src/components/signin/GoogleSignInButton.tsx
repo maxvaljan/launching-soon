@@ -42,7 +42,7 @@ export const GoogleSignInButton = () => {
   return (
     <Button
       variant="outline"
-      className="w-full bg-white hover:bg-gray-50 border border-gray-300 shadow-sm flex items-center justify-center gap-2 py-2.5 h-11 text-sm font-medium text-gray-700 rounded-md"
+      className="w-full bg-white hover:bg-gray-50 border border-gray-300 shadow-sm flex items-center justify-center gap-2 py-2.5 h-[50px] text-sm font-medium text-gray-700 rounded-md"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
     >

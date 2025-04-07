@@ -101,13 +101,13 @@ export const SignInForm = () => {
                   <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
-                    className="border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-11 px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
+                    className="border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-[50px] px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
                   />
                   <Input
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-11 px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                    className="flex-1 border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
               </FormControl>
@@ -121,13 +121,13 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-0 focus-within:ring-offset-0">
+                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-0 focus-within:ring-offset-0 h-[50px]">
                   <Input
                     id="password"
                     placeholder="Password"
                     type={showPassword ? 'text' : 'password'}
                     {...field}
-                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-11 pr-10 pl-3 py-2.5 text-sm"
+                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-[50px] pr-10 pl-3 py-2.5 text-sm"
                   />
                   <button
                     type="button"
@@ -152,7 +152,7 @@ export const SignInForm = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-navy hover:bg-maxmove-navy/90 text-white mt-4 py-3 font-semibold rounded-md h-11"
+          className="w-full bg-maxmove-navy hover:bg-maxmove-navy/90 text-white mt-4 py-3 font-semibold rounded-md h-[50px]"
           disabled={isLoading}
           size="lg"
         >
