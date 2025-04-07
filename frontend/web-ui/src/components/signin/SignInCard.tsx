@@ -9,14 +9,14 @@ export const SignInCard = () => {
   const router = useRouter();
 
   return (
-    <div className="relative w-screen h-screen flex items-center justify-center bg-gray-100 overflow-hidden">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-center bg-gray-100 overflow-hidden">
       {/* Add MaxMove illustration if available, similar to Lalamove */}
       {/* <div className="absolute left-0 bottom-0 w-1/3"> */}
       {/*   <Image src="/path/to/maxmove-illustration.svg" alt="MaxMove Illustration" width={500} height={500} /> */}
       {/* </div> */}
 
       {/* Centered login card - Increased width, removed border, enhanced shadow */}
-      <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-lg">
+      <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-lg mb-4">
         <div className="flex justify-center mb-8">
           <Image
             src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//2.png"
@@ -57,17 +57,17 @@ export const SignInCard = () => {
             </a>
           </div>
         </div>
+      </div>
 
-        {/* Terms and privacy - updated style */}
-        <div className="text-xs text-center text-gray-500 mt-8">
-          <a href="/terms" className="hover:underline hover:text-gray-700">
-            Terms & Conditions
-          </a>
-          <span className="mx-1">•</span>
-          <a href="/privacy-policy" className="hover:underline hover:text-gray-700">
-            Privacy Policy
-          </a>
-        </div>
+      {/* Terms and privacy - moved outside the card */}
+      <div className="text-xs text-center text-gray-500 mb-8">
+        <a href="/terms" className="hover:text-gray-700">
+          Terms & Conditions
+        </a>
+        <span className="mx-1">•</span>
+        <a href="/privacy-policy" className="hover:text-gray-700">
+          Privacy Policy
+        </a>
       </div>
     </div>
   );

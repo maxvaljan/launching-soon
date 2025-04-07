@@ -152,11 +152,11 @@ export const SignInForm = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-navy hover:bg-maxmove-navy/90 text-white mt-4 py-3 font-semibold rounded-md h-[50px]"
+          className="w-full bg-maxmove-navy hover:bg-[#294374] text-white mt-4 py-3 font-semibold rounded-md h-[50px]"
           disabled={isLoading}
           size="lg"
         >
-          {isLoading ? 'Signing in...' : 'Log In'}
+          {isLoading ? 'Signing in...' : 'Login'}
         </Button>
       </form>
     </Form>
