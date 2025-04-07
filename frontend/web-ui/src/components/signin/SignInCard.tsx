@@ -44,7 +44,7 @@ export const SignInCard = () => {
 
           {/* Create account section - updated colors and weight */}
           <div className="text-sm text-center mt-4">
-            <span className="text-maxmove-navy">New to MaxMove? </span>
+            <span className="text-maxmove-navy text-base">New to Maxmove? </span>
             <a
               href="/account-type"
               onClick={e => {
@@ -59,13 +59,13 @@ export const SignInCard = () => {
         </div>
       </div>
 
-      {/* Terms and privacy links - ensure maxmove blue color */}
+      {/* Terms and privacy links - ensure grey color */}
       <div className="text-sm text-center mt-4">
-        <a href="/terms" className="text-[#294374] hover:text-[#294374]">
+        <a href="/terms" className="text-gray-500 hover:text-gray-600">
           Terms & Conditions
         </a>
-        <span className="text-[#294374] mx-1">•</span>
-        <a href="/privacy" className="text-[#294374] hover:text-[#294374]">
+        <span className="text-gray-500 mx-1">•</span>
+        <a href="/privacy" className="text-gray-500 hover:text-gray-600">
           Privacy Policy
         </a>
       </div>

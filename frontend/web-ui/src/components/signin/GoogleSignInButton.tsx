@@ -47,7 +47,7 @@ export const GoogleSignInButton = () => {
       disabled={isLoading}
     >
       <Image
-        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+        src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//google%20icon.png"
         alt="Google logo"
         width={20}
         height={20}
