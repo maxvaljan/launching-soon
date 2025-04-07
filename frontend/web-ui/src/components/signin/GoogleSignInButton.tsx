@@ -1,25 +1,23 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { useState } from "react";
-import Image from "next/image";
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
+import { useState } from 'react';
+import Image from 'next/image';
 
 export const GoogleSignInButton = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
       if (error) {
@@ -27,37 +25,36 @@ export const GoogleSignInButton = () => {
       }
 
       if (!data) {
-        throw new Error("Failed to initiate Google sign in");
+        throw new Error('Failed to initiate Google sign in');
       }
 
       // This will redirect the user to Google sign in
       // When successful, it will redirect back to our redirectTo URL
       // which should handle the authentication
-
-    } catch (error: any) {
-      console.error("Google sign in error:", error);
-      toast.error(error.message);
+    } catch (error: unknown) {
+      console.error('Google sign in error:', error);
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Button 
-      variant="ghost" 
-      className="w-full bg-transparent hover:bg-transparent border-0 shadow-none flex items-center justify-center" 
+    <Button
+      variant="outline"
+      className="w-full bg-white hover:bg-gray-50 border border-gray-300 shadow-sm flex items-center justify-center gap-2 py-6 font-medium text-gray-700"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
     >
-      <div className="relative h-6 w-6">
-        <Image 
-          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-          alt="Google" 
+      <div className="relative h-5 w-5">
+        <Image
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
           fill
           className="object-contain"
         />
       </div>
-      {isLoading && <span className="ml-2">Connecting...</span>}
+      <span>{isLoading ? 'Connecting...' : 'Continue with Google'}</span>
     </Button>
   );
 };
