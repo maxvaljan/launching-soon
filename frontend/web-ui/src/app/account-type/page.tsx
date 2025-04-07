@@ -2,8 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { User, Building2, Car, ArrowLeft } from 'lucide-react';
+import { User, Building2, Car } from 'lucide-react';
 import Image from 'next/image';
 
 export default function AccountTypeSelectionPage() {
@@ -15,26 +14,18 @@ export default function AccountTypeSelectionPage() {
 
   return (
     <div className="relative w-screen h-screen flex flex-col items-center justify-center bg-gray-100 overflow-hidden">
-      {/* Back button - simplified and consistent with sign in page styling */}
-      <Button
-        variant="ghost"
-        onClick={() => router.push('/')}
-        className="absolute top-4 left-4 z-10 text-maxmove-navy hover:text-[#294374]"
-      >
-        <ArrowLeft className="h-5 w-5 mr-2" />
-        Back
-      </Button>
-
       {/* Centered card - using the same shadow styling and width constraints as sign in page */}
       <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-4xl mb-4">
         <div className="flex justify-center mb-8">
-          <Image
-            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20White.png"
-            alt="MaxMove Logo"
-            width={150}
-            height={40}
-            priority
-          />
+          <div className="cursor-pointer" onClick={() => router.push('/')}>
+            <Image
+              src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20White.png"
+              alt="MaxMove Logo"
+              width={150}
+              height={40}
+              priority
+            />
+          </div>
         </div>
 
         <div className="text-center mb-8">
