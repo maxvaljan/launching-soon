@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent, InputHTMLAttributes } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { CountryCodeSelect } from '@/components/CountryCodeSelect';
-import { Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase';
+import { FloatingLabelInput } from '@/components/ui/floating-label-input';
+import { PasswordInput } from '@/components/ui/password-input';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { useRouter } from 'next/navigation';
+import { signUpUser } from '@/lib/services/user-service';
+import type { BusinessUserData } from '@/lib/services/user-service';
 
 const businessFormSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters'),
@@ -22,68 +22,9 @@ const businessFormSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-// Type definition for FloatingLabelInput props
-interface FloatingLabelInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
-  label: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-}
-
-// Custom floating label input component
-const FloatingLabelInput = ({
-  label,
-  value,
-  onChange,
-  type = 'text',
-  className = '',
-  id = '',
-  ...props
-}: FloatingLabelInputProps) => {
-  const [focused, setFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-
-  // Update hasValue whenever the value prop changes
-  useEffect(() => {
-    setHasValue(value.length > 0);
-  }, [value]);
-
-  return (
-    <div className="relative">
-      <Input
-        id={id}
-        type={type}
-        value={value}
-        onChange={e => {
-          onChange(e);
-          setHasValue(e.target.value.length > 0);
-        }}
-        onFocus={() => setFocused(true)}
-        onBlur={() => {
-          setFocused(false);
-          setHasValue(value.length > 0);
-        }}
-        className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
-        {...props}
-      />
-      <label
-        htmlFor={id}
-        className={`absolute text-gray-500 duration-300 transform transition-all ${
-          hasValue || focused
-            ? 'text-sm scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
-            : 'text-base left-3 top-1/2 -translate-y-1/2'
-        }`}
-      >
-        {label}
-      </label>
-    </div>
-  );
-};
-
 export const BusinessSignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [countryCode, setCountryCode] = useState('+49');
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof businessFormSchema>>({
@@ -98,53 +39,25 @@ export const BusinessSignUpForm = () => {
     },
   });
 
-  const handleSignUp = async (data: z.infer<typeof businessFormSchema>) => {
+  const handleSignUp = async (formData: z.infer<typeof businessFormSchema>) => {
     try {
       setIsLoading(true);
 
       // Format the phone number with country code
-      const formattedData = {
-        ...data,
-        phoneNumber: `${countryCode}${data.phoneNumber}`,
+      const userData: BusinessUserData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.workEmail,
+        phoneNumber: `${countryCode}${formData.phoneNumber}`,
+        password: formData.password,
+        companyName: formData.companyName,
       };
 
-      const { error: signUpError, data: authData } = await supabase.auth.signUp({
-        email: formattedData.workEmail,
-        password: formattedData.password,
-        phone: formattedData.phoneNumber,
-        options: {
-          data: {
-            first_name: formattedData.firstName,
-            last_name: formattedData.lastName,
-            role: 'business',
-            company_name: formattedData.companyName,
-          },
-        },
-      });
+      const success = await signUpUser(userData, 'business');
 
-      if (signUpError) throw signUpError;
-
-      // Update profile with phone number and name
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({
-            phone_number: formattedData.phoneNumber,
-            name: `${formattedData.firstName} ${formattedData.lastName}`,
-            company_name: formattedData.companyName,
-          })
-          .eq('id', authData.user.id);
-
-        if (profileError) throw profileError;
+      if (success) {
+        router.push('/signin');
       }
-
-      toast.success('Registration successful! Please check your email to verify your account.');
-      router.push('/signin');
-    } catch (error: unknown) {
-      console.error('Error in sign up:', error);
-      const errorMessage =
-        error instanceof Error ? error.message : 'An error occurred during sign up';
-      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -212,16 +125,12 @@ export const BusinessSignUpForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="flex items-stretch gap-2">
-                  <CountryCodeSelect
-                    value={countryCode}
-                    onChange={setCountryCode}
-                    className="border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
-                  />
-                  <div className="flex-1 relative">
-                    <FloatingLabelInput id="phoneNumber" label="Phone Number" {...field} />
-                  </div>
-                </div>
+                <PhoneInput
+                  label="Phone Number"
+                  countryCode={countryCode}
+                  onCountryCodeChange={setCountryCode}
+                  {...field}
+                />
               </FormControl>
               <FormMessage className="text-red-500 text-xs" />
             </FormItem>
@@ -234,22 +143,7 @@ export const BusinessSignUpForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="relative h-[50px] border border-gray-300 rounded-md focus-within:border-[#294374] focus-within:ring-0 focus-within:ring-offset-0">
-                  <FloatingLabelInput
-                    id="password"
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    {...field}
-                    className="border-none pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
+                <PasswordInput label="Password" {...field} />
               </FormControl>
               <FormMessage className="text-red-500 text-xs" />
             </FormItem>
