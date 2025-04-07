@@ -19,7 +19,7 @@ export const SignInCard = () => {
       <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-lg mb-4">
         <div className="flex justify-center mb-8">
           <Image
-            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//2.png"
+            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20Blue.png"
             alt="MaxMove Logo"
             width={150}
             height={40}
@@ -51,7 +51,7 @@ export const SignInCard = () => {
                 e.preventDefault();
                 router.push('/account-type');
               }}
-              className="font-bold text-[#294374] hover:text-[#294374]/80"
+              className="font-bold text-base text-[#294374]"
             >
               Create a free account
             </a>
@@ -61,11 +61,11 @@ export const SignInCard = () => {
 
       {/* Terms and privacy links - ensure maxmove blue color */}
       <div className="text-sm text-center mt-4">
-        <a href="/terms" className="text-[#294374]">
+        <a href="/terms" className="text-[#294374] hover:text-[#294374]">
           Terms & Conditions
         </a>
         <span className="text-[#294374] mx-1">•</span>
-        <a href="/privacy" className="text-[#294374]">
+        <a href="/privacy" className="text-[#294374] hover:text-[#294374]">
           Privacy Policy
         </a>
       </div>

@@ -38,6 +38,7 @@ const FloatingLabelInput = ({
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(!!value);
 
+  // Ensure hasValue is updated when value prop changes
   useEffect(() => {
     setHasValue(!!value);
   }, [value]);
@@ -53,7 +54,11 @@ const FloatingLabelInput = ({
           setHasValue(!!e.target.value);
         }}
         onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onBlur={() => {
+          setFocused(false);
+          // Explicitly check if the value is empty when blurred
+          setHasValue(!!value);
+        }}
         className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
         {...props}
       />
@@ -61,7 +66,7 @@ const FloatingLabelInput = ({
         htmlFor={id}
         className={`absolute text-gray-500 duration-300 transform transition-all ${
           focused || hasValue
-            ? 'text-[13px] scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
+            ? 'text-sm scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0' // Increased from text-[13px] to text-sm
             : 'text-base left-3 top-1/2 -translate-y-1/2'
         }`}
       >
@@ -158,7 +163,7 @@ export const SignInForm = () => {
                     className="border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
                   />
                   <div className="flex-1 relative">
-                    <FloatingLabelInput id="identifier" label="Email or phone number" {...field} />
+                    <FloatingLabelInput id="identifier" label="Phone Number or Email" {...field} />
                   </div>
                 </div>
               </FormControl>
@@ -190,7 +195,10 @@ export const SignInForm = () => {
                 </div>
               </FormControl>
               <div className="flex justify-end mt-1">
-                <a href="/reset-password" className="text-sm text-[#294374] underline-offset-2">
+                <a
+                  href="/reset-password"
+                  className="text-sm text-[#294374] hover:text-[#294374] underline-offset-2"
+                >
                   Forgot password?
                 </a>
               </div>
