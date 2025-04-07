@@ -4,13 +4,6 @@ import { useState, useEffect, ChangeEvent, InputHTMLAttributes } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -22,7 +15,6 @@ import { useRouter } from 'next/navigation';
 
 const businessFormSchema = z.object({
   companyName: z.string().min(2, 'Company name must be at least 2 characters'),
-  industry: z.string().min(2, 'Please select an industry'),
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   workEmail: z.string().email('Invalid email address'),
@@ -98,7 +90,6 @@ export const BusinessSignUpForm = () => {
     resolver: zodResolver(businessFormSchema),
     defaultValues: {
       companyName: '',
-      industry: '',
       firstName: '',
       lastName: '',
       workEmail: '',
@@ -127,7 +118,6 @@ export const BusinessSignUpForm = () => {
             last_name: formattedData.lastName,
             role: 'business',
             company_name: formattedData.companyName,
-            industry: formattedData.industry,
           },
         },
       });
@@ -142,7 +132,6 @@ export const BusinessSignUpForm = () => {
             phone_number: formattedData.phoneNumber,
             name: `${formattedData.firstName} ${formattedData.lastName}`,
             company_name: formattedData.companyName,
-            industry: formattedData.industry,
           })
           .eq('id', authData.user.id);
 
@@ -151,9 +140,11 @@ export const BusinessSignUpForm = () => {
 
       toast.success('Registration successful! Please check your email to verify your account.');
       router.push('/signin');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error in sign up:', error);
-      toast.error(error.message);
+      const errorMessage =
+        error instanceof Error ? error.message : 'An error occurred during sign up';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -170,37 +161,6 @@ export const BusinessSignUpForm = () => {
               <FormControl>
                 <FloatingLabelInput id="companyName" label="Company Name" {...field} />
               </FormControl>
-              <FormMessage className="text-red-500 text-xs" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="industry"
-          render={({ field }) => (
-            <FormItem>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="h-[50px] rounded-md border border-gray-300 bg-transparent text-gray-700 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#294374]">
-                    <SelectValue placeholder="Select industry" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="bg-white text-gray-700 border border-gray-300">
-                  <SelectItem className="hover:bg-gray-100 focus:bg-gray-100" value="retail">
-                    Retail
-                  </SelectItem>
-                  <SelectItem className="hover:bg-gray-100 focus:bg-gray-100" value="technology">
-                    Technology
-                  </SelectItem>
-                  <SelectItem className="hover:bg-gray-100 focus:bg-gray-100" value="manufacturing">
-                    Manufacturing
-                  </SelectItem>
-                  <SelectItem className="hover:bg-gray-100 focus:bg-gray-100" value="services">
-                    Services
-                  </SelectItem>
-                </SelectContent>
-              </Select>
               <FormMessage className="text-red-500 text-xs" />
             </FormItem>
           )}
