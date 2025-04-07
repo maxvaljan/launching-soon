@@ -60,12 +60,12 @@ export const SignInCard = () => {
       </div>
 
       {/* Terms and privacy links - ensure maxmove blue color */}
-      <div className="text-xs text-center mb-8">
+      <div className="text-sm text-center mt-4">
         <a href="/terms" className="text-[#294374]">
           Terms & Conditions
         </a>
-        <span className="mx-1 text-[#294374]">•</span>
-        <a href="/privacy-policy" className="text-[#294374]">
+        <span className="text-[#294374] mx-1">•</span>
+        <a href="/privacy" className="text-[#294374]">
           Privacy Policy
         </a>
       </div>

@@ -193,10 +193,7 @@ export const SignInForm = () => {
                 </div>
               </FormControl>
               <div className="flex justify-end mt-1">
-                <a
-                  href="/reset-password"
-                  className="text-sm text-[#294374] underline-offset-2 transition-colors"
-                >
+                <a href="/reset-password" className="text-sm text-[#294374] underline-offset-2">
                   Forgot password?
                 </a>
               </div>
