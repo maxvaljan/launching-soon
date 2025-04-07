@@ -52,19 +52,25 @@ export default function AccountTypeSelectionPage() {
               <CardTitle className="text-lg font-semibold text-maxmove-navy">Individual</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-gray-600 text-center">For personal use</p>
+              <p className="text-sm text-gray-600 text-center">
+                For personal use and small businesses
+              </p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Fast sign up
+                  Fast and simple sign up
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Track deliveries
+                  Track deliveries in real-time
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Save locations
+                  Save favorite locations
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Wide range of vehicles
                 </li>
               </ul>
             </CardContent>
@@ -80,19 +86,27 @@ export default function AccountTypeSelectionPage() {
               <CardTitle className="text-lg font-semibold text-maxmove-navy">Business</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-gray-600 text-center">For companies</p>
+              <p className="text-sm text-gray-600 text-center">For companies and enterprises</p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Bulk deliveries
+                  Bulk delivery management
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Business analytics
+                  Business analytics dashboard
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
                   Priority support
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Centralized business wallet for multiple users
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Monthly corporate statements
                 </li>
               </ul>
             </CardContent>
@@ -108,19 +122,23 @@ export default function AccountTypeSelectionPage() {
               <CardTitle className="text-lg font-semibold text-maxmove-navy">Driver</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-gray-600 text-center">Join our fleet</p>
+              <p className="text-sm text-gray-600 text-center">Join our delivery fleet</p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Great earnings
+                  Great Earnings
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Flexible hours
+                  Be your own boss
                 </li>
                 <li className="flex items-center">
                   <span className="mr-2 text-maxmove-navy">•</span>
-                  Choose your vehicle
+                  Flexible working hours
+                </li>
+                <li className="flex items-center">
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Choose your vehicle type
                 </li>
               </ul>
             </CardContent>
