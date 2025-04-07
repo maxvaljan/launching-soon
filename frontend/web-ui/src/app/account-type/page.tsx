@@ -1,152 +1,161 @@
 'use client';
 
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { User, Building2, Car, ArrowLeft } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { User, Building2, Car, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AccountTypeSelectionPage() {
   const router = useRouter();
 
-  const handleSelection = (type: "personal" | "business" | "driver") => {
-    window.location.href = `/signup?type=${type}`;
+  const handleSelection = (type: 'personal' | 'business' | 'driver') => {
+    router.push(`/signup?type=${type}`);
   };
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-center bg-gray-100 overflow-hidden">
+      {/* Back button - simplified and consistent with sign in page styling */}
       <Button
         variant="ghost"
-        onClick={() => window.location.href = "/"}
-        className="absolute top-4 left-4 z-10 text-maxmove-800 hover:text-maxmove-900"
+        onClick={() => router.push('/')}
+        className="absolute top-4 left-4 z-10 text-maxmove-navy hover:text-[#294374]"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
         Back
       </Button>
-      
-      <div className="w-full max-w-4xl space-y-8">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-maxmove-900">
-            Select an account type
-          </h2>
+
+      {/* Centered card - using the same shadow styling and width constraints as sign in page */}
+      <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-4xl mb-4">
+        <div className="flex justify-center mb-8">
+          <Image
+            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20White.png"
+            alt="MaxMove Logo"
+            width={150}
+            height={40}
+            priority
+          />
+        </div>
+
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-maxmove-navy">Select an account type</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Individual Account */}
-          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer" 
-                onClick={() => handleSelection("personal")}>
+          <Card
+            className="border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() => handleSelection('personal')}
+          >
             <CardHeader className="text-center">
-              <User className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Individual</CardTitle>
+              <User className="w-10 h-10 mx-auto text-maxmove-navy mb-2" />
+              <CardTitle className="text-lg font-semibold text-maxmove-navy">Individual</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
-                For personal use and small businesses
-              </p>
-              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
+            <CardContent className="space-y-3">
+              <p className="text-sm text-gray-600 text-center">For personal use</p>
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Fast and simple sign up
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Fast sign up
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Track deliveries in real-time
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Track deliveries
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Save favorite locations
-                </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Wide range of vehicles
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Save locations
                 </li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Business Account */}
-          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                onClick={() => handleSelection("business")}>
+          <Card
+            className="border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() => handleSelection('business')}
+          >
             <CardHeader className="text-center">
-              <Building2 className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Business</CardTitle>
+              <Building2 className="w-10 h-10 mx-auto text-maxmove-navy mb-2" />
+              <CardTitle className="text-lg font-semibold text-maxmove-navy">Business</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
-                For companies and enterprises
-              </p>
-              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
+            <CardContent className="space-y-3">
+              <p className="text-sm text-gray-600 text-center">For companies</p>
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Bulk delivery management
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Bulk deliveries
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Business analytics dashboard
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Business analytics
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
+                  <span className="mr-2 text-maxmove-navy">•</span>
                   Priority support
-                </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Centralized business wallet for multiple users
-                </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Monthly corporate statements
                 </li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Driver Account */}
-          <Card className="group bg-maxmove-navy border-0 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                onClick={() => handleSelection("driver")}>
+          <Card
+            className="border border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer"
+            onClick={() => handleSelection('driver')}
+          >
             <CardHeader className="text-center">
-              <Car className="w-12 h-12 mx-auto text-maxmove-creme mb-4" />
-              <CardTitle className="text-xl font-semibold text-maxmove-creme group-hover:text-white transition-colors duration-200">Driver</CardTitle>
+              <Car className="w-10 h-10 mx-auto text-maxmove-navy mb-2" />
+              <CardTitle className="text-lg font-semibold text-maxmove-navy">Driver</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-maxmove-creme text-center group-hover:text-white transition-colors duration-200">
-                Join our delivery fleet
-              </p>
-              <ul className="space-y-2 text-sm text-maxmove-creme group-hover:text-white transition-colors duration-200">
+            <CardContent className="space-y-3">
+              <p className="text-sm text-gray-600 text-center">Join our fleet</p>
+              <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Great Earnings
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Great earnings
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Be your own boss
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Flexible hours
                 </li>
                 <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Flexible working hours
-                </li>
-                <li className="flex items-center">
-                  <span className="mr-2 text-maxmove-creme group-hover:text-white transition-colors duration-200">•</span>
-                  Choose your vehicle type
+                  <span className="mr-2 text-maxmove-navy">•</span>
+                  Choose your vehicle
                 </li>
               </ul>
             </CardContent>
           </Card>
         </div>
 
-        <div className="text-center text-maxmove-600">
-          <p>Your account type can be upgraded or modified at any time.</p>
+        <div className="text-sm text-center text-gray-600 mt-6">
+          <p>Your account type can be modified at any time.</p>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-maxmove-600 mb-3">
-            Already have an account?
-          </p>
-          <Button
-            className="bg-maxmove-navy hover:bg-maxmove-navy text-maxmove-creme py-6 px-8 font-semibold"
-            onClick={() => window.location.href = "/signin"}
+        {/* Sign in section - matching the exact styling of "create account" on sign in page */}
+        <div className="text-sm text-center mt-8">
+          <span className="text-maxmove-navy text-base">Already have an account? </span>
+          <a
+            href="/signin"
+            onClick={e => {
+              e.preventDefault();
+              router.push('/signin');
+            }}
+            className="font-bold text-base text-[#294374]"
           >
-            Login
-          </Button>
+            Sign in
+          </a>
         </div>
+      </div>
+
+      {/* Terms and privacy links - matching sign in page exactly */}
+      <div className="text-sm text-center mt-4">
+        <a href="/terms" className="text-gray-500 hover:text-gray-600">
+          Terms & Conditions
+        </a>
+        <span className="text-gray-500 mx-1">•</span>
+        <a href="/privacy" className="text-gray-500 hover:text-gray-600">
+          Privacy Policy
+        </a>
       </div>
     </div>
   );
