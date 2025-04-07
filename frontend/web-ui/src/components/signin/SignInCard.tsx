@@ -15,11 +15,11 @@ export const SignInCard = () => {
       {/*   <Image src="/path/to/maxmove-illustration.svg" alt="MaxMove Illustration" width={500} height={500} /> */}
       {/* </div> */}
 
-      {/* Centered login card */}
-      <div className="z-10 bg-white shadow-lg rounded-lg p-8 sm:p-10 w-full max-w-md">
+      {/* Centered login card - Increased width */}
+      <div className="z-10 bg-white shadow-lg rounded-lg p-8 sm:p-10 w-full max-w-lg">
         <div className="flex justify-center mb-8">
           <Image
-            src="/logos/logo-no-background.svg"
+            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20blue.png"
             alt="MaxMove Logo"
             width={150}
             height={40}

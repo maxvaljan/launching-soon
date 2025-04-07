@@ -97,17 +97,17 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-1 focus-within:ring-maxmove-navy">
+                <div className="flex items-stretch gap-2">
                   <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
-                    className="bg-transparent border-none focus:ring-0 pl-3 pr-1"
+                    className="border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-11 px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
                   />
                   <Input
                     id="identifier"
                     placeholder="Email or phone number"
                     {...field}
-                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-10"
+                    className="flex-1 border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-11 px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
               </FormControl>
@@ -121,13 +121,13 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-1 focus-within:ring-maxmove-navy">
+                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-0 focus-within:ring-offset-0">
                   <Input
                     id="password"
                     placeholder="Password"
                     type={showPassword ? 'text' : 'password'}
                     {...field}
-                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-10 pr-10"
+                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-11 pr-10 pl-3 py-2.5 text-sm"
                   />
                   <button
                     type="button"
@@ -141,7 +141,7 @@ export const SignInForm = () => {
               <div className="flex justify-end mt-1">
                 <a
                   href="/reset-password"
-                  className="text-sm text-maxmove-navy hover:text-maxmove-navy/80 underline-offset-2 hover:underline transition-colors"
+                  className="text-sm text-maxmove-navy hover:text-maxmove-navy/80 underline-offset-2 transition-colors"
                 >
                   Forgot password?
                 </a>
