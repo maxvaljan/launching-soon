@@ -31,8 +31,8 @@ If you need to create custom button-like elements:
 
 For action buttons:
 
-- Default state: darker color (e.g., `bg-maxmove-dark-blue`)
-- Hover state: lighter color (e.g., `hover:bg-maxmove-light-blue`)
+- Default state: darker color (e.g., `bg-maxmove-blue`)
+- Hover state: lighter color (e.g., `hover:bg-maxmove-blue`)
 
 ## Other UI Components
 

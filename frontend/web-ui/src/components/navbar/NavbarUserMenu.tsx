@@ -84,7 +84,7 @@ const NavbarUserMenu = ({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative h-10 w-10 rounded-full bg-gradient-to-br from-[#192338] via-[#1c2d4f] to-[#294374] hover:scale-105 transition-all duration-300 ease-out"
+                className="relative h-10 w-10 rounded-full bg-gradient-to-br from-[#192338] via-[#294374] to-[#294374] hover:scale-105 transition-all duration-300 ease-out"
               >
                 <span className="font-medium text-maxmove-creme">
                   {userName.charAt(0).toUpperCase()}
@@ -129,9 +129,9 @@ const NavbarUserMenu = ({
           className={`transition-all duration-300 font-medium px-6 py-2 rounded-xl ${
             isHomePage
               ? isScrolled
-                ? 'bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md'
+                ? 'bg-maxmove-navy hover:bg-maxmove-blue text-white shadow-md'
                 : 'bg-white/90 backdrop-blur-sm hover:bg-white text-maxmove-navy shadow-lg'
-              : 'bg-maxmove-navy hover:bg-maxmove-dark-blue text-white shadow-md'
+              : 'bg-maxmove-navy hover:bg-maxmove-blue text-white shadow-md'
           }`}
           onClick={() => handleNavigate('/signin')}
         >

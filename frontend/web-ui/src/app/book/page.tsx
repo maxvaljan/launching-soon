@@ -131,7 +131,7 @@ export default function BookPage() {
             />
             
             <div className="mt-6">
-              <Button className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-dark-blue" onClick={handleSubmit}>
+              <Button className="w-full bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-blue" onClick={handleSubmit}>
                 Book your delivery
               </Button>
             </div>

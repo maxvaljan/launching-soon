@@ -247,7 +247,7 @@ function ContactPageContent() {
                       <div className="border-t pt-6">
                         <Button 
                           type="submit" 
-                          className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-maxmove-creme"
+                          className="w-full bg-maxmove-navy hover:bg-maxmove-blue text-maxmove-creme"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? "Sending..." : "Send Message"}

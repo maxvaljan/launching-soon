@@ -122,7 +122,7 @@ export default function PersonalDelivery() {
             <Button
               size="lg"
               variant="secondary"
-              className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-dark-blue"
+              className="bg-maxmove-navy text-maxmove-creme hover:bg-maxmove-blue"
               asChild
             >
               <Link href="/book">

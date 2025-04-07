@@ -157,10 +157,10 @@ const Navbar = () => {
   const getTextColor = () => {
     if (isDarkBackground) {
       return isScrolled
-        ? 'text-maxmove-navy hover:text-maxmove-dark-blue'
+        ? 'text-maxmove-navy hover:text-maxmove-blue'
         : 'text-maxmove-creme hover:text-white';
     }
-    return 'text-maxmove-navy hover:text-maxmove-dark-blue';
+    return 'text-maxmove-navy hover:text-maxmove-blue';
   };
 
   return (
@@ -181,9 +181,9 @@ const Navbar = () => {
               className={`text-2xl font-bold ${
                 isDarkBackground
                   ? isScrolled
-                    ? 'text-maxmove-navy hover:text-maxmove-dark-blue'
+                    ? 'text-maxmove-navy hover:text-maxmove-blue'
                     : 'text-maxmove-creme hover:text-white'
-                  : 'text-maxmove-navy hover:text-maxmove-dark-blue'
+                  : 'text-maxmove-navy hover:text-maxmove-blue'
               }`}
             >
               Maxmove

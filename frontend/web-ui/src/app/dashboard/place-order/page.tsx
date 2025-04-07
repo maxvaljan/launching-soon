@@ -682,7 +682,7 @@ export default function PlaceOrderPage() {
           <div className="pt-4">
             <Button
               onClick={handleCreateOrder}
-              className="w-full h-12 bg-maxmove-navy hover:bg-maxmove-dark-blue text-white"
+              className="w-full h-12 bg-maxmove-navy hover:bg-maxmove-blue text-white"
             >
               Continue to Checkout
             </Button>

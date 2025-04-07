@@ -6,8 +6,7 @@
   :root {
     /* MAXMOVE Standard Colors */
     --maxmove-navy: #192338;
-    --maxmove-dark-blue: #1c2d4f;
-    --maxmove-light-blue: #294374;
+    --maxmove-blue: #294374;
     --maxmove-grey: #798390;
     --maxmove-creme: #eeeeee;
     
@@ -111,7 +110,7 @@
 
 @layer utilities {
   .maxmove-gradient {
-    @apply bg-gradient-to-r from-[var(--maxmove-dark-blue)] to-[var(--maxmove-navy)];
+    @apply bg-gradient-to-r from-[var(--maxmove-blue)] to-[var(--maxmove-navy)];
   }
   
   .shadow-blue {

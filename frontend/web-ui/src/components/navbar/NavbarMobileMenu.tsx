@@ -100,7 +100,7 @@ const NavbarMobileMenu = ({
         {session && (
           <>
             <div className="flex items-center px-4 py-4 bg-maxmove-navy/5 mb-2">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-maxmove-navy via-maxmove-dark-blue to-maxmove-light-blue flex items-center justify-center">
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-maxmove-navy via-maxmove-blue to-maxmove-blue flex items-center justify-center">
                 <span className="text-lg font-semibold text-maxmove-creme">
                   {(typeof session.email === 'string'
                     ? session.email.charAt(0)
@@ -148,7 +148,7 @@ const NavbarMobileMenu = ({
             </Button>
           ) : (
             <Button
-              className="w-full bg-maxmove-navy hover:bg-maxmove-dark-blue text-white font-medium py-2.5 rounded-xl"
+              className="w-full bg-maxmove-navy hover:bg-maxmove-blue text-white font-medium py-2.5 rounded-xl"
               onClick={() => router.push('/signin')}
             >
               Sign In

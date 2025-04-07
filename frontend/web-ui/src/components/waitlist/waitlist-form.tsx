@@ -59,7 +59,7 @@ export function WaitlistForm({ onSuccess }: WaitlistFormProps) {
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-maxmove-dark-blue hover:bg-maxmove-light-blue text-maxmove-creme font-semibold px-4 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
+          className="bg-maxmove-blue hover:bg-maxmove-blue text-maxmove-creme font-semibold px-4 rounded-xl transition-all duration-300 ease-in-out focus:outline-none w-[120px]"
         >
           {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Join'}
         </Button>

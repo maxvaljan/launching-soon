@@ -89,8 +89,7 @@ module.exports = {
         // MAXMOVE Standard Colors
         maxmove: {
           navy: "#192338",
-          "dark-blue": "#1c2d4f",
-          "light-blue": "#294374",
+          blue: "#294374",
           grey: "#798390",
           creme: "#eeeeee",
         },
