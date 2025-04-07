@@ -99,7 +99,7 @@ export const SignInForm = () => {
                   <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
-                    className="bg-transparent border border-maxmove-grey"
+                    className="bg-transparent border border-maxmove-grey focus:border-maxmove-creme focus:ring-maxmove-creme text-maxmove-navy"
                   />
                   <Input
                     id="identifier"
@@ -141,7 +141,7 @@ export const SignInForm = () => {
         />
         <Button
           type="submit"
-          className="w-full bg-maxmove-creme hover:bg-white text-maxmove-navy mt-2 py-6 font-semibold"
+          className="w-full bg-maxmove-creme hover:bg-maxmove-creme/90 text-maxmove-navy mt-2 py-6 font-semibold"
           disabled={isLoading}
         >
           {isLoading ? 'Signing in...' : 'Login'}
