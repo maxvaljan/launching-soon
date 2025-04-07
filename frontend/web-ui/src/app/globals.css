@@ -104,7 +104,7 @@
   }
 
   a {
-    @apply text-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))];
+    @apply text-[hsl(var(--primary))];
   }
 }
 
