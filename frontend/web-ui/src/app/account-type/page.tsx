@@ -146,7 +146,7 @@ export default function AccountTypeSelectionPage() {
         </div>
 
         <div className="text-sm text-center text-gray-600 mt-6">
-          <p>Your account type can be modified at any time.</p>
+          <p>You can modify, upgrade or add multiple profiles to your account after signing up.</p>
         </div>
 
         {/* Sign in section - matching the exact styling of "create account" on sign in page */}
@@ -163,17 +163,6 @@ export default function AccountTypeSelectionPage() {
             Sign in
           </a>
         </div>
-      </div>
-
-      {/* Terms and privacy links - matching sign in page exactly */}
-      <div className="text-sm text-center mt-4">
-        <a href="/terms" className="text-gray-500 hover:text-gray-600">
-          Terms & Conditions
-        </a>
-        <span className="text-gray-500 mx-1">•</span>
-        <a href="/privacy" className="text-gray-500 hover:text-gray-600">
-          Privacy Policy
-        </a>
       </div>
     </div>
   );
