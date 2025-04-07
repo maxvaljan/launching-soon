@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, ChangeEvent, InputHTMLAttributes } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,6 +16,60 @@ const signInSchema = z.object({
   identifier: z.string().min(1, 'Email or phone number is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
+
+// Type definition for FloatingLabelInput props
+interface FloatingLabelInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+  label: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}
+
+// Custom floating label input component
+const FloatingLabelInput = ({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  className = '',
+  id = '',
+  ...props
+}: FloatingLabelInputProps) => {
+  const [focused, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(!!value);
+
+  useEffect(() => {
+    setHasValue(!!value);
+  }, [value]);
+
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        onChange={e => {
+          onChange(e);
+          setHasValue(!!e.target.value);
+        }}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
+        {...props}
+      />
+      <label
+        htmlFor={id}
+        className={`absolute text-gray-500 duration-300 transform transition-all ${
+          hasValue || focused
+            ? 'text-xs scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
+            : 'left-3 top-1/2 -translate-y-1/2'
+        }`}
+      >
+        {label}
+      </label>
+    </div>
+  );
+};
 
 export const SignInForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -101,14 +155,11 @@ export const SignInForm = () => {
                   <CountryCodeSelect
                     value={countryCode}
                     onChange={setCountryCode}
-                    className="border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-[50px] px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
+                    className="border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 w-auto text-sm focus:ring-0 focus:ring-offset-0"
                   />
-                  <Input
-                    id="identifier"
-                    placeholder="Email or phone number"
-                    {...field}
-                    className="flex-1 border border-gray-300 rounded-md focus:border-maxmove-navy bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
+                  <div className="flex-1 relative">
+                    <FloatingLabelInput id="identifier" label="Email or phone number" {...field} />
+                  </div>
                 </div>
               </FormControl>
               <FormMessage className="text-red-500 text-xs" />
@@ -121,13 +172,13 @@ export const SignInForm = () => {
           render={({ field }) => (
             <FormItem className="grid gap-2">
               <FormControl>
-                <div className="relative flex items-center border border-gray-300 rounded-md focus-within:border-maxmove-navy focus-within:ring-0 focus-within:ring-offset-0 h-[50px]">
-                  <Input
+                <div className="relative h-[50px] border border-gray-300 rounded-md focus-within:border-[#294374] focus-within:ring-0 focus-within:ring-offset-0">
+                  <FloatingLabelInput
                     id="password"
-                    placeholder="Password"
+                    label="Password"
                     type={showPassword ? 'text' : 'password'}
                     {...field}
-                    className="flex-1 bg-transparent border-none focus:ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 h-[50px] pr-10 pl-3 py-2.5 text-sm"
+                    className="border-none pr-10"
                   />
                   <button
                     type="button"
