@@ -53,7 +53,13 @@ const FloatingLabelInput = ({
           setHasValue(!!e.target.value);
         }}
         onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onBlur={() => {
+          setFocused(false);
+          // Reset floating label to default state if no value when unfocused
+          if (!value) {
+            setHasValue(false);
+          }
+        }}
         className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
         {...props}
       />
@@ -61,8 +67,8 @@ const FloatingLabelInput = ({
         htmlFor={id}
         className={`absolute text-gray-500 duration-300 transform transition-all ${
           hasValue || focused
-            ? 'text-xs scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
-            : 'left-3 top-1/2 -translate-y-1/2'
+            ? 'text-[13px] scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0' // Made text slightly bigger when floating
+            : 'text-sm left-3 top-1/2 -translate-y-1/2'
         }`}
       >
         {label}
@@ -192,7 +198,7 @@ export const SignInForm = () => {
               <div className="flex justify-end mt-1">
                 <a
                   href="/reset-password"
-                  className="text-sm text-maxmove-navy hover:text-maxmove-navy/80 underline-offset-2 transition-colors"
+                  className="text-sm text-[#294374] underline-offset-2 transition-colors"
                 >
                   Forgot password?
                 </a>
