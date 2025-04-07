@@ -53,17 +53,14 @@ const FloatingLabelInput = ({
           setHasValue(!!e.target.value);
         }}
         onFocus={() => setFocused(true)}
-        onBlur={() => {
-          setFocused(false);
-          setHasValue(!!value);
-        }}
+        onBlur={() => setFocused(false)}
         className={`peer w-full border border-gray-300 rounded-md focus:border-[#294374] bg-transparent h-[50px] px-3 py-2.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 ${className}`}
         {...props}
       />
       <label
         htmlFor={id}
         className={`absolute text-gray-500 duration-300 transform transition-all ${
-          hasValue || focused
+          focused || hasValue
             ? 'text-[13px] scale-75 -translate-y-3 bg-white px-1 z-10 left-2 top-0'
             : 'text-base left-3 top-1/2 -translate-y-1/2'
         }`}
