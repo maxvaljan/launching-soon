@@ -97,60 +97,48 @@ const Navbar = () => {
       setIsMobileMenuOpen(false); // Close mobile menu if open
       console.log('Signing out...');
 
-      // 1. First clear client storage immediately (don't wait for server)
+      // 1. First clear all client storage immediately
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_refresh_token');
-        localStorage.removeItem('auth_expires_at');
-        localStorage.removeItem('auth_expires_in');
-        localStorage.removeItem('user_id');
-        localStorage.removeItem('user_role');
+        // Clear localStorage
+        localStorage.clear();
 
-        // Also clear any Supabase-related items
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (
-            key &&
-            (key.startsWith('supabase.') || key.includes('auth') || key.includes('token'))
-          ) {
-            localStorage.removeItem(key);
+        // Clear sessionStorage
+        sessionStorage.clear();
+
+        // Also specifically clear any Supabase or auth related items
+        for (const storage of [localStorage, sessionStorage]) {
+          for (let i = 0; i < storage.length; i++) {
+            const key = storage.key(i);
+            if (
+              key &&
+              (key.startsWith('supabase.') || key.includes('auth') || key.includes('token'))
+            ) {
+              storage.removeItem(key);
+            }
           }
         }
-
-        // Also clear sessionStorage
-        sessionStorage.clear();
       }
 
-      // 2. Also sign out of Supabase Auth directly
+      // 2. Sign out of Supabase Auth
       await supabase.auth.signOut();
 
-      // 3. Finally, call our backend API to clear server-side session
-      try {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies
-        });
-      } catch (apiError) {
-        console.error('API logout error:', apiError);
-        // Continue with local logout even if API fails
-      }
+      // 3. Call our backend API to clear server-side session
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important: include cookies
+      });
 
-      // 4. Set session state to null
-      setSession(null);
-
-      // 5. Force a hard redirect to clear any React state
-      console.log('Redirecting to signin page...');
-      window.location.href = '/signin?ts=' + new Date().getTime();
+      // 4. Force a hard redirect to sign in page with cache buster
+      const signInUrl = new URL('/signin', window.location.origin);
+      signInUrl.searchParams.set('ts', Date.now().toString()); // Add cache buster
+      window.location.href = signInUrl.toString();
     } catch (error) {
       console.error('Error signing out:', error);
-
-      // Fallback - force redirect even if errors occur
-      if (typeof window !== 'undefined') {
-        window.location.href = '/signin';
-      }
+      // Even if there's an error, force redirect to ensure user is logged out
+      window.location.href = '/signin';
     }
   };
 
