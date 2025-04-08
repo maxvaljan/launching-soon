@@ -233,6 +233,43 @@ const VehicleSkeleton = () => (
 // Define libraries array outside component to prevent reloading
 const GOOGLE_MAPS_LIBRARIES: 'places'[] = ['places'];
 
+// Helper to get domain-specific error message
+const getMapErrorMessage = (error: Error | null): { title: string; message: string } => {
+  if (!error)
+    return {
+      title: 'Unknown Error',
+      message: 'An unknown error occurred while loading the map.',
+    };
+
+  if (error.message.includes('RefererNotAllowedMapError')) {
+    return {
+      title: 'Domain Not Authorized',
+      message:
+        'This domain is not authorized to use the Google Maps API. Please contact support or try again later.',
+    };
+  }
+
+  if (error.message.includes('InvalidKeyMapError')) {
+    return {
+      title: 'Invalid API Key',
+      message: 'There was a problem with the map configuration. Please contact support.',
+    };
+  }
+
+  if (error.message.includes('MissingKeyMapError')) {
+    return {
+      title: 'Missing API Key',
+      message: 'Map configuration is incomplete. Please contact support.',
+    };
+  }
+
+  return {
+    title: 'Map Loading Error',
+    message:
+      'There was a problem loading the map. Please try refreshing the page or contact support if the problem persists.',
+  };
+};
+
 export default function PlaceOrderPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
@@ -262,7 +299,17 @@ export default function PlaceOrderPage() {
     id: 'google-maps-script',
     nonce: '',
   });
-  // --- End Google Maps API Loader ---
+
+  // Log error details for debugging in non-production environments
+  useEffect(() => {
+    if (loadError && process.env.NODE_ENV !== 'production') {
+      console.error('Google Maps API load error:', {
+        error: loadError,
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing',
+        host: typeof window !== 'undefined' ? window.location.host : 'SSR',
+      });
+    }
+  }, [loadError]);
 
   // Move fetchVehicleTypes definition before useEffect
   const fetchVehicleTypes = useCallback(async () => {
@@ -476,26 +523,35 @@ export default function PlaceOrderPage() {
   };
 
   if (loadError) {
-    console.error('Google Maps API load error:', loadError);
-
-    // Log additional information to help debugging
-    if (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
-      console.log('API key exists but may be invalid or restricted');
-    } else {
-      console.log('API key is missing in environment variables');
-    }
+    const { title, message } = getMapErrorMessage(loadError as Error);
 
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center p-6 max-w-md">
-          <p className="text-red-600 font-medium text-lg mb-2">Error loading map services</p>
-          <p className="text-gray-600 mb-4">
-            We&apos;re having trouble loading the map service. This could be due to a network issue
-            or a configuration problem.
-          </p>
-          <p className="text-gray-600">
-            Please try refreshing the page or contact support if the problem persists.
-          </p>
+      <div className="flex items-center justify-center min-h-[calc(100vh-65px)]">
+        <div className="text-center p-8 max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="mb-6">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+          <p className="text-gray-600 mb-6">{message}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-maxmove-navy hover:bg-maxmove-blue text-white"
+          >
+            Try Again
+          </Button>
         </div>
       </div>
     );
