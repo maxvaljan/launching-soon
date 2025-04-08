@@ -179,30 +179,32 @@ const VehicleCard = ({
       }`}
       onClick={() => onSelect(vehicle.id)}
     >
-      <div className="relative flex-1 flex items-center justify-center">
-        <Image
-          src={imageUrl}
-          alt={vehicle.name}
-          width={imageSize}
-          height={imageSize}
-          className="mx-auto object-contain"
-          quality={90}
-          priority={true}
-          // Add onError handler to show fallback icon if image fails to load
-          onError={e => {
-            // Show fallback truck icon if image fails to load
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            // We'll add a truck icon element after this one
-            const parentDiv = target.parentElement;
-            if (parentDiv) {
-              const svgElement = document.createElement('div');
-              svgElement.innerHTML =
-                '<svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
-              parentDiv.appendChild(svgElement);
-            }
-          }}
-        />
+      <div className="relative flex-1 flex items-center justify-center w-full h-[120px]">
+        <div className="relative w-full h-full flex items-center justify-center">
+          <Image
+            src={imageUrl}
+            alt={vehicle.name}
+            width={imageSize}
+            height={imageSize}
+            className="max-w-full max-h-full w-auto h-auto object-contain"
+            quality={90}
+            priority={true}
+            // Add onError handler to show fallback icon if image fails to load
+            onError={e => {
+              // Show fallback truck icon if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              // We'll add a truck icon element after this one
+              const parentDiv = target.parentElement;
+              if (parentDiv) {
+                const svgElement = document.createElement('div');
+                svgElement.innerHTML =
+                  '<svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-maxmove-navy"><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>';
+                parentDiv.appendChild(svgElement);
+              }
+            }}
+          />
+        </div>
       </div>
 
       <div>
