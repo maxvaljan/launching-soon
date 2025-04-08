@@ -35,6 +35,9 @@ interface VehicleType {
   weight_capacity_kg: number;
   volume_capacity_cbm: number;
   dimensions_meter: string;
+  base_price: number;
+  price_per_km: number;
+  minimum_distance: number;
 }
 
 // Define google explicitly on the window object for the Autocomplete library
@@ -315,22 +318,22 @@ export default function PlaceOrderPage() {
   const fetchVehicleTypes = useCallback(async () => {
     setIsLoadingVehicles(true);
     try {
-      // Use relative URL for API endpoints in Next.js
       const response = await fetch('/api/vehicles');
-      if (!response.ok) {
-        throw new Error('Failed to fetch vehicle types');
-      }
       const result = await response.json();
 
-      if (result.success && Array.isArray(result.data)) {
-        setVehicleTypes(result.data);
-      } else {
-        throw new Error(result.message || 'Invalid data format received');
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch vehicle types');
       }
+
+      if (!result.success || !Array.isArray(result.data)) {
+        throw new Error('Invalid response format from server');
+      }
+
+      setVehicleTypes(result.data);
     } catch (error) {
-      // Removed unused variable name 'error'
       console.error('Error fetching vehicle types:', error);
-      toast.error('Failed to load vehicle types.');
+      toast.error(error instanceof Error ? error.message : 'Failed to load vehicle types');
+      setVehicleTypes([]); // Set empty array to show no vehicles available
     } finally {
       setIsLoadingVehicles(false);
     }
