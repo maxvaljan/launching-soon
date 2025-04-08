@@ -3,10 +3,24 @@ import type { NextRequest } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
-// Define which routes require specific roles
+// Define PROTECTED routes that require authentication
+const protectedRoutes = [
+  '/dashboard',
+  '/driver-dashboard',
+  '/admin',
+  '/profile',
+  '/account-switch',
+  '/wallet',
+  // Add any other routes that strictly require login
+];
+
+// Define AUTH routes (login, signup, etc.)
+const authRoutes = ['/signin', '/signup', '/reset-password'];
+
+// Define which routes require specific roles (subsets of protectedRoutes)
 const roleBasedRoutes = {
-  '/driver-dashboard': ['driver'],
-  '/admin': ['admin'],
+  '/driver-dashboard': ['driver'], // Includes /driver-dashboard/*
+  '/admin': ['admin'], // Includes /admin/*
 };
 
 /**
@@ -21,10 +35,13 @@ export async function middleware(request: NextRequest) {
   try {
     const path = request.nextUrl.pathname;
 
-    // Get Supabase instance
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() });
+    // Allow all requests for static assets, API routes, etc. (already excluded by config.matcher)
+    // Handle auth callback explicitly
+    if (path === '/auth/callback') {
+      return NextResponse.next();
+    }
 
-    // Check if we have a session
+    const supabase = createRouteHandlerClient({ cookies: () => cookies() });
     const {
       data: { session },
       error: sessionError,
@@ -32,81 +49,45 @@ export async function middleware(request: NextRequest) {
 
     if (sessionError) {
       console.error('Error fetching session:', sessionError);
+      // Allow request to proceed but log error
     }
-
     const isValidSession = !!session;
 
-    // Handle auth callback route - this must be allowed to proceed
-    if (path === '/auth/callback') {
-      return NextResponse.next();
-    }
+    // Determine if the current route IS a protected route
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
 
-    // Check if the current path is a protected route
-    const isProtectedRoute = ![
-      '/signin',
-      '/signup',
-      '/auth/callback',
-      '/',
-      '/about',
-      '/contact',
-      '/terms',
-      '/privacy-policy',
-      '/cookie-policy',
-    ].some(publicRoute => path === publicRoute || path.startsWith(`${publicRoute}/`));
+    // Determine if the current route is an authentication route
+    const isAuthRoute = authRoutes.includes(path);
 
-    // Unauthenticated user trying to access protected route
+    // --- Main Logic ---
+
+    // 1. Unauthenticated user trying to access a PROTECTED route
     if (isProtectedRoute && !isValidSession) {
-      // Store the intended destination to redirect after login
+      console.log(`Redirecting unauthenticated user from protected route: ${path}`);
       const redirectUrl = new URL('/signin', request.url);
       redirectUrl.searchParams.set('redirectTo', path);
-      redirectUrl.searchParams.set('ts', Date.now().toString()); // Add cache buster
+      redirectUrl.searchParams.set('ts', Date.now().toString());
 
-      // Clear auth cookies to ensure no stale data
       const redirectResponse = NextResponse.redirect(redirectUrl);
-      redirectResponse.cookies.delete('supabase-auth-token');
-      redirectResponse.cookies.delete('supabase-refresh-token');
-
-      // Clear all Supabase-related cookies
-      const cookiesToClear = request.cookies
-        .getAll()
-        .filter(
-          cookie =>
-            cookie.name.toLowerCase().includes('supabase') ||
-            cookie.name.toLowerCase().includes('auth')
-        );
-
-      cookiesToClear.forEach(cookie => {
-        redirectResponse.cookies.delete(cookie.name);
-      });
-
-      // Add response headers to instruct client to clear local storage
+      // Clear potential stale cookies
+      redirectResponse.cookies.set('supabase-auth-token', '', { maxAge: -1 });
+      redirectResponse.cookies.set('supabase-refresh-token', '', { maxAge: -1 });
       redirectResponse.headers.set('X-Auth-Required', 'true');
-      redirectResponse.headers.set(
-        'Cache-Control',
-        'no-store, no-cache, must-revalidate, proxy-revalidate'
-      );
-      redirectResponse.headers.set('Pragma', 'no-cache');
-      redirectResponse.headers.set('Expires', '0');
-
+      redirectResponse.headers.set('Cache-Control', 'no-store, no-cache');
       return redirectResponse;
     }
 
-    // Authenticated user with valid session trying to access auth routes
-    if (
-      isValidSession &&
-      (path === '/signin' || path === '/signup' || path === '/reset-password')
-    ) {
-      // Determine where to redirect based on user role
+    // 2. Authenticated user trying to access an AUTH route (signin/signup)
+    if (isValidSession && isAuthRoute) {
+      console.log(`Redirecting authenticated user from auth route: ${path}`);
+      // Redirect to their appropriate dashboard
       const { data: profile } = await supabase
         .from('profiles')
         .select('role, email')
         .eq('id', session.user.id)
         .single();
 
-      // Create redirect response with cache-busting
       let redirectUrl: string;
-
-      // First check for the specific admin email account
       if (profile?.email === 'max.valjan@icloud.com' || profile?.role === 'admin') {
         redirectUrl = '/admin';
       } else if (profile?.role === 'driver') {
@@ -114,45 +95,53 @@ export async function middleware(request: NextRequest) {
       } else {
         redirectUrl = '/dashboard/place-order';
       }
-
-      // Add cache busting parameter
       const fullRedirectUrl = new URL(redirectUrl, request.url);
       fullRedirectUrl.searchParams.set('ts', Date.now().toString());
-
       return NextResponse.redirect(fullRedirectUrl);
     }
 
-    // Role-based access control
-    if (isValidSession) {
-      for (const [routePath, allowedRoles] of Object.entries(roleBasedRoutes)) {
-        if (path.startsWith(routePath)) {
-          // Get the user's role from the profiles table
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role, email')
-            .eq('id', session.user.id)
-            .single();
+    // 3. Role-Based Access Control for authenticated users on specific protected routes
+    if (isValidSession && isProtectedRoute) {
+      let userRole: string | null = null;
+      let userEmail: string | null = null;
 
-          // Special handling for max.valjan@icloud.com - always allowed admin access
-          if (profile?.email === 'max.valjan@icloud.com' && routePath === '/admin') {
-            break; // Allow access
+      // Check if the route requires specific role checks
+      const requiresRoleCheck = Object.keys(roleBasedRoutes).some(route => path.startsWith(route));
+
+      if (requiresRoleCheck) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, email')
+          .eq('id', session.user.id)
+          .single();
+        userRole = profile?.role;
+        userEmail = profile?.email;
+
+        // Admin override
+        if (userEmail === 'max.valjan@icloud.com') {
+          console.log('Admin override access granted.');
+          // Allow access, skip further role checks for admin
+        } else {
+          // Perform standard role check
+          let authorized = false;
+          for (const [routePath, allowedRoles] of Object.entries(roleBasedRoutes)) {
+            if (path.startsWith(routePath)) {
+              if (userRole && allowedRoles.includes(userRole)) {
+                authorized = true;
+                break;
+              }
+            }
           }
 
-          // If user doesn't have the required role, redirect them
-          if (!profile || !allowedRoles.includes(profile.role)) {
-            // Redirect to appropriate dashboard based on role
-            let redirectUrl: string;
-
-            if (profile?.role === 'driver') {
-              redirectUrl = '/driver-dashboard';
-            } else {
-              redirectUrl = '/dashboard/place-order';
-            }
-
-            // Add cache busting parameter
+          if (!authorized) {
+            console.log(
+              `Redirecting user with role '${userRole}' from unauthorized route: ${path}`
+            );
+            // Redirect to appropriate dashboard if role doesn't match
+            const redirectUrl: string =
+              userRole === 'driver' ? '/driver-dashboard' : '/dashboard/place-order';
             const fullRedirectUrl = new URL(redirectUrl, request.url);
             fullRedirectUrl.searchParams.set('ts', Date.now().toString());
-
             const redirectResponse = NextResponse.redirect(fullRedirectUrl);
             redirectResponse.headers.set('X-Access-Denied', 'true');
             return redirectResponse;
@@ -161,14 +150,14 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    // Add the user's session status to response headers for client-side awareness
+    // If none of the above conditions caused a redirect, allow the request
+    console.log(`Allowing request for path: ${path}, Auth status: ${isValidSession}`);
     const res = NextResponse.next();
     res.headers.set('X-Auth-Status', isValidSession ? 'authenticated' : 'unauthenticated');
-
     return res;
   } catch (error) {
     console.error('Middleware error:', error);
-    return NextResponse.next();
+    return NextResponse.next(); // Fallback: allow request on error
   }
 }
 
@@ -185,5 +174,7 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
     '/admin/:path*', // Explicitly match all admin routes
+    '/dashboard/:path*',
+    '/driver-dashboard/:path*',
   ],
 };
