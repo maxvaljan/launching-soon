@@ -716,14 +716,17 @@ export default function PlaceOrderPage() {
               ))}
 
               {/* Add Stop button - Changed colors */}
-              <button className="flex items-center text-maxmove-navy mt-2" onClick={handleAddStop}>
+              <button
+                className="flex items-center text-maxmove-navy mt-2 text-sm"
+                onClick={handleAddStop}
+              >
                 <svg
-                  width="20"
-                  height="20"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="mr-2"
+                  className="mr-1.5"
                 >
                   <path
                     d="M12 5V19"
