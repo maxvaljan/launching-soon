@@ -171,14 +171,14 @@ const VehicleCard = ({
 
   return (
     <div
-      className={`cursor-pointer group relative rounded-md border p-4 text-center transition-all h-[160px] flex flex-col justify-between ${
+      className={`cursor-pointer group relative rounded-md border p-4 text-center transition-all aspect-square flex flex-col justify-between ${
         isSelected
           ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme'
           : 'border-gray-200 hover:border-maxmove-gray hover:shadow-sm'
       }`}
       onClick={() => onSelect(vehicle.id)}
     >
-      <div className="relative h-[95px] flex items-center justify-center">
+      <div className="relative flex-1 flex items-center justify-center">
         <Image
           src={imageUrl}
           alt={vehicle.name}
@@ -563,26 +563,26 @@ export default function PlaceOrderPage() {
   return (
     <div className="flex flex-col lg:flex-row h-screen">
       {/* Left Side - Order Form */}
-      <div className="lg:w-1/2 p-6 flex flex-col h-full overflow-hidden">
-        <div className="flex justify-between items-center mb-6">
+      <div className="lg:w-1/2 p-4 flex flex-col h-full overflow-hidden">
+        <div className="flex justify-between items-center mb-3">
           <Label className="text-sm text-gray-500 font-medium">ROUTE (MAX. 20 STOPS)</Label>
 
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="bg-white border-maxmove-gray">
-                Import Addresses <ChevronDown className="ml-2 w-4 h-4" />
+              <Button variant="outline" className="bg-white border-maxmove-gray h-8 px-3 py-1">
+                Import Addresses <ChevronDown className="ml-2 w-3 h-3" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-56 p-0" align="end">
               <div className="flex flex-col">
                 <Button
                   variant="ghost"
-                  className="justify-start text-left h-10"
+                  className="justify-start text-left h-8"
                   onClick={handleOpenPastOrders}
                 >
                   Load from Past Orders
                 </Button>
-                <Button variant="ghost" className="justify-start text-left h-10">
+                <Button variant="ghost" className="justify-start text-left h-8">
                   Import CSV
                 </Button>
               </div>
@@ -590,15 +590,15 @@ export default function PlaceOrderPage() {
           </Popover>
         </div>
 
-        <div className="flex-1 overflow-auto pr-2 pb-4 custom-scrollbar space-y-6">
+        <div className="flex-1 overflow-auto pr-2 pb-4 custom-scrollbar space-y-4">
           {/* Route Section */}
           <div>
-            <div className="border border-gray-200 rounded-lg p-6 relative">
+            <div className="border border-gray-200 rounded-lg p-4 relative">
               {stops.map((stop, index) => (
-                <div key={index} className="relative mb-4">
+                <div key={index} className="relative mb-3">
                   {/* Vertical dotted line connecting stops */}
                   {index < stops.length - 1 && (
-                    <div className="absolute left-[9px] top-[32px] bottom-[-16px] border-l-2 border-dashed border-gray-300 z-0"></div>
+                    <div className="absolute left-[9px] top-[28px] bottom-[-12px] border-l-2 border-dashed border-gray-300 z-0"></div>
                   )}
 
                   <div className="flex items-center relative z-10">
@@ -641,7 +641,7 @@ export default function PlaceOrderPage() {
                                   ? 'Drop-off location'
                                   : 'Mid-stop location'
                             }
-                            className="w-full py-2 bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-gray-400 outline-none text-gray-700 pr-8"
+                            className="w-full py-1.5 bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-gray-400 outline-none text-gray-700 pr-8 text-sm"
                             value={stop.address}
                             onChange={e => handleAddressChange(e.target.value, index)}
                             id={`place-input-${index}`}
@@ -746,17 +746,17 @@ export default function PlaceOrderPage() {
           </div>
 
           {/* Vehicle Type Section */}
-          <div className="space-y-4">
+          <div className="space-y-3 mt-4">
             <Label className="text-sm text-gray-500 font-medium">VEHICLE TYPE</Label>
 
             {isLoadingVehicles ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[1, 2, 3, 4].map(skeleton => (
                   <VehicleSkeleton key={`skeleton-${skeleton}`} />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {vehicleTypes.map(vehicle => (
                   <VehicleCard
                     key={vehicle.id}
@@ -769,10 +769,10 @@ export default function PlaceOrderPage() {
             )}
           </div>
 
-          <div className="pt-4">
+          <div className="pt-3">
             <Button
               onClick={handleCreateOrder}
-              className="w-full h-12 bg-maxmove-navy hover:bg-maxmove-blue text-white"
+              className="w-full h-10 bg-maxmove-navy hover:bg-maxmove-blue text-white"
             >
               Continue to Checkout
             </Button>
