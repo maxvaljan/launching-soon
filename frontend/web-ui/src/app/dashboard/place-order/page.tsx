@@ -227,10 +227,15 @@ const VehicleCard = ({
 
 // Vehicle skeleton loader component
 const VehicleSkeleton = () => (
-  <div className="rounded-md border border-gray-200 p-4 h-[160px] animate-pulse">
-    <div className="bg-gray-200 h-[73px] w-[73px] mx-auto rounded-md mb-2"></div>
-    <div className="bg-gray-200 h-4 w-24 mx-auto rounded-sm mb-2"></div>
-    <div className="bg-gray-200 h-3 w-16 mx-auto rounded-sm"></div>
+  <div className="rounded-md border border-gray-200 p-4 aspect-square animate-pulse">
+    <div className="flex flex-col h-full justify-between">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="bg-gray-200 w-[73px] h-[73px] mx-auto rounded-md"></div>
+      </div>
+      <div>
+        <div className="bg-gray-200 h-4 w-24 mx-auto rounded-sm"></div>
+      </div>
+    </div>
   </div>
 );
 
