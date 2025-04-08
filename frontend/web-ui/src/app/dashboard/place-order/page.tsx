@@ -40,7 +40,7 @@ interface VehicleType {
 // Define google explicitly on the window object for the Autocomplete library
 declare global {
   interface Window {
-    google: any;
+    google: Record<string, unknown>;
   }
 }
 
@@ -261,14 +261,10 @@ export default function PlaceOrderPage() {
     region: 'DE',
     id: 'google-maps-script',
     nonce: '', // Add empty nonce to avoid CSP issues
-    retries: 3, // Add retries to make loading more resilient
   });
   // --- End Google Maps API Loader ---
 
-  useEffect(() => {
-    fetchVehicleTypes();
-  }, [fetchVehicleTypes]);
-
+  // Move fetchVehicleTypes definition before useEffect
   const fetchVehicleTypes = useCallback(async () => {
     setIsLoadingVehicles(true);
     try {
@@ -292,6 +288,10 @@ export default function PlaceOrderPage() {
       setIsLoadingVehicles(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchVehicleTypes();
+  }, [fetchVehicleTypes]);
 
   // --- Autocomplete Handlers ---
   const handleAutocompleteLoad = (autocomplete: google.maps.places.Autocomplete, index: number) => {
@@ -439,10 +439,10 @@ export default function PlaceOrderPage() {
       await response.json();
 
       toast.success('Order created successfully. Looking for available drivers...');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Keep error handling as is for now, including type annotation
       console.error('Error creating order:', error);
-      toast.error(error.message || 'Failed to create order');
+      toast.error(error instanceof Error ? error.message : 'Failed to create order');
     }
   };
 
@@ -480,22 +480,21 @@ export default function PlaceOrderPage() {
 
   if (loadError) {
     console.error('Google Maps API load error:', loadError);
-    
+
     // Log additional information to help debugging
     if (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
       console.log('API key exists but may be invalid or restricted');
     } else {
       console.log('API key is missing in environment variables');
     }
-    
+
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center p-6 max-w-md">
-          <p className="text-red-600 font-medium text-lg mb-2">
-            Error loading map services
-          </p>
+          <p className="text-red-600 font-medium text-lg mb-2">Error loading map services</p>
           <p className="text-gray-600 mb-4">
-            We're having trouble loading the map service. This could be due to a network issue or a configuration problem.
+            We&apos;re having trouble loading the map service. This could be due to a network issue
+            or a configuration problem.
           </p>
           <p className="text-gray-600">
             Please try refreshing the page or contact support if the problem persists.
