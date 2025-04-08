@@ -2,13 +2,8 @@
 
 import { SignInCard } from '@/components/signin/SignInCard';
 
+// This page component now only renders the card.
+// The layout (background, centering) is handled within SignInCard to match SignUpCard.
 export default function SignIn() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-maxmove-50 to-white px-4 py-12">
-      <div className="w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-maxmove-900">Welcome Back</h1>
-        <SignInCard />
-      </div>
-    </div>
-  );
+  return <SignInCard />;
 }
