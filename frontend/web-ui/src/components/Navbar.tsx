@@ -95,50 +95,53 @@ const Navbar = () => {
   const handleSignOut = async () => {
     try {
       setIsMobileMenuOpen(false); // Close mobile menu if open
-      console.log('Signing out...');
+      console.log('Starting sign out process...');
 
-      // 1. First clear all client storage immediately
-      if (typeof window !== 'undefined') {
-        // Clear localStorage
-        localStorage.clear();
-
-        // Clear sessionStorage
-        sessionStorage.clear();
-
-        // Also specifically clear any Supabase or auth related items
-        for (const storage of [localStorage, sessionStorage]) {
-          for (let i = 0; i < storage.length; i++) {
-            const key = storage.key(i);
-            if (
-              key &&
-              (key.startsWith('supabase.') || key.includes('auth') || key.includes('token'))
-            ) {
-              storage.removeItem(key);
-            }
-          }
-        }
-      }
-
-      // 2. Sign out of Supabase Auth
-      await supabase.auth.signOut();
-
-      // 3. Call our backend API to clear server-side session
-      await fetch('/api/auth/logout', {
+      // 1. Call backend API to clear server-side session and cookies FIRST
+      console.log('Calling logout API...');
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Important: include cookies
+        credentials: 'include',
       });
 
-      // 4. Force a hard redirect to sign in page with cache buster
-      const signInUrl = new URL('/signin', window.location.origin);
-      signInUrl.searchParams.set('ts', Date.now().toString()); // Add cache buster
-      window.location.href = signInUrl.toString();
+      console.log('Logout API response status:', response.status);
+      if (!response.ok) {
+        console.error('Logout API call failed:', await response.text());
+        // Continue sign out process even if API fails
+      }
+
+      // 2. Sign out of Supabase Auth on the client
+      console.log('Signing out from Supabase client...');
+      const { error: supabaseError } = await supabase.auth.signOut();
+      if (supabaseError) {
+        console.error('Supabase client sign out error:', supabaseError);
+        // Continue sign out process
+      }
+
+      // 3. Clear all client storage
+      console.log('Clearing client storage...');
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+
+      // 4. Force a complete page reload and redirect to signin page
+      console.log('Redirecting to signin page...');
+      if (typeof window !== 'undefined') {
+        const signInUrl = new URL('/signin', window.location.origin);
+        signInUrl.searchParams.set('ts', Date.now().toString()); // Cache buster
+        window.location.replace(signInUrl.toString());
+      }
     } catch (error) {
-      console.error('Error signing out:', error);
-      // Even if there's an error, force redirect to ensure user is logged out
-      window.location.href = '/signin';
+      console.error('Critical error during sign out process:', error);
+      // Force a hard reload to signin as a last resort
+      if (typeof window !== 'undefined') {
+        console.log('Forcing redirect due to error...');
+        window.location.replace('/signin?error=true');
+      }
     }
   };
 

@@ -33,60 +33,53 @@ export default function DashboardHeader({ isAdmin }: DashboardHeaderProps) {
 
   const handleSignOut = async () => {
     try {
-      // 1. Sign out of Supabase Auth first
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      console.log('Starting sign out process...');
 
-      // 2. Clear all client storage
+      // 1. Call backend API to clear server-side session and cookies FIRST
+      console.log('Calling logout API...');
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      console.log('Logout API response status:', response.status);
+      if (!response.ok) {
+        console.error('Logout API call failed:', await response.text());
+        // Continue sign out process even if API fails,
+        // but prioritize client-side cleanup
+      }
+
+      // 2. Sign out of Supabase Auth on the client
+      console.log('Signing out from Supabase client...');
+      const { error: supabaseError } = await supabase.auth.signOut();
+      if (supabaseError) {
+        console.error('Supabase client sign out error:', supabaseError);
+        // Continue sign out process
+      }
+
+      // 3. Clear all client storage
+      console.log('Clearing client storage...');
       if (typeof window !== 'undefined') {
-        // Clear all storage
         localStorage.clear();
         sessionStorage.clear();
-
-        // Double check for any remaining Supabase or auth related items
-        [localStorage, sessionStorage].forEach(storage => {
-          for (let i = storage.length - 1; i >= 0; i--) {
-            const key = storage.key(i);
-            if (
-              key &&
-              (key.startsWith('supabase.') || key.includes('auth') || key.includes('token'))
-            ) {
-              storage.removeItem(key);
-            }
-          }
-        });
       }
 
-      // 3. Call backend API to clear server-side session
-      try {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-      } catch (apiError) {
-        console.error('API logout error:', apiError);
-        // Continue with logout even if API call fails
-      }
-
-      // 4. Force a complete page reload and redirect
-      // This ensures all React state is cleared
+      // 4. Force a complete page reload and redirect to signin page
+      console.log('Redirecting to signin page...');
       if (typeof window !== 'undefined') {
-        // Add cache buster and force flag
         const signInUrl = new URL('/signin', window.location.origin);
-        signInUrl.searchParams.set('ts', Date.now().toString());
-        signInUrl.searchParams.set('force', 'true');
-
-        // Use replace instead of href to prevent back navigation
+        signInUrl.searchParams.set('ts', Date.now().toString()); // Cache buster
         window.location.replace(signInUrl.toString());
       }
     } catch (error) {
-      console.error('Error signing out:', error);
-      // Force a hard reload to signin even if there's an error
+      console.error('Critical error during sign out process:', error);
+      // Force a hard reload to signin as a last resort
       if (typeof window !== 'undefined') {
-        window.location.replace('/signin');
+        console.log('Forcing redirect due to error...');
+        window.location.replace('/signin?error=true');
       }
     }
   };
