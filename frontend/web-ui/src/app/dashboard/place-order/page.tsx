@@ -72,17 +72,18 @@ const getVehicleImageUrl = (vehicle: VehicleType): string => {
 
 // Helper function to get custom image size based on vehicle type
 const getVehicleImageSize = (vehicleName: string): number => {
-  // Default size is 88px
-  const defaultSize = 88;
+  // Default size increased by 16% from 88px to 102px
+  const defaultSize = 102;
 
-  // Custom sizes for specific vehicles
+  // Custom sizes for specific vehicles, maintaining their relative size differences
+  // but with the new 16% larger baseline
   switch (vehicleName) {
     case 'Car':
-      return Math.round(defaultSize * 1.25); // Increased from 15% to 25% larger
+      return Math.round(defaultSize * 1.25); // 25% larger than new default
     case '2,7m Van':
     case '3,3m Van':
     case 'Towing':
-      return Math.round(defaultSize * 1.2); // Increased from 10% to 20% larger
+      return Math.round(defaultSize * 1.2); // 20% larger than new default
     default:
       return defaultSize;
   }
