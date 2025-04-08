@@ -99,32 +99,39 @@ const Map = memo(
     }, [pickupLat, pickupLng, dropoffLat, dropoffLng, stops]);
 
     useEffect(() => {
-      if (!map) return;
+      if (!map || !isLoaded || !window.google) return;
 
       const hasPickup = pickupLat !== undefined && pickupLng !== undefined;
       const hasDropoff = dropoffLat !== undefined && dropoffLng !== undefined;
 
-      if (hasPickup && hasDropoff) {
-        const bounds = new window.google.maps.LatLngBounds();
-        bounds.extend(new window.google.maps.LatLng(pickupLat!, pickupLng!));
-        bounds.extend(new window.google.maps.LatLng(dropoffLat!, dropoffLng!));
-        stops?.forEach(stop => {
-          if (stop.latitude && stop.longitude) {
-            bounds.extend(new window.google.maps.LatLng(stop.latitude, stop.longitude));
-          }
-        });
-        map.fitBounds(bounds, 100);
-      } else if (hasPickup) {
-        map.panTo({ lat: pickupLat!, lng: pickupLng! });
-        map.setZoom(14);
-      } else if (hasDropoff) {
-        map.panTo({ lat: dropoffLat!, lng: dropoffLng! });
-        map.setZoom(14);
-      } else {
+      try {
+        if (hasPickup && hasDropoff) {
+          const bounds = new window.google.maps.LatLngBounds();
+          bounds.extend(new window.google.maps.LatLng(pickupLat!, pickupLng!));
+          bounds.extend(new window.google.maps.LatLng(dropoffLat!, dropoffLng!));
+          stops?.forEach(stop => {
+            if (stop.latitude && stop.longitude) {
+              bounds.extend(new window.google.maps.LatLng(stop.latitude, stop.longitude));
+            }
+          });
+          map.fitBounds(bounds, 100);
+        } else if (hasPickup) {
+          map.panTo({ lat: pickupLat!, lng: pickupLng! });
+          map.setZoom(14);
+        } else if (hasDropoff) {
+          map.panTo({ lat: dropoffLat!, lng: dropoffLng! });
+          map.setZoom(14);
+        } else {
+          map.panTo(defaultCenter);
+          map.setZoom(12);
+        }
+      } catch (error) {
+        console.error('Error manipulating map bounds:', error);
+        // Fallback to center map on default location
         map.panTo(defaultCenter);
         map.setZoom(12);
       }
-    }, [map, pickupLat, pickupLng, dropoffLat, dropoffLng, stops]);
+    }, [map, pickupLat, pickupLng, dropoffLat, dropoffLng, stops, isLoaded]);
 
     if (!isLoaded) {
       return (
@@ -168,7 +175,7 @@ const Map = memo(
               key={`${stop.type}-${index}`}
               position={{ lat: stop.latitude, lng: stop.longitude }}
               icon={{
-                path: window.google.maps.SymbolPath.CIRCLE,
+                path: window.google?.maps?.SymbolPath?.CIRCLE || 0,
                 fillColor: bgColor,
                 fillOpacity: 1,
                 strokeColor: '#ffffff',
@@ -194,7 +201,7 @@ const Map = memo(
                 destination: { lat: dropoffLat, lng: dropoffLng },
                 origin: { lat: pickupLat, lng: pickupLng },
                 waypoints: waypoints,
-                travelMode: window.google.maps.TravelMode.DRIVING,
+                travelMode: window.google?.maps?.TravelMode?.DRIVING || 'DRIVING',
               }}
               callback={directionsCallback}
             />

@@ -253,13 +253,15 @@ export default function PlaceOrderPage() {
 
   // --- Google Maps API Loader ---
   const { isLoaded, loadError } = useJsApiLoader({
-    // Use environment variable directly
+    // Use environment variable directly - add fallback to avoid errors
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries: ['places'],
     preventGoogleFontsLoading: true,
     language: 'en',
     region: 'DE',
     id: 'google-maps-script',
+    nonce: '', // Add empty nonce to avoid CSP issues
+    retries: 3, // Add retries to make loading more resilient
   });
   // --- End Google Maps API Loader ---
 
@@ -303,27 +305,32 @@ export default function PlaceOrderPage() {
       return;
     }
 
-    const place = autocomplete.getPlace();
+    try {
+      const place = autocomplete.getPlace();
 
-    if (!place || !place.geometry || !place.geometry.location || !place.formatted_address) {
-      console.warn('Autocomplete returned place without geometry or formatted address:', place);
-      return;
+      if (!place || !place.geometry || !place.geometry.location || !place.formatted_address) {
+        console.warn('Autocomplete returned place without geometry or formatted address:', place);
+        return;
+      }
+
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      const address = place.formatted_address;
+
+      console.log(`Place selected for index ${index}:`, { address, lat, lng });
+
+      const newStops = [...stops];
+      newStops[index] = {
+        ...newStops[index],
+        address: address,
+        latitude: lat,
+        longitude: lng,
+      };
+      setStops(newStops);
+    } catch (error) {
+      console.error('Error selecting place:', error);
+      toast.error('Error processing location selection. Please try again.');
     }
-
-    const lat = place.geometry.location.lat();
-    const lng = place.geometry.location.lng();
-    const address = place.formatted_address;
-
-    console.log(`Place selected for index ${index}:`, { address, lat, lng });
-
-    const newStops = [...stops];
-    newStops[index] = {
-      ...newStops[index],
-      address: address,
-      latitude: lat,
-      longitude: lng,
-    };
-    setStops(newStops);
   };
   // --- End Autocomplete Handlers ---
 
@@ -473,11 +480,27 @@ export default function PlaceOrderPage() {
 
   if (loadError) {
     console.error('Google Maps API load error:', loadError);
+    
+    // Log additional information to help debugging
+    if (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      console.log('API key exists but may be invalid or restricted');
+    } else {
+      console.log('API key is missing in environment variables');
+    }
+    
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-red-600">
-          Error loading map services. Please check your API key configuration or network connection.
-        </p>
+        <div className="text-center p-6 max-w-md">
+          <p className="text-red-600 font-medium text-lg mb-2">
+            Error loading map services
+          </p>
+          <p className="text-gray-600 mb-4">
+            We're having trouble loading the map service. This could be due to a network issue or a configuration problem.
+          </p>
+          <p className="text-gray-600">
+            Please try refreshing the page or contact support if the problem persists.
+          </p>
+        </div>
       </div>
     );
   }
