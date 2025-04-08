@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import Map from '@/components/Map';
@@ -9,7 +9,7 @@ import { ChevronDown } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { PopoverTrigger, Popover, PopoverContent } from '@/components/ui/popover';
 import Image from 'next/image';
-import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+import { useJsApiLoader } from '@react-google-maps/api';
 
 // New order management components
 import PastOrdersDialog from '@/components/order/PastOrdersDialog';
@@ -230,6 +230,9 @@ const VehicleSkeleton = () => (
   </div>
 );
 
+// Define libraries array outside component to prevent reloading
+const GOOGLE_MAPS_LIBRARIES: 'places'[] = ['places'];
+
 export default function PlaceOrderPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
@@ -240,8 +243,7 @@ export default function PlaceOrderPage() {
   ]);
   const [pastOrdersOpen, setPastOrdersOpen] = useState(false);
   const [pastOrders, setPastOrders] = useState<PastOrder[]>([]);
-  const [additionalServices /* setAdditionalServices */] = useState({
-    // Commented out unused setter
+  const [additionalServices] = useState({
     standards: false,
     secureZone: false,
     refrigeratedChilled: false,
@@ -249,18 +251,16 @@ export default function PlaceOrderPage() {
     tailboard: false,
     doorToDoor: false,
   });
-  const autocompleteRefs = useRef<(google.maps.places.Autocomplete | null)[]>([]);
 
   // --- Google Maps API Loader ---
   const { isLoaded, loadError } = useJsApiLoader({
-    // Use environment variable directly - add fallback to avoid errors
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places'],
+    libraries: GOOGLE_MAPS_LIBRARIES,
     preventGoogleFontsLoading: true,
     language: 'en',
     region: 'DE',
     id: 'google-maps-script',
-    nonce: '', // Add empty nonce to avoid CSP issues
+    nonce: '',
   });
   // --- End Google Maps API Loader ---
 
@@ -293,31 +293,17 @@ export default function PlaceOrderPage() {
     fetchVehicleTypes();
   }, [fetchVehicleTypes]);
 
-  // --- Autocomplete Handlers ---
-  const handleAutocompleteLoad = (autocomplete: google.maps.places.Autocomplete, index: number) => {
-    autocompleteRefs.current[index] = autocomplete;
-  };
-
-  const handlePlaceSelect = (index: number) => {
-    const autocomplete = autocompleteRefs.current[index];
-    if (!autocomplete) {
-      console.error('Autocomplete instance not found for index:', index);
-      return;
-    }
-
-    try {
-      const place = autocomplete.getPlace();
-
-      if (!place || !place.geometry || !place.geometry.location || !place.formatted_address) {
-        console.warn('Autocomplete returned place without geometry or formatted address:', place);
+  // Handle place selection
+  const handlePlaceSelect = useCallback(
+    (index: number, place: google.maps.places.PlaceResult) => {
+      if (!place.geometry?.location || !place.formatted_address) {
+        console.warn('Place selected without geometry or formatted address:', place);
         return;
       }
 
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
       const address = place.formatted_address;
-
-      console.log(`Place selected for index ${index}:`, { address, lat, lng });
 
       const newStops = [...stops];
       newStops[index] = {
@@ -327,12 +313,23 @@ export default function PlaceOrderPage() {
         longitude: lng,
       };
       setStops(newStops);
-    } catch (error) {
-      console.error('Error selecting place:', error);
-      toast.error('Error processing location selection. Please try again.');
-    }
-  };
-  // --- End Autocomplete Handlers ---
+    },
+    [stops]
+  );
+
+  // Add event listener for place selection
+  useEffect(() => {
+    const handlePlaceSelectedEvent = ((event: CustomEvent) => {
+      const { index, place } = event.detail;
+      handlePlaceSelect(index, place);
+    }) as EventListener;
+
+    window.addEventListener('place_selected', handlePlaceSelectedEvent);
+
+    return () => {
+      window.removeEventListener('place_selected', handlePlaceSelectedEvent);
+    };
+  }, [handlePlaceSelect]);
 
   // Handles manual input changes
   const handleAddressChange = (value: string, index: number) => {
@@ -572,16 +569,10 @@ export default function PlaceOrderPage() {
                       )}
                     </div>
 
-                    {/* Input field wrapped with Autocomplete */}
+                    {/* Replace Autocomplete with PlaceAutocompleteElement */}
                     <div className="flex-1 relative">
                       {isLoaded ? (
-                        <Autocomplete
-                          onLoad={autocomplete => handleAutocompleteLoad(autocomplete, index)}
-                          onPlaceChanged={() => handlePlaceSelect(index)}
-                          options={{
-                            fields: ['formatted_address', 'geometry.location', 'name'],
-                          }}
-                        >
+                        <div className="w-full">
                           <input
                             type="text"
                             placeholder={
@@ -594,18 +585,36 @@ export default function PlaceOrderPage() {
                             className="w-full py-2 bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-gray-400 outline-none text-gray-700 pr-8"
                             value={stop.address}
                             onChange={e => handleAddressChange(e.target.value, index)}
+                            id={`place-input-${index}`}
                           />
-                        </Autocomplete>
+                          <script
+                            dangerouslySetInnerHTML={{
+                              __html: `
+                                function initPlaceAutocomplete${index}() {
+                                  const input = document.getElementById('place-input-${index}');
+                                  const options = {
+                                    fields: ['formatted_address', 'geometry', 'name'],
+                                    strictBounds: false,
+                                  };
+                                  const autocomplete = new google.maps.places.Autocomplete(input, options);
+                                  autocomplete.addListener('place_changed', () => {
+                                    const place = autocomplete.getPlace();
+                                    window.dispatchEvent(new CustomEvent('place_selected', {
+                                      detail: { index: ${index}, place }
+                                    }));
+                                  });
+                                }
+                                if (window.google && window.google.maps) {
+                                  initPlaceAutocomplete${index}();
+                                }
+                              `,
+                            }}
+                          />
+                        </div>
                       ) : (
                         <input
                           type="text"
-                          placeholder={
-                            stop.type === 'pickup'
-                              ? 'Loading address input...'
-                              : stop.type === 'dropoff'
-                                ? 'Loading address input...'
-                                : 'Loading address input...'
-                          }
+                          placeholder="Loading address input..."
                           className="w-full py-2 bg-transparent border-0 border-b border-gray-200 focus:ring-0 focus:border-gray-400 outline-none text-gray-700 pr-8"
                           disabled
                         />
