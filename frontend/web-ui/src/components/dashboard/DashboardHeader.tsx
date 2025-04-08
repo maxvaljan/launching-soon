@@ -33,14 +33,19 @@ export default function DashboardHeader({ isAdmin }: DashboardHeaderProps) {
 
   const handleSignOut = async () => {
     try {
-      // 1. Clear all client storage
+      // 1. Sign out of Supabase Auth first
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // 2. Clear all client storage
       if (typeof window !== 'undefined') {
+        // Clear all storage
         localStorage.clear();
         sessionStorage.clear();
 
-        // Specifically clear any Supabase or auth related items
-        for (const storage of [localStorage, sessionStorage]) {
-          for (let i = 0; i < storage.length; i++) {
+        // Double check for any remaining Supabase or auth related items
+        [localStorage, sessionStorage].forEach(storage => {
+          for (let i = storage.length - 1; i >= 0; i--) {
             const key = storage.key(i);
             if (
               key &&
@@ -49,29 +54,40 @@ export default function DashboardHeader({ isAdmin }: DashboardHeaderProps) {
               storage.removeItem(key);
             }
           }
-        }
+        });
       }
 
-      // 2. Sign out of Supabase Auth
-      await supabase.auth.signOut();
-
       // 3. Call backend API to clear server-side session
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+      } catch (apiError) {
+        console.error('API logout error:', apiError);
+        // Continue with logout even if API call fails
+      }
 
-      // 4. Force a hard redirect with cache buster
-      const signInUrl = new URL('/signin', window.location.origin);
-      signInUrl.searchParams.set('ts', Date.now().toString());
-      window.location.href = signInUrl.toString();
+      // 4. Force a complete page reload and redirect
+      // This ensures all React state is cleared
+      if (typeof window !== 'undefined') {
+        // Add cache buster and force flag
+        const signInUrl = new URL('/signin', window.location.origin);
+        signInUrl.searchParams.set('ts', Date.now().toString());
+        signInUrl.searchParams.set('force', 'true');
+
+        // Use replace instead of href to prevent back navigation
+        window.location.replace(signInUrl.toString());
+      }
     } catch (error) {
       console.error('Error signing out:', error);
-      // Force redirect even if error occurs
-      window.location.href = '/signin';
+      // Force a hard reload to signin even if there's an error
+      if (typeof window !== 'undefined') {
+        window.location.replace('/signin');
+      }
     }
   };
 
