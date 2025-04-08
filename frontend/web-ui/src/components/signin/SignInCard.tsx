@@ -9,68 +9,52 @@ export const SignInCard = () => {
   const router = useRouter();
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-center bg-gray-100 overflow-hidden">
-      {/* Add MaxMove illustration if available, similar to Lalamove */}
-      {/* <div className="absolute left-0 bottom-0 w-1/3"> */}
-      {/*   <Image src="/path/to/maxmove-illustration.svg" alt="MaxMove Illustration" width={500} height={500} /> */}
-      {/* </div> */}
-
-      {/* Centered login card - Increased width, removed border, enhanced shadow */}
-      <div className="z-10 bg-white shadow-2xl rounded-lg p-8 sm:p-10 w-full max-w-lg mb-4">
-        <div className="flex justify-center mb-8">
-          <div className="cursor-pointer" onClick={() => router.push('/')}>
-            <Image
-              src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20White.png"
-              alt="MaxMove Logo"
-              width={150}
-              height={40}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <SignInForm />
-
-          {/* Divider */}
-          <div className="relative text-center my-4">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or</span>
-            </div>
-          </div>
-
-          <GoogleSignInButton />
-
-          {/* Create account section - updated colors and weight */}
-          <div className="text-sm text-center mt-4">
-            <span className="text-maxmove-navy text-base">New to Maxmove? </span>
-            <a
-              href="/account-type"
-              onClick={e => {
-                e.preventDefault();
-                router.push('/account-type');
-              }}
-              className="font-bold text-base text-[#294374]"
-            >
-              Create a free account
-            </a>
-          </div>
+    <div className="bg-white shadow-xl rounded-lg p-8 sm:p-10 w-full">
+      {/* Card content starts here */}
+      <div className="flex justify-center mb-8">
+        <div className="cursor-pointer" onClick={() => router.push('/')}>
+          <Image
+            src="https://xuehdmslktlsgpoexilo.supabase.co/storage/v1/object/public/pics//Maxmove%20Logo%20White.png"
+            alt="MaxMove Logo"
+            width={150}
+            height={40}
+            priority
+          />
         </div>
       </div>
 
-      {/* Terms and privacy links - ensure grey color */}
-      <div className="text-sm text-center mt-4">
-        <a href="/terms" className="text-gray-500 hover:text-gray-600">
-          Terms & Conditions
-        </a>
-        <span className="text-gray-500 mx-1">•</span>
-        <a href="/privacy" className="text-gray-500 hover:text-gray-600">
-          Privacy Policy
-        </a>
+      <div className="flex flex-col gap-5">
+        <SignInForm />
+
+        {/* Divider */}
+        <div className="relative text-center my-4">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton />
+
+        {/* Create account section */}
+        <div className="text-sm text-center mt-4">
+          <span className="text-maxmove-navy text-base">New to Maxmove? </span>
+          <a
+            href="/account-type"
+            onClick={e => {
+              e.preventDefault();
+              router.push('/account-type');
+            }}
+            className="font-bold text-base text-[#294374] hover:underline"
+          >
+            Create a free account
+          </a>
+        </div>
       </div>
+
+      {/* Removed Terms and Privacy links from here - they should be outside the card */}
     </div>
   );
 };
