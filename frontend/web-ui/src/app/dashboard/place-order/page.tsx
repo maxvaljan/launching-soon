@@ -174,7 +174,7 @@ const VehicleCard = ({
     <div
       className={`cursor-pointer group relative rounded-md border p-4 text-center transition-all aspect-square flex flex-col justify-between ${
         isSelected
-          ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-creme'
+          ? 'border-2 border-maxmove-navy shadow-md bg-maxmove-navy text-maxmove-creme'
           : 'border-gray-200 hover:border-maxmove-gray hover:shadow-sm'
       }`}
       onClick={() => onSelect(vehicle.id)}
@@ -208,18 +208,26 @@ const VehicleCard = ({
       </div>
 
       <div>
-        <p className="font-medium text-sm">{vehicle.name}</p>
+        <p className="font-bold text-sm">{vehicle.name}</p>
       </div>
 
       {/* Hover overlay with detailed information */}
-      <div className="absolute inset-0 bg-white bg-opacity-95 rounded-md p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+      <div
+        className={`absolute inset-0 ${isSelected ? 'bg-maxmove-navy' : 'bg-white'} bg-opacity-95 rounded-md p-4 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none ${isSelected ? 'text-maxmove-creme' : ''}`}
+      >
         <div className="text-center">
-          <p className="font-medium text-sm mb-1">{vehicle.name}</p>
-          <p className="text-xs text-gray-500">{formattedDimensions}</p>
-          <p className="text-xs text-gray-500 mb-2">{formattedWeight}</p>
+          <p className="font-bold text-sm mb-1">{vehicle.name}</p>
+          <p className={`text-xs ${isSelected ? 'text-maxmove-creme/80' : 'text-gray-500'}`}>
+            {formattedDimensions}
+          </p>
+          <p className={`text-xs ${isSelected ? 'text-maxmove-creme/80' : 'text-gray-500'} mb-2`}>
+            {formattedWeight}
+          </p>
         </div>
 
-        <div className="text-xs text-gray-600 text-center">
+        <div
+          className={`text-xs ${isSelected ? 'text-maxmove-creme/90' : 'text-gray-600'} text-center`}
+        >
           <p>{formattedDescription}</p>
         </div>
       </div>
