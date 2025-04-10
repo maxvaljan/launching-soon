@@ -202,6 +202,65 @@ export const getActiveVehicles = async () => {
   return api.get('/vehicles/types/active');
 };
 
+/**
+ * Helper function to generate vehicle image URL from a path
+ * @param iconPath - Path to the vehicle image in Supabase storage
+ * @returns Full URL to the vehicle image
+ */
+export const getVehicleImageUrl = (iconPath: string | null | undefined): string | null => {
+  if (!iconPath) return null;
+  
+  // Get Supabase URL from environment or use default
+  const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || 'https://xuehdmslktlsgpoexilo.supabase.co';
+  
+  // Remove leading slash if present
+  const cleanPath = iconPath.startsWith('/') ? iconPath.substring(1) : iconPath;
+  
+  // Use the proper storage bucket name from config or default to 'vehicles'
+  // Check available buckets: 'vehicles', 'pics', 'images'
+  let storageBucket = 'vehicles';
+  
+  // If path already contains bucket info, extract it
+  if (cleanPath.includes('/')) {
+    const parts = cleanPath.split('/');
+    if (parts.length > 1) {
+      // If the path has format like "bucket_name/file.png", extract the bucket name
+      const possibleBucket = parts[0];
+      if (['vehicles', 'pics', 'images'].includes(possibleBucket)) {
+        storageBucket = possibleBucket;
+        // If bucket is in the path, remove it from cleanPath
+        parts.shift();
+        return `${supabaseUrl}/storage/v1/object/public/${storageBucket}/${parts.join('/')}`;
+      }
+    }
+  }
+  
+  // Check if the path looks like a full URL already
+  if (cleanPath.startsWith('http')) {
+    return cleanPath;
+  }
+  
+  // Map vehicle names to image files (similar to web UI)
+  const vehicleImageMap: { [key: string]: string } = {
+    'Courier': 'courier1.png',
+    'Car': 'car1.png',
+    'Compact Van': 'kangoo1.png',
+    '2,7m Van': 'minivan1.png',
+    '3,3m Van': 'van1.png',
+    '4,3m Lorry': 'lorry1.png',
+    '7,5m Lorry': 'lorry1.png',
+    'Towing': 'towing1.png',
+  };
+  
+  // If cleanPath matches a known image name, use it directly
+  if (Object.values(vehicleImageMap).includes(cleanPath)) {
+    return `${supabaseUrl}/storage/v1/object/public/${storageBucket}/${cleanPath}`;
+  }
+  
+  // Otherwise, assume cleanPath is the complete path after the bucket
+  return `${supabaseUrl}/storage/v1/object/public/${storageBucket}/${cleanPath}`;
+};
+
 // Payment API methods
 export const addPaymentMethod = async (paymentMethodId: string) => {
   return api.post('/payment/methods', { paymentMethodId });

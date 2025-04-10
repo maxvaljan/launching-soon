@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, SafeAreaView, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { OrderStops, Stop } from '@/components/OrderStops';
 import { VehicleCard } from '@/components/VehicleCard';
-import { MotorcycleSvg, CarSvg, VanSvg, TruckSvg } from '@/assets/images/vehicles';
+import { VehicleImage } from '@/components/VehicleImage';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 import { getActiveVehicles } from '@/services/api';
@@ -14,7 +14,10 @@ interface Vehicle {
   name: string;
   description: string;
   category?: string;
-  icon_path: string | null;
+  icon_path?: string | null;
+  custom_icon_url?: string | null;
+  svg_icon?: string | null;
+  display_order?: number;
 }
 
 export default function HomeScreen() {
@@ -39,7 +42,17 @@ export default function HomeScreen() {
         const response = await getActiveVehicles();
         
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          setVehicles(response.data.data);
+          // Sort vehicles by display_order if available, then by name
+          const sortedVehicles = [...response.data.data].sort((a, b) => {
+            // First sort by display_order if available
+            if (a.display_order !== undefined && b.display_order !== undefined) {
+              return a.display_order - b.display_order;
+            }
+            // Then sort by name
+            return (a.name || '').localeCompare(b.name || '');
+          });
+          
+          setVehicles(sortedVehicles);
         } else {
           console.error('Unexpected API response structure:', response.data);
           setVehicles([]);
@@ -115,35 +128,8 @@ export default function HomeScreen() {
             </View>
           ) : vehicles && vehicles.length > 0 ? (
             vehicles.map(vehicle => {
-              let icon: React.ReactNode;
-              const supabaseUrl = "https://xuehdmslktlsgpoexilo.supabase.co"; // <-- Use actual Supabase URL
-              const storageBucket = "pics"; // Assuming the bucket is named 'pics'
-              let iconUrl = null;
-              if (vehicle.icon_path && supabaseUrl) {
-                const path = vehicle.icon_path.startsWith('/') 
-                             ? vehicle.icon_path.substring(1) 
-                             : vehicle.icon_path;
-                iconUrl = `${supabaseUrl}/storage/v1/object/public/${storageBucket}/${path}`;
-              }
-              
-              if (iconUrl) {
-                icon = <Image 
-                         source={{ uri: iconUrl }} 
-                         style={styles.vehicleIcon} 
-                         resizeMode="contain"
-                       />;
-              } else {
-                const typeName = (vehicle.category || vehicle.name || '').toLowerCase();
-                if (typeName.includes('motorcycle') || typeName.includes('courier')) {
-                  icon = <MotorcycleSvg style={styles.vehicleIcon} />;
-                } else if (typeName.includes('van')) {
-                  icon = <VanSvg style={styles.vehicleIcon} />;
-                } else if (typeName.includes('truck') || typeName.includes('lorry')) {
-                  icon = <TruckSvg style={styles.vehicleIcon} />;
-                } else {
-                  icon = <CarSvg style={styles.vehicleIcon} />;
-                }
-              }
+              // Use the new VehicleImage component that handles all the loading logic and fallbacks
+              const icon = <VehicleImage vehicle={vehicle} style={styles.vehicleIcon} />;
               
               return (
                 <VehicleCard

@@ -39,6 +39,8 @@ module.exports = {
     },
     extra: {
       apiUrl: process.env.EXPO_PUBLIC_API_URL || "https://launching-soon-production.up.railway.app/api",
+      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || "https://xuehdmslktlsgpoexilo.supabase.co",
+      storageVehiclesBucket: "vehicles",
       router: {
         origin: false
       },

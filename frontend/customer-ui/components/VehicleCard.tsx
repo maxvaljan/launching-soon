@@ -24,12 +24,24 @@ export function VehicleCard({
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
 
-  // Merge the styles instead of using an array
+  // Update the styling to match web UI with navy background when selected
   const cardStyle: ViewStyle = {
     ...styles.card,
-    borderColor: selected ? colors.accent : colors.border,
+    ...(selected 
+      ? { 
+          backgroundColor: '#002147', // navy background when selected
+          borderColor: '#002147',
+        } 
+      : { 
+          borderColor: colors.border,
+          backgroundColor: colors.card
+        }),
     ...(style || {})
   };
+  
+  // Text colors based on selection state
+  const titleColor = selected ? '#f1ebdb' : colors.text; // creme color when selected
+  const descriptionColor = selected ? 'rgba(241, 235, 219, 0.8)' : colors.grayText; // semi-transparent creme when selected
 
   return (
     <Card
@@ -40,9 +52,9 @@ export function VehicleCard({
       <View style={styles.container}>
         <View style={styles.iconContainer}>{icon}</View>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
           {description && (
-            <Text style={[styles.description, { color: colors.grayText }]}>
+            <Text style={[styles.description, { color: descriptionColor }]}>
               {description}
             </Text>
           )}
