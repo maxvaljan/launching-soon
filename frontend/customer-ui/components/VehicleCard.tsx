@@ -8,6 +8,8 @@ interface VehicleCardProps {
   icon: React.ReactNode;
   title: string;
   description?: string;
+  dimensions?: string;
+  maxWeight?: string;
   selected?: boolean;
   onPress: () => void;
   style?: ViewStyle;
@@ -17,6 +19,8 @@ export function VehicleCard({
   icon,
   title,
   description,
+  dimensions,
+  maxWeight,
   selected = false,
   onPress,
   style,
@@ -27,21 +31,23 @@ export function VehicleCard({
   // Update the styling to match web UI with navy background when selected
   const cardStyle: ViewStyle = {
     ...styles.card,
-    ...(selected 
-      ? { 
+    ...(selected
+      ? {
           backgroundColor: '#002147', // navy background when selected
           borderColor: '#002147',
-        } 
-      : { 
+        }
+      : {
           borderColor: colors.border,
-          backgroundColor: colors.card
+          backgroundColor: colors.card,
         }),
-    ...(style || {})
+    ...(style || {}),
   };
-  
+
   // Text colors based on selection state
   const titleColor = selected ? '#f1ebdb' : colors.text; // creme color when selected
-  const descriptionColor = selected ? 'rgba(241, 235, 219, 0.8)' : colors.grayText; // semi-transparent creme when selected
+  const descriptionColor = selected
+    ? 'rgba(241, 235, 219, 0.8)'
+    : colors.grayText; // semi-transparent creme when selected
 
   return (
     <Card
@@ -57,6 +63,21 @@ export function VehicleCard({
             <Text style={[styles.description, { color: descriptionColor }]}>
               {description}
             </Text>
+          )}
+          {/* Display additional information if available */}
+          {(dimensions || maxWeight) && (
+            <View style={styles.specsContainer}>
+              {dimensions && (
+                <Text style={[styles.specs, { color: descriptionColor }]}>
+                  {dimensions} m
+                </Text>
+              )}
+              {maxWeight && (
+                <Text style={[styles.specs, { color: descriptionColor }]}>
+                  {maxWeight} kg
+                </Text>
+              )}
+            </View>
           )}
         </View>
       </View>
@@ -86,5 +107,13 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     marginTop: 2,
+  },
+  specsContainer: {
+    flexDirection: 'row',
+    marginTop: 4,
+  },
+  specs: {
+    fontSize: 12,
+    marginRight: 8,
   },
 });
