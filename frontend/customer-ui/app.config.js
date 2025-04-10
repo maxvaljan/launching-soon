@@ -42,7 +42,11 @@ module.exports = {
       supabaseUrl:
         process.env.EXPO_PUBLIC_SUPABASE_URL ||
         'https://xuehdmslktlsgpoexilo.supabase.co',
+      supabaseAnonKey: 
+        process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1ZWhkbXNsa3Rsc2dwb2V4aWxvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ3MjA4ODIsImV4cCI6MjAyMDI5Njg4Mn0.jEBkLbuU9bv4g__Jl5O5e_8rASNKJM5FNz-aceRvP1I',
       storageVehiclesBucket: 'vehicles',
+      useDirectSupabase: true,
       router: {
         origin: false,
       },

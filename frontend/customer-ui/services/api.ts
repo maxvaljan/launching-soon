@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import { getActiveVehicleTypesFromSupabase } from './supabase';
 
 // Set base URL based on environment
 const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000/api';
@@ -233,15 +234,39 @@ const mockVehicles = [
 ];
 
 /**
- * Fetch active vehicle types with proper error handling
+ * Fetch active vehicle types using the most reliable method available
  * @returns Promise with vehicle data
  */
 export const getActiveVehicles = async () => {
+  // Check if we should use direct Supabase access (preferred method)
+  const useDirectSupabase = Constants.expoConfig?.extra?.useDirectSupabase;
+  
+  if (useDirectSupabase) {
+    try {
+      // Try to fetch directly from Supabase (like web UI does)
+      console.info('Fetching vehicles directly from Supabase');
+      const supabaseResponse = await getActiveVehicleTypesFromSupabase();
+      
+      // Format response to match expected API response structure
+      return {
+        data: supabaseResponse,
+        status: 200,
+        statusText: 'OK (Supabase Direct)',
+        headers: {},
+        config: {},
+      };
+    } catch (supabaseError) {
+      console.warn('Failed to fetch from Supabase directly:', supabaseError);
+      // Fall through to API methods if Supabase direct fails
+    }
+  }
+  
+  // Fall back to API methods if direct Supabase fails or is disabled
   try {
-    // Use the same endpoint pattern as web UI - with query parameter instead of separate endpoint
+    // First try the web UI pattern - query parameter
     const response = await api.get('/vehicles/types', {
       params: { active: true },
-      timeout: 10000 // 10 second timeout
+      timeout: 8000 // 8 second timeout
     });
     return response;
   } catch (error) {
@@ -252,15 +277,13 @@ export const getActiveVehicles = async () => {
         error.response?.data || 'No response data'
       );
       
-      // Try fallback URL pattern if we get a 404 or 502
-      if (error.response?.status === 404 || error.response?.status === 502) {
-        try {
-          console.info('Trying fallback endpoint pattern /vehicles/types/active');
-          const fallbackResponse = await api.get('/vehicles/types/active', { timeout: 8000 });
-          return fallbackResponse;
-        } catch (fallbackError) {
-          console.warn('Fallback API call also failed, using mock data');
-        }
+      // Try original URL pattern as second fallback
+      try {
+        console.info('Trying fallback endpoint pattern /vehicles/types/active');
+        const fallbackResponse = await api.get('/vehicles/types/active', { timeout: 5000 });
+        return fallbackResponse;
+      } catch (fallbackError) {
+        console.warn('All API fallback attempts failed, using mock data');
       }
     } else {
       console.warn('Non-Axios error:', error);
@@ -277,7 +300,7 @@ export const getActiveVehicles = async () => {
       status: 200,
       statusText: 'OK (Mock)',
       headers: {},
-      config: {} as any,
+      config: {},
     };
   }
 };
