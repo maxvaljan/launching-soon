@@ -135,34 +135,35 @@ export default function HomeScreen() {
               <Text style={styles.loadingText}>Loading vehicles...</Text>
             </View>
           ) : vehicles && vehicles.length > 0 ? (
-            vehicles.map((vehicle) => {
-              // Debug to see what's available in the vehicle object
-              console.log('Vehicle data:', vehicle);
-              return (
-                <VehicleCard
-                  key={vehicle.id}
-                  icon={
-                    <VehicleImage
-                      vehicle={vehicle}
-                      style={
-                        // Apply different sizes based on vehicle type
-                        vehicle.name.includes('2,7m Van') ||
-                        vehicle.name.includes('Car') ||
-                        vehicle.name.includes('Towing')
-                          ? styles.vehicleIconLarge // 20% larger
-                          : styles.vehicleIconMedium // 15% larger
-                      }
-                    />
-                  }
-                  title={vehicle.name}
-                  description={vehicle.description}
-                  dimensions={vehicle.max_dimensions}
-                  maxWeight={vehicle.max_weight}
-                  selected={selectedVehicle === vehicle.id}
-                  onPress={() => setSelectedVehicle(vehicle.id)}
-                />
-              );
-            })
+            vehicles.map((vehicle) => (
+              <VehicleCard
+                key={vehicle.id}
+                icon={
+                  <VehicleImage
+                    vehicle={vehicle}
+                    style={
+                      // Car and Towing get the largest size (55% larger than original)
+                      vehicle.name.includes('Car') ||
+                      vehicle.name.includes('Towing')
+                        ? styles.vehicleIconXLarge
+                        : // 3.3m Van, Courier, and 2.7m Van get large size (30% larger than original)
+                          vehicle.name.includes('3,3m Van') ||
+                            vehicle.name.includes('Courier') ||
+                            vehicle.name.includes('2,7m Van')
+                          ? styles.vehicleIconLarge
+                          : // All others get medium size (15% larger than original)
+                            styles.vehicleIconMedium
+                    }
+                  />
+                }
+                title={vehicle.name}
+                description={vehicle.description}
+                dimensions={vehicle.max_dimensions}
+                maxWeight={vehicle.max_weight}
+                selected={selectedVehicle === vehicle.id}
+                onPress={() => setSelectedVehicle(vehicle.id)}
+              />
+            ))
           ) : (
             <View style={styles.loadingContainer}>
               <Text style={styles.noVehiclesText}>
@@ -223,9 +224,13 @@ const styles = StyleSheet.create({
   noVehiclesText: {
     opacity: 0.6,
   },
+  vehicleIconXLarge: {
+    width: 68,
+    height: 68,
+  },
   vehicleIconLarge: {
-    width: 53,
-    height: 53,
+    width: 58,
+    height: 58,
   },
   vehicleIconMedium: {
     width: 51,
