@@ -14,62 +14,78 @@ import {
 } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
 
-// Prevent splash screen from auto-hiding
-SplashScreen.preventAutoHideAsync().catch((err) => {
-  console.warn('Error preventing splash screen from hiding:', err);
-});
+// Define font fallbacks to be more resilient
+const fontAssets = {
+  'Inter-Regular': Inter_400Regular,
+  'Inter-Medium': Inter_500Medium,
+  'Inter-SemiBold': Inter_600SemiBold,
+  'Inter-Bold': Inter_700Bold,
+  'Poppins-Regular': Poppins_400Regular,
+  'Poppins-Medium': Poppins_500Medium,
+  'Poppins-SemiBold': Poppins_600SemiBold,
+  'Poppins-Bold': Poppins_700Bold,
+};
+
+// Create fallbacks for font families
+const FALLBACK_FONT_MAP = {
+  'Inter-Regular': 'System',
+  'Inter-Medium': 'System',
+  'Inter-SemiBold': 'System',
+  'Inter-Bold': 'System',
+  'Poppins-Regular': 'System',
+  'Poppins-Medium': 'System',
+  'Poppins-SemiBold': 'System',
+  'Poppins-Bold': 'System',
+};
+
+// Prevent splash screen from auto-hiding immediately
+try {
+  SplashScreen.preventAutoHideAsync();
+} catch (err) {
+  // Log but don't crash the app if splash screen API fails
+  console.warn('Error preventing splash screen from hiding, ignoring', err);
+}
 
 export default function useFonts() {
   const [fontAttempts, setFontAttempts] = useState(0);
-  const [fontsLoaded, fontError] = useExpoFonts({
-    'Inter-Regular': Inter_400Regular,
-    'Inter-Medium': Inter_500Medium,
-    'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
-    'Poppins-Regular': Poppins_400Regular,
-    'Poppins-Medium': Poppins_500Medium,
-    'Poppins-SemiBold': Poppins_600SemiBold,
-    'Poppins-Bold': Poppins_700Bold,
-  });
+  const [fontsLoaded, fontError] = useExpoFonts(fontAssets);
 
-  // Retry loading fonts if there's an error
+  // Retry loading fonts if there's an error (up to 2 retries)
   useEffect(() => {
-    if (fontError && fontAttempts < 3) {
-      console.log('Font loading error, retrying...', fontError);
+    if (fontError && fontAttempts < 2) {
       const timer = setTimeout(() => {
-        setFontAttempts(prev => prev + 1);
-      }, 1000);
-      
+        setFontAttempts((prev) => prev + 1);
+      }, 500); // Slightly faster retry
+
       return () => clearTimeout(timer);
     }
   }, [fontError, fontAttempts]);
 
-  // Debug font loading
-  useEffect(() => {
-    console.log('Font loading status:', { fontsLoaded, fontError, fontAttempts });
-  }, [fontsLoaded, fontError, fontAttempts]);
-
+  // Hide splash screen once fonts are loaded or after max retries
   useEffect(() => {
     const hideSplash = async () => {
-      // Only hide splash screen if fonts successfully loaded or we've exhausted retries
-      if (fontsLoaded || (fontError && fontAttempts >= 3)) {
+      if (fontsLoaded || fontAttempts >= 2) {
         try {
           await SplashScreen.hideAsync();
-          console.log('Splash screen hidden successfully');
-        } catch (error) {
-          console.warn('Error hiding splash screen:', error);
+        } catch {
+          // Just continue if there's an error hiding the splash screen
         }
       }
     };
 
     hideSplash();
-  }, [fontsLoaded, fontError, fontAttempts]);
+  }, [fontsLoaded, fontAttempts]);
+
+  // Report font loading status (minimal logging)
+  const fontsReady = fontsLoaded || fontAttempts >= 2;
 
   return {
     fontsLoaded,
-    fontError, 
-    fontAttempts,
-    // Consider fonts "ready" if they're loaded or we've tried 3 times
-    fontsReady: fontsLoaded || (fontError && fontAttempts >= 3),
+    fontError,
+    fontsReady,
+    fontFamilies: fontsReady
+      ? fontAssets
+      : // If fonts aren't ready, return fallback font map
+        FALLBACK_FONT_MAP,
   };
 }
