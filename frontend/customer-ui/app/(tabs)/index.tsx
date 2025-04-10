@@ -144,7 +144,14 @@ export default function HomeScreen() {
                   icon={
                     <VehicleImage
                       vehicle={vehicle}
-                      style={styles.vehicleIcon}
+                      style={
+                        // Apply different sizes based on vehicle type
+                        vehicle.name.includes('2,7m Van') ||
+                        vehicle.name.includes('Car') ||
+                        vehicle.name.includes('Towing')
+                          ? styles.vehicleIconLarge // 20% larger
+                          : styles.vehicleIconMedium // 15% larger
+                      }
                     />
                   }
                   title={vehicle.name}
@@ -216,8 +223,12 @@ const styles = StyleSheet.create({
   noVehiclesText: {
     opacity: 0.6,
   },
-  vehicleIcon: {
-    width: 44,
-    height: 44,
+  vehicleIconLarge: {
+    width: 53,
+    height: 53,
+  },
+  vehicleIconMedium: {
+    width: 51,
+    height: 51,
   },
 });
