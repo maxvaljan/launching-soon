@@ -135,20 +135,27 @@ export default function HomeScreen() {
               <Text style={styles.loadingText}>Loading vehicles...</Text>
             </View>
           ) : vehicles && vehicles.length > 0 ? (
-            vehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                icon={
-                  <VehicleImage vehicle={vehicle} style={styles.vehicleIcon} />
-                }
-                title={vehicle.name}
-                description={vehicle.description}
-                dimensions={vehicle.dimensions}
-                maxWeight={vehicle.max_weight}
-                selected={selectedVehicle === vehicle.id}
-                onPress={() => setSelectedVehicle(vehicle.id)}
-              />
-            ))
+            vehicles.map((vehicle) => {
+              // Debug to see what's available in the vehicle object
+              console.log('Vehicle data:', vehicle);
+              return (
+                <VehicleCard
+                  key={vehicle.id}
+                  icon={
+                    <VehicleImage
+                      vehicle={vehicle}
+                      style={styles.vehicleIcon}
+                    />
+                  }
+                  title={vehicle.name}
+                  description={vehicle.description}
+                  dimensions={vehicle.dimensions}
+                  maxWeight={vehicle.max_weight}
+                  selected={selectedVehicle === vehicle.id}
+                  onPress={() => setSelectedVehicle(vehicle.id)}
+                />
+              );
+            })
           ) : (
             <View style={styles.loadingContainer}>
               <Text style={styles.noVehiclesText}>
@@ -210,7 +217,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   vehicleIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
   },
 });

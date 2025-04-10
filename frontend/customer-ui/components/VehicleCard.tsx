@@ -65,20 +65,18 @@ export function VehicleCard({
             </Text>
           )}
           {/* Display additional information if available */}
-          {(dimensions || maxWeight) && (
-            <View style={styles.specsContainer}>
-              {dimensions && (
-                <Text style={[styles.specs, { color: descriptionColor }]}>
-                  {dimensions}
-                </Text>
-              )}
-              {maxWeight && (
-                <Text style={[styles.specs, { color: descriptionColor }]}>
-                  {maxWeight}
-                </Text>
-              )}
-            </View>
-          )}
+          <View style={styles.specsContainer}>
+            {dimensions && (
+              <Text style={[styles.specs, { color: descriptionColor }]}>
+                {dimensions}
+              </Text>
+            )}
+            {maxWeight && (
+              <Text style={[styles.specs, { color: descriptionColor }]}>
+                {maxWeight}
+              </Text>
+            )}
+          </View>
         </View>
       </View>
     </Card>
@@ -113,7 +111,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   specs: {
-    fontSize: 12,
-    marginRight: 8,
+    fontSize: 13,
+    marginRight: 10,
+    opacity: 0.9,
   },
 });
