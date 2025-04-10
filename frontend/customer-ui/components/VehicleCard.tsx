@@ -69,12 +69,12 @@ export function VehicleCard({
             <View style={styles.specsContainer}>
               {dimensions && (
                 <Text style={[styles.specs, { color: descriptionColor }]}>
-                  {dimensions} m
+                  {dimensions}
                 </Text>
               )}
               {maxWeight && (
                 <Text style={[styles.specs, { color: descriptionColor }]}>
-                  {maxWeight} kg
+                  {maxWeight}
                 </Text>
               )}
             </View>
