@@ -18,24 +18,26 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: '#0e1424' }]}>
-      <TouchableOpacity 
-        style={styles.skipButton} 
+    <View style={[styles.container, { backgroundColor: colors.primary }]}>
+      <TouchableOpacity
+        style={styles.skipButton}
         onPress={() => router.push('/(auth)/login')}
       >
-        <Text style={styles.skipText}>Skip</Text>
+        <Text style={[styles.skipText, { color: colors.accent }]}>Skip</Text>
       </TouchableOpacity>
-      
+
       <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>MAXMOVE</Text>
-        <Text style={styles.tagline}>Efficient logistics for Germany</Text>
+        <Text style={[styles.logoText, { color: colors.accent }]}>MAXMOVE</Text>
+        <Text style={[styles.tagline, { color: colors.accent }]}>
+          Efficient logistics for Germany
+        </Text>
       </View>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={styles.accountLink}
         onPress={() => router.push('/(auth)/login')}
       >
-        <Text style={styles.accountText}>
+        <Text style={[styles.accountText, { color: colors.accent }]}>
           Already have an account?
         </Text>
       </TouchableOpacity>
@@ -60,7 +62,6 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: 'white',
   },
   logoContainer: {
     alignItems: 'center',
@@ -68,13 +69,11 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 32,
     fontFamily: 'Poppins-Bold',
-    color: '#f1ebdb',
     marginBottom: 16,
   },
   tagline: {
     fontSize: 18,
     fontFamily: 'Poppins-Medium',
-    color: 'white',
     textAlign: 'center',
   },
   accountLink: {
@@ -85,6 +84,5 @@ const styles = StyleSheet.create({
   accountText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: 'white',
   },
 });

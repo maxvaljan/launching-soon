@@ -12,28 +12,28 @@ export default function AccountTypeScreen() {
   const colors = Colors[colorScheme];
 
   return (
-    <View style={[styles.container, { backgroundColor: '#0e1424' }]}>
+    <View style={[styles.container, { backgroundColor: colors.primary }]}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <ChevronLeft size={24} color="#fff" />
+          <ChevronLeft size={24} color={colors.accent} />
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.skipButton}
           onPress={() => router.push('/(auth)/login')}
         >
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={[styles.skipText, { color: colors.accent }]}>Skip</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: colors.accent }]}>
           Select your account type
         </Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: colors.accent }]}>
           What type of delivery do you need?
         </Text>
 
@@ -43,7 +43,7 @@ export default function AccountTypeScreen() {
             description="For both basic personal and small businesses use"
             onPress={() => router.push('/(auth)/register')}
           />
-          
+
           <AccountTypeCard
             title="Business"
             description="Sign up for exclusive business features or submit your enquiry, and let's talk!"
@@ -53,13 +53,11 @@ export default function AccountTypeScreen() {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.loginLink}
           onPress={() => router.push('/(auth)/login')}
         >
-          <Text style={styles.loginText}>
-            Already have an account?
-          </Text>
+          <Text style={styles.loginText}>Already have an account?</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -87,7 +85,6 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: '#fff',
   },
   content: {
     flex: 1,
@@ -96,13 +93,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: 'Poppins-Bold',
     marginBottom: 8,
-    color: '#fff',
   },
   subtitle: {
     fontSize: 16,
     fontFamily: 'Inter-Regular',
     marginBottom: 32,
-    color: '#ddd',
   },
   optionsContainer: {
     marginTop: 16,
@@ -118,6 +113,5 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: '#fff',
   },
 });

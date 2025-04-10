@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
-import { Chrome as Home, ClipboardList, MessageSquare, User } from 'lucide-react-native';
+import { Chrome as Home, ClipboardList, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() || 'light';
@@ -28,9 +28,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Home size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -43,21 +41,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="messages"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, size }) => (
-            <MessageSquare size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <User size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />
     </Tabs>

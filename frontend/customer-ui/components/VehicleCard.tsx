@@ -28,33 +28,25 @@ export function VehicleCard({
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
 
-  // Update the styling to match web UI with navy background when selected
+  // Update the styling to have grey border normally and blue border when selected
   const cardStyle: ViewStyle = {
     ...styles.card,
-    ...(selected
-      ? {
-          backgroundColor: '#002147', // navy background when selected
-          borderColor: '#002147',
-        }
-      : {
-          borderColor: colors.border,
-          backgroundColor: colors.card,
-        }),
+    borderColor: selected
+      ? colors.blue // blue border when selected
+      : colorScheme === 'dark'
+        ? 'rgba(237, 237, 237, 0.3)'
+        : '#e0e0e0', // grey border
+    borderWidth: selected ? 2 : 1, // slightly thicker border when selected
+    backgroundColor: 'transparent', // always transparent background
     ...(style || {}),
   };
 
-  // Text colors based on selection state
-  const titleColor = selected ? '#f1ebdb' : colors.text; // creme color when selected
-  const descriptionColor = selected
-    ? 'rgba(241, 235, 219, 0.8)'
-    : colors.grayText; // semi-transparent creme when selected
+  // Text colors remain the same regardless of selection
+  const titleColor = colors.text;
+  const descriptionColor = colors.grayText;
 
   return (
-    <Card
-      style={cardStyle}
-      variant={selected ? 'outline' : 'default'}
-      onPress={onPress}
-    >
+    <Card style={cardStyle} variant="outline" onPress={onPress}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>{icon}</View>
         <View style={styles.content}>
@@ -86,7 +78,8 @@ export function VehicleCard({
 const styles = StyleSheet.create({
   card: {
     marginBottom: 12,
-    borderWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   container: {
     flexDirection: 'row',

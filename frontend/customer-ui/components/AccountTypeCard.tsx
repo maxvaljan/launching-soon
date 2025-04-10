@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Card } from './ui/Card';
+import { Card } from '@/components/ui/Card';
+import { User, Briefcase } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
-import { User, Briefcase } from 'lucide-react-native';
 
 interface AccountTypeCardProps {
   title: string;
@@ -22,16 +22,18 @@ export function AccountTypeCard({
   return (
     <Card style={styles.card} onPress={onPress}>
       <View style={styles.container}>
-        <View style={styles.iconContainer}>
-          {title === "Individual" ? (
-            <User size={40} color="#0e1424" />
+        <View
+          style={[styles.iconContainer, { backgroundColor: colors.accent }]}
+        >
+          {title === 'Individual' ? (
+            <User size={40} color={colors.primary} />
           ) : (
-            <Briefcase size={40} color="#0e1424" />
+            <Briefcase size={40} color={colors.primary} />
           )}
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>
+          <Text style={[styles.title, { color: colors.primary }]}>{title}</Text>
+          <Text style={[styles.description, { color: colors.textLight }]}>
             {description}
           </Text>
         </View>
@@ -43,33 +45,31 @@ export function AccountTypeCard({
 const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
-    backgroundColor: '#fff',
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 16,
   },
   iconContainer: {
-    width: 60,
-    height: 60,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-    backgroundColor: '#f9f2e4',
-    borderRadius: 10,
   },
   content: {
     flex: 1,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     marginBottom: 4,
-    color: '#0e1424',
   },
   description: {
     fontSize: 14,
-    marginBottom: 8,
-    color: '#333',
+    fontFamily: 'Inter-Regular',
+    lineHeight: 20,
   },
 });

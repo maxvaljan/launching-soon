@@ -11,37 +11,37 @@ export default function WelcomeScreen() {
   const colors = Colors[colorScheme];
 
   return (
-    <View style={[styles.container, { backgroundColor: '#0e1424' }]}>
+    <View style={[styles.container, { backgroundColor: colors.primary }]}>
       <View style={styles.header}>
-        <Text style={styles.logoText}>MAXMOVE</Text>
-        <TouchableOpacity 
+        <Text style={[styles.logoText, { color: colors.accent }]}>MAXMOVE</Text>
+        <TouchableOpacity
           style={styles.skipButton}
           onPress={() => router.push('/(auth)/login')}
         >
-          <Text style={styles.skipText}>Skip</Text>
+          <Text style={[styles.skipText, { color: colors.accent }]}>Skip</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.content}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>
+          <Text style={[styles.title, { color: colors.accent }]}>
             Reliable delivery, whenever you need it
           </Text>
         </View>
       </View>
 
       <View style={styles.footer}>
-        <Button 
-          title="Get Started" 
+        <Button
+          title="Get Started"
           style={styles.button}
           onPress={() => router.push('/(onboarding)/account-type')}
         />
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.loginLink}
           onPress={() => router.push('/(auth)/login')}
         >
-          <Text style={styles.loginText}>
+          <Text style={[styles.loginText, { color: colors.accent }]}>
             Already have an account?
           </Text>
         </TouchableOpacity>
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 24,
     fontFamily: 'Poppins-Bold',
-    color: '#f1ebdb',
   },
   skipButton: {
     padding: 10,
@@ -73,7 +72,6 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: '#fff',
   },
   content: {
     flex: 1,
@@ -88,7 +86,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontFamily: 'Poppins-Bold',
     textAlign: 'left',
-    color: '#fff',
   },
   footer: {
     marginTop: 40,
@@ -106,6 +103,5 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-    color: '#fff',
   },
 });
