@@ -25,8 +25,8 @@ interface Vehicle {
   svg_icon?: string | null;
   // display_order is not in the database schema, but kept optional for compatibility
   display_order?: number;
-  // Add dimensions (meter) and max_weight (kg) fields
-  dimensions?: string;
+  // Database fields for dimensions and weight
+  max_dimensions?: string;
   max_weight?: string;
 }
 
@@ -149,7 +149,7 @@ export default function HomeScreen() {
                   }
                   title={vehicle.name}
                   description={vehicle.description}
-                  dimensions={vehicle.dimensions}
+                  dimensions={vehicle.max_dimensions}
                   maxWeight={vehicle.max_weight}
                   selected={selectedVehicle === vehicle.id}
                   onPress={() => setSelectedVehicle(vehicle.id)}
