@@ -39,7 +39,7 @@ export const getActiveVehicleTypes = async () => {
       .from('vehicle_types')
       .select('*')
       .eq('active', true)
-      .order('display_order', { ascending: true });
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Supabase error fetching vehicle types:', error);

@@ -23,6 +23,7 @@ interface Vehicle {
   icon_path?: string | null;
   custom_icon_url?: string | null;
   svg_icon?: string | null;
+  // display_order is not in the database schema, but kept optional for compatibility
   display_order?: number;
 }
 
