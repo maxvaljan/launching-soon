@@ -53,7 +53,19 @@ export default function HomeScreen() {
         const response = await getActiveVehicleTypes();
 
         if (response.data && Array.isArray(response.data)) {
-          setVehicles(response.data);
+          // Sort vehicles by max_weight (from smaller to bigger)
+          const sortedVehicles = [...response.data].sort((a, b) => {
+            // Always put towing at the end
+            if (a.name.includes('Towing')) return 1;
+            if (b.name.includes('Towing')) return -1;
+
+            // Extract numeric values from weight strings (e.g., "1000kg" -> 1000)
+            const weightA = parseInt(a.max_weight?.replace(/\D/g, '') || '0');
+            const weightB = parseInt(b.max_weight?.replace(/\D/g, '') || '0');
+            return weightA - weightB; // Ascending order (smaller to bigger)
+          });
+
+          setVehicles(sortedVehicles);
         } else {
           setVehicles([]);
         }
