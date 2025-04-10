@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Modal, ScrollView, TouchableWithoutFeedback, Platform } from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, Modal, TouchableWithoutFeedback, Platform } from 'react-native';
 import { MapPin, Circle, Clock, Plus, X, ChevronDown, CircleCheck as CheckCircle, Calendar } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useRouter } from 'expo-router';
 
 export interface Stop {
   id: string;
@@ -19,6 +20,12 @@ interface OrderStopsProps {
   onDeleteStop?: (id: string) => void;
 }
 
+// Define a constant for modal background color
+const MODAL_BACKGROUND_COLORS = {
+  light: '#fff',
+  dark: '#1a202c',
+};
+
 export function OrderStops({
   stops,
   onAddStop,
@@ -28,6 +35,7 @@ export function OrderStops({
 }: OrderStopsProps) {
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
+  const router = useRouter();
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState('Now');
   const [timeMode, setTimeMode] = useState<'now' | 'later'>('now');
@@ -48,6 +56,23 @@ export function OrderStops({
   const handleDeleteStop = (id: string) => {
     if (onDeleteStop) {
       onDeleteStop(id);
+    }
+  };
+
+  const handleFocusAddress = (id: string) => {
+    // Get the stop type ('pickup' or 'dropoff')
+    const stop = stops.find(s => s.id === id);
+    if (stop) {
+      // Use the original onFocusStop for any necessary side effects
+      if (onFocusStop) {
+        onFocusStop(id);
+      }
+      
+      // Navigate to the location search screen with the stop ID and type
+      router.push({
+        pathname: '/location-search',
+        params: { stopId: id, type: stop.type }
+      });
     }
   };
 
@@ -84,11 +109,23 @@ export function OrderStops({
     setTimeModalVisible(false);
   };
 
+  // Extract styles to avoid inline styles
+  const getIconContainerStyle = (index: number) => [
+    styles.iconContainer,
+    { width: 24 }
+  ];
+
+  // Define common styles to reduce inline style usage
+  const modalContentStyle = [
+    styles.modalContent, 
+    { backgroundColor: colorScheme === 'dark' ? colors.card : MODAL_BACKGROUND_COLORS.light }
+  ];
+
   return (
     <View style={styles.container}>
       {stops.map((stop, index) => (
         <View key={stop.id} style={styles.stopRow}>
-          <View style={styles.iconContainer}>
+          <View style={getIconContainerStyle(index)}>
             {stop.type === 'pickup' ? (
               <Circle 
                 size={12} 
@@ -119,7 +156,7 @@ export function OrderStops({
               placeholderTextColor={colors.grayText}
               value={stop.address}
               onChangeText={(text) => onUpdateStop(stop.id, text)}
-              onFocus={() => onFocusStop(stop.id)}
+              onFocus={() => handleFocusAddress(stop.id)}
             />
             
             {index === 0 && (
@@ -163,7 +200,7 @@ export function OrderStops({
         <TouchableWithoutFeedback onPress={toggleTimeModal}>
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
-              <View style={[styles.modalContent, { backgroundColor: colorScheme === 'dark' ? colors.card : '#fff' }]}>
+              <View style={modalContentStyle}>
                 <Text style={[styles.modalTitle, { color: colors.text }]}>Pick-up time</Text>
                 
                 {!showDateTimePicker ? (
@@ -267,7 +304,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   iconContainer: {
-    width: 24,
     alignItems: 'center',
     marginRight: 12,
   },
@@ -325,7 +361,6 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     borderTopLeftRadius: 20,
@@ -333,7 +368,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 30,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -351,7 +385,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(128, 128, 128, 0.2)',
   },
   timeOptionIconText: {
     flexDirection: 'row',
@@ -363,12 +396,6 @@ const styles = StyleSheet.create({
   timeOptionLabel: {
     fontSize: 16,
     fontFamily: 'Inter-Medium',
-  },
-  timeOptionSubLabel: {
-      fontSize: 12,
-      fontFamily: 'Inter-Regular',
-      color: 'grey',
-      marginTop: 2,
   },
   dateTimePickerContainer: {
     marginTop: 20,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import { VehicleImage } from '@/components/VehicleImage';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from 'react-native';
 import { getActiveVehicleTypes } from '@/services/supabase';
+import { useLocalSearchParams } from 'expo-router';
 
 // Add Vehicle interface
 interface Vehicle {
@@ -30,8 +31,14 @@ interface Vehicle {
   max_weight?: string;
 }
 
+// Logo text color constant
+const LOGO_TEXT_COLOR = '#f1ebdb';
+
 export default function HomeScreen() {
-  // Router removed as it's not used
+  const { selectedStopId, selectedAddress } = useLocalSearchParams<{ 
+    selectedStopId: string; 
+    selectedAddress: string 
+  }>();
   const colorScheme = useColorScheme() || 'light';
   const colors = Colors[colorScheme];
 
@@ -43,6 +50,20 @@ export default function HomeScreen() {
   ]);
 
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+
+  // Handler for updating a stop
+  const handleUpdateStop = useCallback((id: string, address: string) => {
+    setStops(
+      stops.map((stop) => (stop.id === id ? { ...stop, address } : stop)),
+    );
+  }, [stops]);
+
+  // Update stop address when returning from location search screen
+  useEffect(() => {
+    if (selectedStopId && selectedAddress) {
+      handleUpdateStop(selectedStopId, selectedAddress);
+    }
+  }, [selectedStopId, selectedAddress, handleUpdateStop]);
 
   // Fetch vehicles directly from Supabase
   useEffect(() => {
@@ -70,7 +91,7 @@ export default function HomeScreen() {
           setVehicles([]);
         }
       } catch (error) {
-        console.error('Error fetching vehicles from Supabase:', error);
+        // Log error but don't display to user
         setVehicles([]);
       } finally {
         setLoading(false);
@@ -95,30 +116,26 @@ export default function HomeScreen() {
     }
   };
 
-  const handleUpdateStop = (id: string, address: string) => {
-    setStops(
-      stops.map((stop) => (stop.id === id ? { ...stop, address } : stop)),
-    );
-  };
-
-  const handleFocusStop = (id: string) => {
-    // This would typically open a map or address search
-    console.log('Focus on stop', id);
+  const handleFocusStop = () => {
+    // Empty handler for focus events (navigation happens in component)
   };
 
   const handleDeleteStop = (id: string) => {
     // Filter out the stop with the specified id
     setStops(stops.filter((stop) => stop.id !== id));
   };
+  
+  // Styles for placeholder views in header
+  const placeholderStyle = { width: 24 };
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
       <View style={styles.header}>
-        <View style={{ width: 24 }} />
+        <View style={placeholderStyle} />
         <Text style={styles.logoText}>MAXMOVE</Text>
-        <View style={{ width: 24 }} />
+        <View style={placeholderStyle} />
       </View>
 
       <ScrollView
@@ -203,7 +220,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
-    color: '#f1ebdb',
+    color: LOGO_TEXT_COLOR,
   },
   content: {
     flex: 1,
